@@ -2,8 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.UsuarioDTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint.EmailConstraint;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.model.Email;
-import jakarta.persistence.Column;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

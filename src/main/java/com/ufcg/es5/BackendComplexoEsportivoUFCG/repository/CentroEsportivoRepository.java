@@ -1,10 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.repository;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.model.CentroEsportivo;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.model.Reserva;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.CentroEsportivo;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
