@@ -4,4 +4,10 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
 
 public interface UserService extends BasicService<User, Long> {
+
+    boolean existsByEmail(String email);
+
+    boolean existsByStudentId(String s);
+
+    User findByEmail(String email);
 }

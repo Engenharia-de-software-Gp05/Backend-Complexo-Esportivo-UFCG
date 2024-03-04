@@ -11,8 +11,25 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository repository;
+
     @Override
     public JpaRepository<User, Long> getRepository() {
         return repository;
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return repository.findByEmail(email) != null;
+    }
+    @Override
+    public boolean existsByStudentId(String studentId) {
+        return repository.findByStudentId(studentId).isPresent();
+    }
+
+
+    @Override
+    public User findByEmail(String email) {
+        return repository.findByEmail(email);
+    }
+
 }

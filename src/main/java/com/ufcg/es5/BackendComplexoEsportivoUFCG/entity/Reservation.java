@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name =   Reservation.RESERVATION_TABLE)
+@Table(name = Reservation.RESERVATION_TABLE)
 public class Reservation extends BasicEntity {
 
     private static final String START_DATE_TIME_COLUMN = "start_date_time";
