@@ -20,16 +20,13 @@ public class UserController {
     @Autowired
     private UserService service;
 
-    private static final Log LOGGER = LogFactory.getLog(UserController.class);
     @GetMapping(value = "/by/email")
     public ResponseEntity<UserResponseDto> findByEmail(
             @RequestParam
             String email
     ){
         User user = service.findByEmail(email);
-        LOGGER.info("buceta: " + user);
         UserResponseDto response = new UserResponseDto(user.getEmail(), user.getName());
-        LOGGER.info("caralho: " + response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -28,11 +28,8 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponseDto login(LoginRequestDto data) {
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        System.out.println("caralho userPass: " + usernamePassword);
         var auth = this.authenticationManager.authenticate(usernamePassword);
-        System.out.println("caralho: auth" + auth);
         var token = tokenService.generateToken((User) auth.getPrincipal());
-        System.out.println("caralho: token" + token);
 
         return new LoginResponseDto(token);
     }

@@ -23,13 +23,11 @@ public class TokenService {
     public String generateToken(User user) {
         try {
 
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
                     .withExpiresAt(generateExpirationDate())
                     .sign(getAlgorithm());
-            System.out.println("bucetinha generate: " + token);
-            return token;
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error while generating token.", exception);
         }
@@ -37,15 +35,11 @@ public class TokenService {
 
     public String validateToken(String token){
         try {
-
-
-            String subject = JWT.require(getAlgorithm())
+            return JWT.require(getAlgorithm())
                     .withIssuer("auth-api")
                     .build()
                     .verify(token)
                     .getSubject();
-            System.out.println("bucetinha validate:" + subject);
-            return subject;
         } catch (JWTCreationException exception) {
             return UNAUTHORIZED;
         }

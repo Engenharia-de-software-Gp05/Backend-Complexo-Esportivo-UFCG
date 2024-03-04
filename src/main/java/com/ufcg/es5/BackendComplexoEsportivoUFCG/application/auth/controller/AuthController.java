@@ -31,7 +31,6 @@ public class AuthController {
     ){
 
         LoginResponseDto token = service.login(data);
-        System.out.println("caralho: " + token);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
