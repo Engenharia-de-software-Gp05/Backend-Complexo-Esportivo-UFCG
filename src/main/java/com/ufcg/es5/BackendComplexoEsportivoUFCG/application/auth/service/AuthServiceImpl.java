@@ -7,6 +7,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterRequestDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.UserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,25 +26,26 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserService userService;
 
-    public LoginResponseDto login(LoginRequestDto data) {
+    public LoginResponseDto login(LoginRequestDto credentials) {
 
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var usernamePassword = new UsernamePasswordAuthenticationToken(credentials.email(), credentials.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
 
         return new LoginResponseDto(token);
     }
 
-    public UserResponseDto register(RegisterRequestDto data){
-        validateRegisterData(data);
+    @Transactional
+    public UserResponseDto register(RegisterRequestDto credentials){
+        this.checkIfUserExists(credentials);
 
-        String encodedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = makeUser(data, encodedPassword);
+        String encodedPassword = new BCryptPasswordEncoder().encode(credentials.password());
+        User newUser = makeUser(credentials, encodedPassword);
         User user = userService.save(newUser);
         return new UserResponseDto(user.getEmail(), user.getPassword());
     }
 
-    private void validateRegisterData(RegisterRequestDto data){
+    private void checkIfUserExists(RegisterRequestDto data){
         if(userService.existsByEmail(data.email())){
             throw new IllegalArgumentException("Email already registered.");
         }

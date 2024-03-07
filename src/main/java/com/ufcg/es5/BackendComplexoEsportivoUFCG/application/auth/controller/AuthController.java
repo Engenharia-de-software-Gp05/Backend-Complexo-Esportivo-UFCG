@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class AuthController {
     private AuthService service;
 
     @PostMapping("/login")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<LoginResponseDto> login(
             @RequestBody
             @Valid
@@ -34,7 +36,7 @@ public class AuthController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/register/admin")
     public ResponseEntity<UserResponseDto> register(
             @RequestBody
             @Valid

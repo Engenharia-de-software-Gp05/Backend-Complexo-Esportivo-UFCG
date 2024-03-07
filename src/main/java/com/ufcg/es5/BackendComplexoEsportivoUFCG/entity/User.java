@@ -56,6 +56,9 @@ public class User extends BasicEntity implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    public User() {
+    }
+
     public User(
             String email,
             String name,
