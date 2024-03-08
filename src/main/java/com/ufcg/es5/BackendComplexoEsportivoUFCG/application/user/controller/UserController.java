@@ -20,7 +20,6 @@ public class UserController {
 
     @Autowired
     private UserService service;
-
     @GetMapping(value = "/by/email")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserResponseDto> findByEmail(

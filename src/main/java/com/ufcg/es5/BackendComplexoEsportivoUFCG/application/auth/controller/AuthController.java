@@ -25,7 +25,6 @@ public class AuthController {
     private AuthService service;
 
     @PostMapping("/login")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<LoginResponseDto> login(
             @RequestBody
             @Valid
@@ -36,7 +35,7 @@ public class AuthController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping("/register/admin")
+    @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(
             @RequestBody
             @Valid
