@@ -11,4 +11,5 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     List<Reservation> findByUserId(Long userId);
 
+    void deleteReservation(Long reservationId, Long userId);
 }

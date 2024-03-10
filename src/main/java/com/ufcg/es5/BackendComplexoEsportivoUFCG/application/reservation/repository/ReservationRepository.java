@@ -3,6 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.reposi
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +19,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         WHERE reservation.id = :id
     """
     )
-    Reservation findReservationById(
+    Optional<Reservation> findById(
             @Param("id") Long id
     );
 
