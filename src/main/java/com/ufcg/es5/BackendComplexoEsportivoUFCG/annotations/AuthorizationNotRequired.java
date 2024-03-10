@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.annotations;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

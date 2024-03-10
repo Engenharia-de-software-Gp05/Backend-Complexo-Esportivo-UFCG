@@ -9,7 +9,6 @@ public record RegisterRequestDto(
         String name,
         String phoneNumber,
         String studentId,
-        String password,
-        Set<UserRoleEnum> userRoles
+        String password
 ) {
 }
