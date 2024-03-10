@@ -1,11 +1,16 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -17,6 +22,8 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository repository;
     @Autowired 
     private UserRepository userRepository;
+    @Autowired
+    private CourtRepository courtRepository;
 
     @Override
     public JpaRepository<Reservation, Long> getRepository() {
@@ -24,13 +31,22 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<Reservation> findByCourtByDate(Long courtId, String date) {
-        return repository.findByCourtByDate(courtId, date);
+    public List<Reservation> findByCourtAndDateTime(Long courtId, LocalDateTime date) {
+        return repository.findByCourtAndDateTime(courtId, date);
     }
 
     @Override
     public List<Reservation> findByUserId(Long userId) {
         return repository.findByUserId(userId);
+    }
+
+    @Override
+    public Reservation createReservation(Long userId, Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        // TODO : teste de nulidade 
+        Court court = courtRepository.findById(courtId).get();
+        User user = userRepository.findById(userId).get();
+        Reservation reservation = new Reservation(startDateTime, endDateTime, court, user);
+        return repository.save(reservation);
     }
 
     @Override

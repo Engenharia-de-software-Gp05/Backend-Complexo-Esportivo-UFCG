@@ -2,6 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.reposi
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,9 +39,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         AND reservation.date = :date
     """
     )
-    List<Reservation> findByCourtByDate(
+    List<Reservation> findByCourtAndDateTime(
             @Param("courtId") Long courtId,
-            @Param("date") String date
+            @Param("date") LocalDateTime date
     );
 
 
