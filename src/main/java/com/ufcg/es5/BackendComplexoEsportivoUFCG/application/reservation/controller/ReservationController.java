@@ -14,11 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 
 @RestController
 @RequestMapping("/reservation")
@@ -44,4 +49,30 @@ public class ReservationController {
         Collection<ReservationResponseDto> response = service.findByUserId(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/by/court")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<Collection<ReservationResponseDto>> findByCourtAndDateTime(@RequestParam Long courtId, @RequestParam LocalDateTime date) {
+        Collection<ReservationResponseDto> response = service.findByCourtAndDateTime(courtId, date);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/create")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<Reservation> createReservation (
+        @RequestParam Long userId,
+        @RequestParam Long courtId,
+        @RequestParam LocalDateTime start_date_time,
+        @RequestParam LocalDateTime end_date_time
+    ){
+        return ResponseEntity.ok(service.createReservation(userId, courtId, start_date_time, end_date_time));
+    }
+
+
+    @DeleteMapping(value = "/delete")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    public void deleteReservation(@RequestParam Long reservationId, Long userId) {
+        service.deleteReservation(reservationId, userId);
+    }
+
 }

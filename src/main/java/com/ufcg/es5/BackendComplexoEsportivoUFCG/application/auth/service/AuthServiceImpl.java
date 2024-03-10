@@ -65,6 +65,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Email already registered.");
         }
     }
+
     private User makeUser(RegisterRequestDto data, String encodedPassword){
         return new User(
                 data.email(),
