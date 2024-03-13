@@ -16,4 +16,5 @@ public class CourtServiceImpl implements CourtService{
     public JpaRepository<Court, Long> getRepository() {
         return repository;
     }
+
 }
