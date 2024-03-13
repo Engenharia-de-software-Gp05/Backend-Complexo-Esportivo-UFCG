@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service.UserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
@@ -26,10 +27,9 @@ public class ReservationServiceImpl implements ReservationService {
     private UserService userService;
 
     @Autowired
-    private CourtRepository courtRepository;
-
-    @Autowired
     private AuthenticatedUser authenticatedUser;
+
+    private CourtService courtService;
 
     @Override
     public JpaRepository<Reservation, Long> getRepository() {
@@ -47,12 +47,21 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Reservation createReservation(Long userId, Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        // TODO : teste de nulidade
-        Court court = courtRepository.findById(courtId).get();
-        User user = userService.findById(userId).get();
+    public Reservation createReservation(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Long userId = authenticatedUser.getAuthenticatedUserId();
+        User user = userService.findById(userId).orElseThrow();
+
+        Court court = courtService.findById(courtId).orElseThrow();
 
         Reservation reservation = new Reservation(startDateTime, endDateTime, court, user);
+        return repository.save(reservation);
+    }
+
+    @Override
+    public Reservation makeUnavailable(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Court court = courtService.findById(courtId).orElseThrow();
+
+        Reservation reservation = new Reservation(startDateTime, endDateTime, court, null);
         return repository.save(reservation);
     }
 

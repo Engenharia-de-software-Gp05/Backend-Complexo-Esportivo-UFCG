@@ -12,8 +12,11 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     Collection<ReservationResponseDto> findByUserId(Long userId);
 
-    Reservation createReservation(Long userId, Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    Reservation createReservation(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    Reservation makeUnavailable(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     void deleteReservation(Long reservationId);
+
 
 }
