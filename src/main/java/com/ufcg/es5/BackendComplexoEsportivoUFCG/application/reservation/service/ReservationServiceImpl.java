@@ -2,9 +2,10 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.servic
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.repository.UserRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service.UserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.enums.UserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
@@ -22,7 +23,7 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository repository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private CourtRepository courtRepository;
@@ -49,7 +50,7 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation createReservation(Long userId, Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         // TODO : teste de nulidade
         Court court = courtRepository.findById(courtId).get();
-        User user = userRepository.findById(userId).get();
+        User user = userService.findById(userId).get();
 
         Reservation reservation = new Reservation(startDateTime, endDateTime, court, user);
         return repository.save(reservation);
@@ -57,15 +58,20 @@ public class ReservationServiceImpl implements ReservationService {
 
 
     @Override
-    public void deleteReservation(Long reservationId, Long userId) {
+    public void deleteReservation(Long id) {
         //TODO: verificar se o usuário tem a role de admin
-        boolean isOwner = repository.findById(reservationId).get().getUser().getId().equals(userId);
+        Reservation reservation = repository.findById(id).orElseThrow();
 
-        if (isOwner) {
-            repository.deleteById(reservationId);
+        Long userId = authenticatedUser.getAuthenticatedUserId();
+        if (isOwner(userId, reservation) || authenticatedUser.hasRole(UserRoleEnum.ROLE_ADMIN)) {
+            repository.delete(reservation);
         } else {
             throw new RuntimeException("Usuário não tem permissão para deletar a reserva");
         }
+    }
+
+    private boolean isOwner(Long userId, Reservation reservation) {
+        return reservation.getUser().getId().equals(userId);
     }
 
 }

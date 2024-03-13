@@ -2,6 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.contro
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,26 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
 
+    private static final String USER_ID_PROPERTY = "userId";
     @Autowired
     private ReservationService service;
-
-    private static final String USER_ID_PROPERTY = "userId";
 
     @GetMapping(value = "/by/user-id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -45,7 +38,7 @@ public class ReservationController {
             @Valid
             @RequestParam(USER_ID_PROPERTY)
             Long userId
-    ){
+    ) {
         Collection<ReservationResponseDto> response = service.findByUserId(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -59,20 +52,23 @@ public class ReservationController {
 
     @PostMapping(value = "/create")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<Reservation> createReservation (
-        @RequestParam Long userId,
-        @RequestParam Long courtId,
-        @RequestParam LocalDateTime start_date_time,
-        @RequestParam LocalDateTime end_date_time
-    ){
+    public ResponseEntity<Reservation> createReservation(
+            @RequestParam Long userId,
+            @RequestParam Long courtId,
+            @RequestParam LocalDateTime start_date_time,
+            @RequestParam LocalDateTime end_date_time
+    ) {
         return ResponseEntity.ok(service.createReservation(userId, courtId, start_date_time, end_date_time));
     }
 
 
     @DeleteMapping(value = "/delete")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public void deleteReservation(@RequestParam Long reservationId, Long userId) {
-        service.deleteReservation(reservationId, userId);
+    public void deleteReservation(
+            @RequestParam("id")
+            Long id
+    ) {
+        service.deleteReservation(id);
     }
 
 }

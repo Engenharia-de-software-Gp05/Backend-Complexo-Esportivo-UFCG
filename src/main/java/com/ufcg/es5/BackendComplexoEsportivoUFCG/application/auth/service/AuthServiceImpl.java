@@ -30,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public LoginResponseDto login(LoginRequestDto credentials) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(credentials.username(), credentials.password());
         var auth = authenticationManager.authenticate(usernamePassword);
@@ -55,7 +56,6 @@ public class AuthServiceImpl implements AuthService {
         String encodedPassword = new BCryptPasswordEncoder().encode(credentials.password());
         User newUser = makeUserWithRoles(credentials, encodedPassword);
         User user = userService.save(newUser);
-
         return new UserResponseDto(user.getEmail(), user.getPassword());
     }
 

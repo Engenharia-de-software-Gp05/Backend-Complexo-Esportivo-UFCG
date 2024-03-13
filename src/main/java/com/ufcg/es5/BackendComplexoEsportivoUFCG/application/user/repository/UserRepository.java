@@ -13,13 +13,13 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("""
-        SELECT userDetails
-        FROM User userDetails
-        WHERE userDetails.email = :email
-    """
+                SELECT userDetails
+                FROM User userDetails
+                WHERE userDetails.email = :username
+            """
     )
     UserDetails findUserDetailsByEmail(
-            @Param("username") String email
+            @Param("username") String username
     );
 
     User findByEmail(String email);
@@ -27,10 +27,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByStudentId(String StudentId);
 
     @Query("""
-        SELECT user.id AS id
-        FROM User user
-        WHERE user.email = :email
-    """
+                SELECT user.id AS id
+                FROM User user
+                WHERE user.email = :email
+            """
     )
     Optional<Long> findIdByEmail(
             @Param("email") String email);
