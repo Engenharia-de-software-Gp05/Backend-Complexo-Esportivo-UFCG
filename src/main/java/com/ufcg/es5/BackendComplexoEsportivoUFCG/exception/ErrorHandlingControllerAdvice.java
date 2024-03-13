@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,11 +17,7 @@ import java.util.ArrayList;
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
     private CustomErrorType defaultCustomErrorTypeConstruct(String message) {
-        return CustomErrorType.builder()
-                .timestamp(LocalDateTime.now())
-                .errors(new ArrayList<>())
-                .message(message)
-                .build();
+        return new CustomErrorType(LocalDateTime.now(), message);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -28,7 +25,7 @@ public class ErrorHandlingControllerAdvice {
     @ResponseBody
     public CustomErrorType onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         CustomErrorType customErrorType = defaultCustomErrorTypeConstruct(
-                "Erros de validacao encontrados"
+                "Validation errors found"
         );
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             customErrorType.getErrors().add(fieldError.getDefaultMessage());
@@ -41,12 +38,21 @@ public class ErrorHandlingControllerAdvice {
     @ResponseBody
     public CustomErrorType onConstraintViolation(ConstraintViolationException e) {
         CustomErrorType customErrorType = defaultCustomErrorTypeConstruct(
-                "Erros de validacao encontrados"
+                "Validation errors found"
         );
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             customErrorType.getErrors().add(violation.getMessage());
         }
         return customErrorType;
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public CustomErrorType onResourceNotFoundException(NoHandlerFoundException e) {
+        return defaultCustomErrorTypeConstruct(
+                "Resource not found: " + e.getRequestURL()
+        );
     }
 
     @ExceptionHandler(ComplexoEspException.class)

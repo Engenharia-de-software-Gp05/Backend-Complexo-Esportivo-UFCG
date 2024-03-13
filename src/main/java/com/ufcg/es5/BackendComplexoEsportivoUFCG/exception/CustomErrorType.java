@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -29,4 +30,13 @@ public class CustomErrorType {
         this.message = e.getMessage();
         this.errors = new ArrayList<>();
     }
+
+    public CustomErrorType(LocalDateTime localDateTime, String message) {
+        this.timestamp = localDateTime;
+        this.message = message;
+        this.errors = new ArrayList<>();
+    }
+
+    public List<String> getErrors() {return this.errors;}
+
 }
