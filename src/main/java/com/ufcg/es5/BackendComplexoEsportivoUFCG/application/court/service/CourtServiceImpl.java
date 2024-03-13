@@ -1,12 +1,12 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtPostRequestDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.ComplexoEspException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,7 @@ public class CourtServiceImpl implements CourtService{
         return this.repository;
     }
 
+    @Transactional
     @Override
     public CourtResponseDto create(CourtSaveDto data) {
         checkByName(data.name());
@@ -33,6 +34,7 @@ public class CourtServiceImpl implements CourtService{
         CourtResponseDto response = objectMapper.convertValue(court, CourtResponseDto.class);
         return response;
     }
+
 
     @Override
     public Court findByName(String name) {return repository.findByName(name);}
