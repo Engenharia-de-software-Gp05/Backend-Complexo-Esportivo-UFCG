@@ -2,6 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.contro
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -10,18 +11,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import jakarta.websocket.OnOpen;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 @RestController
+@Validated
 @RequestMapping("/reservation")
 public class ReservationController {
 
@@ -59,17 +60,17 @@ public class ReservationController {
 
     @PostMapping(value = "/make-unavailable")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Make a reservetaion time unavailable.")
+    @Operation(summary = "Make a reservation unavailable.")
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
             description = "Reservation time is made unavailable.",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Reservation.class))})})
     public ResponseEntity<Reservation> makeUnavailable(
-            @RequestParam Long courtId,
-            @RequestParam LocalDateTime start_date_time,
-            @RequestParam LocalDateTime end_date_time
+            @Valid
+            @RequestParam
+            ReservationSaveDto reservationSaveDto
     ) {
-        return ResponseEntity.ok(service.makeUnavailable(courtId, start_date_time, end_date_time));
+        return ResponseEntity.ok(service.makeUnavailable(reservationSaveDto));
     }
 
 
@@ -81,11 +82,11 @@ public class ReservationController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = Reservation.class))})})
     public ResponseEntity<Reservation> createReservation(
-            @RequestParam Long courtId,
-            @RequestParam LocalDateTime start_date_time,
-            @RequestParam LocalDateTime end_date_time
+            @Valid
+            @RequestParam
+            ReservationSaveDto reservationSaveDto
     ) {
-        return ResponseEntity.ok(service.createReservation(courtId, start_date_time, end_date_time));
+        return ResponseEntity.ok(service.createReservation(reservationSaveDto));
     }
 
 
@@ -93,7 +94,7 @@ public class ReservationController {
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
-            description = "Reservation is deleted.")}) 
+            description = "Reservation is deleted.")})
     public void deleteReservation(
             @RequestParam("id")
             Long id
@@ -101,5 +102,5 @@ public class ReservationController {
         service.deleteReservation(id);
     }
 
-    
+
 }
