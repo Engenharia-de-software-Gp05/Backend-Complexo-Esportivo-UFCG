@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @Validated
-@RequestMapping("user")
+@RestController
+@RequestMapping("/user")
 public class UserController {
 
     private static final String EMAIL_PROPERTY = "email";
