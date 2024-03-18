@@ -1,5 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionBadRequest;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionConflit;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionNotFound;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
@@ -55,12 +57,38 @@ public class ErrorHandlingControllerAdvice {
         );
     }
 
-    @ExceptionHandler(ComplexoEspException.class)
+    @ExceptionHandler(ComplexoEspExceptionBadRequest.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public CustomErrorType onPitAException(ComplexoEspException e) {
+    public CustomErrorType onEspExceptionBadRequest(ComplexoEspExceptionBadRequest e) {
         return defaultCustomErrorTypeConstruct(
-                e.getMessage()
+               "Bad request" + e.getMessage()
         );
     }
+
+    @ExceptionHandler(ComplexoEspExceptionNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public CustomErrorType onEspExceptionNotFound(ComplexoEspExceptionNotFound e) {
+        return defaultCustomErrorTypeConstruct(
+                "Resource not found: " + e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(ComplexoEspExceptionConflit.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public CustomErrorType onEspExceptionConflit(ComplexoEspExceptionConflit e) {
+        return defaultCustomErrorTypeConstruct(
+                "Application conflict: " + e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public CustomErrorType onInternalServerError(RuntimeException e) {
+        return defaultCustomErrorTypeConstruct("Internal server error occurred: " + e.getMessage());
+    }
+
 }

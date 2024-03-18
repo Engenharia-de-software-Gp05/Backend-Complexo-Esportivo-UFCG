@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionBadRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -25,7 +25,7 @@ public class CustomErrorType {
     @JsonProperty("errors")
     private List<String> errors;
 
-    public CustomErrorType(ComplexoEspException e) {
+    public CustomErrorType(ComplexoEspExceptionBadRequest e) {
         this.timestamp = LocalDateTime.now();
         this.message = e.getMessage();
         this.errors = new ArrayList<>();

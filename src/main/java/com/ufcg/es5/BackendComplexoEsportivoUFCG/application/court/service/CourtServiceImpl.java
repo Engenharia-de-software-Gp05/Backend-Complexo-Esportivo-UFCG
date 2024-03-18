@@ -5,7 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtResponseDt
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.ComplexoEspException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionBadRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,7 +43,7 @@ public class CourtServiceImpl implements CourtService{
     public Boolean existsByName(String name) {return findByName(name) != null;}
 
     private void checkByName(String name) {
-        if(existsByName(name)) {throw new ComplexoEspException();}
+        if(existsByName(name)) {throw new ComplexoEspExceptionBadRequest();}
     }
 
 }
