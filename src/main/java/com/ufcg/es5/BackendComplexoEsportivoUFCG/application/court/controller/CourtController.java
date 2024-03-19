@@ -45,7 +45,7 @@ public class CourtController {
             CourtSaveDto data
     ){
         CourtResponseDto response = service.create(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }
