@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourtController {
 
     @Autowired
-    CourtService service;
+    private CourtService service;
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -46,7 +46,7 @@ public class CourtController {
             CourtSaveDto data
     ) {
         CourtResponseDto response = service.create(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }

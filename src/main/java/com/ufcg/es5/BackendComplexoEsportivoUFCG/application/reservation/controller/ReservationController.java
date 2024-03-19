@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -29,6 +27,7 @@ import java.util.Collection;
 public class ReservationController {
 
     private static final String USER_ID_PROPERTY = "userId";
+
     @Autowired
     private ReservationService service;
 
@@ -55,7 +54,9 @@ public class ReservationController {
             description = "Court reservations are returned.",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = ReservationResponseDto[].class)))})})
-    public ResponseEntity<Collection<ReservationResponseDto>> findByCourtAndDateTime(@RequestParam Long courtId, @RequestParam LocalDateTime date) {
+    public ResponseEntity<Collection<ReservationResponseDto>> findByCourtAndDateTime(
+            @RequestParam Long courtId,
+            @RequestParam LocalDateTime date) {
         Collection<ReservationResponseDto> response = service.findByCourtAndDateTime(courtId, date);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -72,7 +73,8 @@ public class ReservationController {
             @RequestParam
             ReservationSaveDto reservationSaveDto
     ) {
-        return ResponseEntity.ok(service.makeUnavailable(reservationSaveDto));
+        Reservation response = service.makeUnavailable(reservationSaveDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 
@@ -88,21 +90,21 @@ public class ReservationController {
             @RequestParam
             ReservationSaveDto reservationSaveDto
     ) {
-        return ResponseEntity.ok(service.createReservation(reservationSaveDto));
+        Reservation response = service.createReservation(reservationSaveDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 
     @DeleteMapping(value = "/delete")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "204",
+    @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Reservation is deleted.")})
-    public void deleteReservation(
+    public ResponseEntity<Void> deleteReservation(
             @RequestParam("id")
             Long id
     ) {
         service.deleteReservation(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }

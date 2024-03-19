@@ -37,7 +37,7 @@ public class AuthController {
                     responseCode = "200",
                     description = "Successfully authentication",
                     content = {@Content(mediaType = "application/json",
-                                        schema = @Schema(implementation = LoginResponseDto.class))}),
+                            schema = @Schema(implementation = LoginResponseDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "Failed authentication",
@@ -48,31 +48,53 @@ public class AuthController {
             @Valid
             @RequestBody
             LoginRequestDto data
-    ){
+    ) {
         LoginResponseDto token = service.login(data);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @AuthorizationNotRequired
     @PostMapping("/register")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully registered",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class))}),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Failed authentication",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class))})})
     public ResponseEntity<UserResponseDto> register(
             @RequestBody
             @Valid
             RegisterRequestDto data
-    ){
+    ) {
         UserResponseDto response = service.register(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/register/admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully registered",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class))}),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Failed authentication",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class))})})
     public ResponseEntity<UserResponseDto> registerAddingRoles(
             @RequestBody
             @Valid
             RegisterWithRolesRequestDto data
-    ){
+    ) {
         UserResponseDto response = service.registerWithRoles(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }
