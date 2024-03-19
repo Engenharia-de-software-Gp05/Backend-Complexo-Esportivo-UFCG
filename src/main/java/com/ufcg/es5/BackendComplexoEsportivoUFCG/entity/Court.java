@@ -27,7 +27,7 @@ public class Court extends BasicEntity {
     private List<String> imagesUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Reservation> reservas = new ArrayList<>();
+    private List<Reservation> reservations = new ArrayList<>();
 
     @Column(name = STATUS_COLUMN, nullable = false)
     @Enumerated(EnumType.STRING)
@@ -61,12 +61,12 @@ public class Court extends BasicEntity {
         this.imagesUrls = imagesUrls;
     }
 
-    public List<Reservation> getReservas() {
-        return reservas;
+    public List<Reservation> getReservations() {
+        return reservations;
     }
 
-    public void setReservas(List<Reservation> reservas) {
-        this.reservas = reservas;
+    public void setReservations(List<Reservation> reservas) {
+        this.reservations = reservas;
     }
 
     public CourtStatusEnum getCourtStatusEnum() {
@@ -83,12 +83,12 @@ public class Court extends BasicEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Court court = (Court) o;
-        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservas, court.reservas) && courtStatusEnum == court.courtStatusEnum;
+        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && courtStatusEnum == court.courtStatusEnum;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, imagesUrls, reservas, courtStatusEnum);
+        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, courtStatusEnum);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Court extends BasicEntity {
         return "Court{" +
                 "name='" + name + '\'' +
                 ", imagesUrls=" + imagesUrls +
-                ", reservas=" + reservas +
+                ", reservas=" + reservations +
                 ", courtStatusEnum=" + courtStatusEnum +
                 '}';
     }

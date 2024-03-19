@@ -2,10 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
 
@@ -17,7 +14,7 @@ public class EmailFormat {
             if (validateEmail(email)) {
                 jsonGenerator.writeString(email);
             } else {
-                throw new IllegalArgumentException("Invalid email");
+                throw new IllegalArgumentException("Invalid username");
             }
         }
     }
@@ -29,7 +26,7 @@ public class EmailFormat {
             if (validateEmail(email)) {
                 return email;
             } else {
-                throw new IllegalArgumentException("Invalid email");
+                throw new IllegalArgumentException("Invalid username");
             }
         }
     }

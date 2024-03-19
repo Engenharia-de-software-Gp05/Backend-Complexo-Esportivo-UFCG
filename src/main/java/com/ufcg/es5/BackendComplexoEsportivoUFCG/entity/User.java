@@ -1,25 +1,31 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.enums.RoleEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.enums.UserRoleEnum;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = User.USER_TABLE)
-public class User extends BasicEntity {
+public class User extends BasicEntity implements UserDetails {
 
     private static final String PHONE_NUMBER_COLUMN = "phone_number";
     private static final String PASSWORD_COLUMN = "password";
     private static final String NAME_COLUMN = "name";
-    private static final String EMAIL_COLUMN = "email";
+    private static final String EMAIL_COLUMN = "username";
     private static final String ROLES_COLUMN = "roles";
     private static final String ROLE_TABLE = "role";
     private static final String USER_ID_COLUMN = "user_id";
     private static final String STUDENT_ID_COLUMN = "student_id";
-    public static final String USER_TABLE = "user";
+    private static final String USER_PROPERTY = "user";
+    public static final String USER_TABLE = "users";
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
@@ -36,11 +42,64 @@ public class User extends BasicEntity {
     @Column(name = STUDENT_ID_COLUMN, unique = true)
     private String studentId;
 
+    @OneToMany(mappedBy = USER_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Reservation> reservations;
+
     @ElementCollection
     @CollectionTable(name = ROLE_TABLE, joinColumns = @JoinColumn(name = USER_ID_COLUMN))
     @Column(name = ROLES_COLUMN, nullable = false)
     @Enumerated(EnumType.STRING)
-    private Set<RoleEnum> roleEnums;
+    private Set<UserRoleEnum> roleEnums;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roleEnums.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRole()))
+                .collect(Collectors.toList());
+    }
+
+    public User() {
+    }
+
+    public User(
+            String email,
+            String name,
+            String phoneNumber,
+            String studentId,
+            String password,
+            Set<UserRoleEnum> roleEnums){
+            this.email = email;
+            this.name = name;
+            this.phoneNumber = phoneNumber;
+            this.studentId = studentId;
+            this.password = password;
+            this.roleEnums = roleEnums;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     public String getName() {
         return name;
@@ -66,6 +125,7 @@ public class User extends BasicEntity {
         this.phoneNumber = phoneNumber;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -74,20 +134,28 @@ public class User extends BasicEntity {
         this.password = password;
     }
 
-    public Set<RoleEnum> getRoleEnums() {
-        return roleEnums;
-    }
-
-    public void setRoleEnums(Set<RoleEnum> roleEnums) {
-        this.roleEnums = roleEnums;
-    }
-
     public String getStudentId() {
         return studentId;
     }
 
     public void setStudentId(String studentId) {
         this.studentId = studentId;
+    }
+
+    public Set<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(Set<Reservation> reservas) {
+        this.reservations = reservas;
+    }
+
+    public Set<UserRoleEnum> getRoleEnums() {
+        return roleEnums;
+    }
+
+    public void setRoleEnums(Set<UserRoleEnum> roleEnums) {
+        this.roleEnums = roleEnums;
     }
 
     @Override
@@ -108,7 +176,7 @@ public class User extends BasicEntity {
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                ", username='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", password='" + password + '\'' +
                 ", roleEnums=" + roleEnums +

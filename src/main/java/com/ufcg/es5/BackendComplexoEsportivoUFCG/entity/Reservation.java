@@ -7,16 +7,14 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name =   Reservation.RESERVATION_TABLE)
+@Table(name = Reservation.RESERVATION_TABLE)
 public class Reservation extends BasicEntity {
 
-    private static final String START_DATE_TIME_COLUMN = "start_date_time";
-    private static final String END_DATE_TIME_COLUMN = "end_date_time";
+    public static final String RESERVATION_TABLE = "reservation";
+    private static final String START_DATE_TIME_COLUMN = "startDateTime";
+    private static final String END_DATE_TIME_COLUMN = "endDateTime";
     private static final String COURT_ID_COLUMN = "court_id";
     private static final String USER_ID_COLUMN = "user_id";
-    public static final String RESERVATION_TABLE = "reservation";
-
-
     @Column(name = START_DATE_TIME_COLUMN, nullable = false)
     private LocalDateTime startDateTime;
     @Column(name = END_DATE_TIME_COLUMN, nullable = false)
@@ -30,10 +28,10 @@ public class Reservation extends BasicEntity {
     @JoinColumn(name = USER_ID_COLUMN, nullable = false)
     private User user;
 
-    public Reservation(){
+    public Reservation() {
     }
 
-    public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime, Court court, User user){
+    public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime, Court court, User user) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.court = court;

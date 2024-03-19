@@ -24,9 +24,20 @@ public class CustomErrorType {
     @JsonProperty("errors")
     private List<String> errors;
 
-    public CustomErrorType(ComplexoEspException e) {
+    public CustomErrorType(SystemInternalException e) {
         this.timestamp = LocalDateTime.now();
         this.message = e.getMessage();
         this.errors = new ArrayList<>();
     }
+
+    public CustomErrorType(LocalDateTime localDateTime, String message) {
+        this.timestamp = localDateTime;
+        this.message = message;
+        this.errors = new ArrayList<>();
+    }
+
+    public List<String> getErrors() {
+        return this.errors;
+    }
+
 }
