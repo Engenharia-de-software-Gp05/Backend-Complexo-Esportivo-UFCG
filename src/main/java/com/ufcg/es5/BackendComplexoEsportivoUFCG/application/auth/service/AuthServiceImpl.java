@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -31,16 +30,17 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public LoginResponseDto login(LoginRequestDto credentials) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(credentials.email(), credentials.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+        var usernamePassword = new UsernamePasswordAuthenticationToken(credentials.username(), credentials.password());
+        var auth = authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
 
         return new LoginResponseDto(token);
     }
 
     @Transactional
-    public UserResponseDto register(RegisterRequestDto credentials){
+    public UserResponseDto register(RegisterRequestDto credentials) {
         this.checkIfUserExists(credentials.email());
 
         String encodedPassword = new BCryptPasswordEncoder().encode(credentials.password());
@@ -50,23 +50,22 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Transactional
-    public UserResponseDto registerWithRoles(RegisterWithRolesRequestDto credentials){
+    public UserResponseDto registerWithRoles(RegisterWithRolesRequestDto credentials) {
         this.checkIfUserExists(credentials.email());
 
         String encodedPassword = new BCryptPasswordEncoder().encode(credentials.password());
         User newUser = makeUserWithRoles(credentials, encodedPassword);
         User user = userService.save(newUser);
-
         return new UserResponseDto(user.getEmail(), user.getPassword());
     }
 
-    private void checkIfUserExists(String username){
-        if(userService.existsByEmail(username)){
+    private void checkIfUserExists(String username) {
+        if (userService.existsByEmail(username)) {
             throw new IllegalArgumentException("Email already registered.");
         }
     }
 
-    private User makeUser(RegisterRequestDto data, String encodedPassword){
+    private User makeUser(RegisterRequestDto data, String encodedPassword) {
         return new User(
                 data.email(),
                 data.name(),
@@ -76,7 +75,8 @@ public class AuthServiceImpl implements AuthService {
                 Set.of(UserRoleEnum.ROLE_USER)
         );
     }
-    private User makeUserWithRoles(RegisterWithRolesRequestDto data, String encodedPassword){
+
+    private User makeUserWithRoles(RegisterWithRolesRequestDto data, String encodedPassword) {
         return new User(
                 data.email(),
                 data.name(),

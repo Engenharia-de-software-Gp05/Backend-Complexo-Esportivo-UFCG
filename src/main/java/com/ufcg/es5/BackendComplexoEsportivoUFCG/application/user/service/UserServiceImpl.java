@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -31,6 +33,12 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public User findByEmail(String email) {
         return repository.findByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public Optional<Long> findIdByEmail(String email) {
+        return repository.findIdByEmail(email);
     }
 
 }

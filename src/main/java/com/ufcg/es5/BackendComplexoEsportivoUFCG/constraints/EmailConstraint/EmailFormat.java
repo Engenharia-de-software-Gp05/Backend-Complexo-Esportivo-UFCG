@@ -14,7 +14,7 @@ public class EmailFormat {
             if (validateEmail(email)) {
                 jsonGenerator.writeString(email);
             } else {
-                throw new IllegalArgumentException("Invalid email");
+                throw new IllegalArgumentException("Invalid username");
             }
         }
     }
@@ -26,7 +26,7 @@ public class EmailFormat {
             if (validateEmail(email)) {
                 return email;
             } else {
-                throw new IllegalArgumentException("Invalid email");
+                throw new IllegalArgumentException("Invalid username");
             }
         }
     }

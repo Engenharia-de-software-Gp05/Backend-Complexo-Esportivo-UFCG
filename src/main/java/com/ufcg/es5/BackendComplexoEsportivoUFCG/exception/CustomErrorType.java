@@ -37,6 +37,8 @@ public class CustomErrorType {
         this.errors = new ArrayList<>();
     }
 
-    public List<String> getErrors() {return this.errors;}
+    public List<String> getErrors() {
+        return this.errors;
+    }
 
 }

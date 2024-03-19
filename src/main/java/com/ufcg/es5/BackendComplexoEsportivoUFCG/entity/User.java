@@ -19,7 +19,7 @@ public class User extends BasicEntity implements UserDetails {
     private static final String PHONE_NUMBER_COLUMN = "phone_number";
     private static final String PASSWORD_COLUMN = "password";
     private static final String NAME_COLUMN = "name";
-    private static final String EMAIL_COLUMN = "email";
+    private static final String EMAIL_COLUMN = "username";
     private static final String ROLES_COLUMN = "roles";
     private static final String ROLE_TABLE = "role";
     private static final String USER_ID_COLUMN = "user_id";
@@ -176,7 +176,7 @@ public class User extends BasicEntity implements UserDetails {
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                ", username='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", password='" + password + '\'' +
                 ", roleEnums=" + roleEnums +

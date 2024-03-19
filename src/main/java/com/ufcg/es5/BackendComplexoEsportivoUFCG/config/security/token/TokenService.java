@@ -12,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import javax.security.sasl.AuthenticationException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -30,7 +29,6 @@ public class TokenService {
 
     public String generateToken(User user) {
         try {
-
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
@@ -41,7 +39,7 @@ public class TokenService {
         }
     }
 
-    public String validateToken(String token){
+    public String validateToken(String token) {
         try {
             return JWT.require(getAlgorithm())
                     .withIssuer("auth-api")
@@ -53,11 +51,11 @@ public class TokenService {
         }
     }
 
-    private Algorithm getAlgorithm(){
+    private Algorithm getAlgorithm() {
         return Algorithm.HMAC256(secret);
     }
 
-    private Instant generateExpirationDate(){
+    private Instant generateExpirationDate() {
         return LocalDateTime.now().plusMinutes(30L).toInstant(ZoneOffset.of("-03:00"));
     }
 
@@ -65,7 +63,7 @@ public class TokenService {
     public Authentication getAuthentication(String username) {
         User user = userService.findByEmail(username);
         Authentication authentication = null;
-        if(user != null){
+        if (user != null) {
             authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         }
         return authentication;

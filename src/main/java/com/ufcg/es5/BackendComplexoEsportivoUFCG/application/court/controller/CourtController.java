@@ -13,29 +13,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-
-@RestController
 @Validated
+@RestController
 @RequestMapping("/court")
 public class CourtController {
 
     @Autowired
-    CourtService service;
+    private CourtService service;
 
     @PostMapping("/save")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Successfully creation",
+                    description = "Successfully creating court",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = CourtResponseDto.class))}),
             @ApiResponse(
-                    responseCode = "403",
-                    description = "Failed creation",
+                    responseCode = "400",
+                    description = "Failed creating court",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = CourtResponseDto.class))})
     })
@@ -43,9 +44,9 @@ public class CourtController {
             @Valid
             @RequestBody
             CourtSaveDto data
-    ){
+    ) {
         CourtResponseDto response = service.create(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }

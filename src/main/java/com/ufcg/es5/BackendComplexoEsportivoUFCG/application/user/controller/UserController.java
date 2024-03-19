@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @Validated
-@RequestMapping("user")
+@RestController
+@RequestMapping("/user")
 public class UserController {
 
     private static final String EMAIL_PROPERTY = "email";
@@ -35,9 +35,9 @@ public class UserController {
 
     @GetMapping(value = "/by/email")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Get user email and name by email.")
+    @Operation(summary = "Get user username and name by username.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
-            description = "User email and name are returned.",
+            description = "User username and name are returned.",
             content = {@Content(mediaType = "application/json",
             array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class)))})})
     public ResponseEntity<UserResponseDto> findByEmail(
