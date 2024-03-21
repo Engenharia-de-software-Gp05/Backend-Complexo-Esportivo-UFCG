@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionBadRequest;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class CustomErrorType {
     @JsonProperty("errors")
     private List<String> errors;
 
-    public CustomErrorType(ComplexoEspExceptionBadRequest e) {
+    public CustomErrorType(SaceInvalidArgumentException e) {
         this.timestamp = LocalDateTime.now();
         this.message = e.getMessage();
         this.errors = new ArrayList<>();

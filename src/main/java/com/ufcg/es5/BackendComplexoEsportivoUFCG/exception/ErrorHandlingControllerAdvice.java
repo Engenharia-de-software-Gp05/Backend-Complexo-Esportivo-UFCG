@@ -1,8 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionBadRequest;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionConflit;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.ComplexoEspExceptionNotFound;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -48,6 +48,15 @@ public class ErrorHandlingControllerAdvice {
         return customErrorType;
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public CustomErrorType onAccessDeniedException(org.springframework.security.access.AccessDeniedException e) {
+        return defaultCustomErrorTypeConstruct(
+                "Forbidden Exception: User does not have authorization to access this resource."
+        );
+    }
+
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
@@ -57,28 +66,28 @@ public class ErrorHandlingControllerAdvice {
         );
     }
 
-    @ExceptionHandler(ComplexoEspExceptionBadRequest.class)
+    @ExceptionHandler(SaceInvalidArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public CustomErrorType onEspExceptionBadRequest(ComplexoEspExceptionBadRequest e) {
+    public CustomErrorType onBadRequestException(SaceInvalidArgumentException e) {
         return defaultCustomErrorTypeConstruct(
-               "Bad request" + e.getMessage()
+                "Bad request" + e.getMessage()
         );
     }
 
-    @ExceptionHandler(ComplexoEspExceptionNotFound.class)
+    @ExceptionHandler(SaceResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public CustomErrorType onEspExceptionNotFound(ComplexoEspExceptionNotFound e) {
+    public CustomErrorType onNotFoundException(SaceResourceNotFoundException e) {
         return defaultCustomErrorTypeConstruct(
                 "Resource not found: " + e.getMessage()
         );
     }
 
-    @ExceptionHandler(ComplexoEspExceptionConflit.class)
+    @ExceptionHandler(SaceConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public CustomErrorType onEspExceptionConflit(ComplexoEspExceptionConflit e) {
+    public CustomErrorType onConflictException(SaceConflictException e) {
         return defaultCustomErrorTypeConstruct(
                 "Application conflict: " + e.getMessage()
         );
