@@ -1,5 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
 
@@ -14,9 +15,12 @@ public class Reservation extends BasicEntity {
     private static final String START_DATE_TIME_COLUMN = "startDateTime";
     private static final String END_DATE_TIME_COLUMN = "endDateTime";
     private static final String COURT_ID_COLUMN = "court_id";
-    private static final String USER_ID_COLUMN = "user_id";
+    private static final String SACE_USER_ID_COLUMN = "sace_user_id";
+    private static final String STATUS_COLUMN = "status";
+
     @Column(name = START_DATE_TIME_COLUMN, nullable = false)
     private LocalDateTime startDateTime;
+
     @Column(name = END_DATE_TIME_COLUMN, nullable = false)
     private LocalDateTime endDateTime;
 
@@ -25,17 +29,28 @@ public class Reservation extends BasicEntity {
     private Court court;
 
     @ManyToOne
-    @JoinColumn(name = USER_ID_COLUMN, nullable = false)
-    private User user;
+    @JoinColumn(name = SACE_USER_ID_COLUMN, nullable = false)
+    private SaceUser saceUser;
+
+    @Column(name = STATUS_COLUMN, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReservationAvailabilityStatusEnum reservationAvailabilityStatusEnum;
 
     public Reservation() {
     }
 
-    public Reservation(LocalDateTime startDateTime, LocalDateTime endDateTime, Court court, User user) {
+    public Reservation(
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
+            Court court,
+            SaceUser saceUser,
+            ReservationAvailabilityStatusEnum status
+    ) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.court = court;
-        this.user = user;
+        this.saceUser = saceUser;
+        this.reservationAvailabilityStatusEnum = status;
     }
 
     public LocalDateTime getStartDateTime() {
@@ -62,12 +77,20 @@ public class Reservation extends BasicEntity {
         this.court = court;
     }
 
-    public User getUser() {
-        return user;
+    public SaceUser getSaceUser() {
+        return saceUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setSaceUser(SaceUser user) {
+        this.saceUser = user;
+    }
+
+    public ReservationAvailabilityStatusEnum getReservationAvailabilityStatusEnum() {
+        return reservationAvailabilityStatusEnum;
+    }
+
+    public void setReservationAvailabilityStatusEnum(ReservationAvailabilityStatusEnum reservationAvailabilityStatusEnum) {
+        this.reservationAvailabilityStatusEnum = reservationAvailabilityStatusEnum;
     }
 
     @Override
@@ -76,12 +99,12 @@ public class Reservation extends BasicEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Reservation that = (Reservation) o;
-        return Objects.equals(startDateTime, that.startDateTime) && Objects.equals(endDateTime, that.endDateTime) && Objects.equals(court, that.court) && Objects.equals(user, that.user);
+        return Objects.equals(startDateTime, that.startDateTime) && Objects.equals(endDateTime, that.endDateTime) && Objects.equals(court, that.court) && Objects.equals(saceUser, that.saceUser) && reservationAvailabilityStatusEnum == that.reservationAvailabilityStatusEnum;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), startDateTime, endDateTime, court, user);
+        return Objects.hash(super.hashCode(), startDateTime, endDateTime, court, saceUser, reservationAvailabilityStatusEnum);
     }
 
     @Override
@@ -90,7 +113,8 @@ public class Reservation extends BasicEntity {
                 "startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
                 ", court=" + court +
-                ", user=" + user +
+                ", saceUser=" + saceUser +
+                ", reservationAvailabilityStatusEnum=" + reservationAvailabilityStatusEnum +
                 '}';
     }
 }

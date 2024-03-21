@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service.UserService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.enums.UserRoleEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,17 +13,17 @@ import java.util.Set;
 public class AuthenticatedUser {
 
     @Autowired
-    private UserService userService;
+    private SaceUserService saceUserService;
 
     public Long getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
-        return userService.findIdByEmail(userName).orElseThrow();
+        return saceUserService.findIdByEmail(userName).orElseThrow();
     }
 
-    public boolean hasRole(UserRoleEnum role) {
+    public boolean hasRole(SaceUserRoleEnum role) {
         Long userId = getAuthenticatedUserId();
-        Set<UserRoleEnum> roles = userService.findById(userId).get().getRoleEnums();
+        Set<SaceUserRoleEnum> roles = saceUserService.findById(userId).get().getRoleEnums();
         return roles.contains(role);
     }
 }

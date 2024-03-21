@@ -1,17 +1,16 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums;
 
-public enum CourtStatusEnum {
+public enum CourtAvailabilityStatusEnum {
     AVAILABLE(true),
-    UNAVAILABLE(false),
-    PENDING(false);
+    UNAVAILABLE(false);
 
     private final Boolean available;
 
-    CourtStatusEnum(boolean available){
+    CourtAvailabilityStatusEnum(boolean available) {
         this.available = available;
     }
 
-    public boolean isAvailable(){
+    public boolean isAvailable() {
         return this.available;
     }
 }

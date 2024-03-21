@@ -1,8 +1,8 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.controller;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.controller;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service.UserService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.UserResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class SaceUserController {
 
     private static final String EMAIL_PROPERTY = "email";
 
     @Autowired
-    private UserService service;
+    private SaceUserService service;
 
     @GetMapping(value = "/by/email")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -39,15 +37,15 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "User username and name are returned.",
             content = {@Content(mediaType = "application/json",
-            array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class)))})})
-    public ResponseEntity<UserResponseDto> findByEmail(
+                    array = @ArraySchema(schema = @Schema(implementation = SaceUserResponseDto.class)))})})
+    public ResponseEntity<SaceUserResponseDto> findByEmail(
             @Valid
             @NotNull
             @RequestParam(EMAIL_PROPERTY)
             String email
-    ){
-        User user = service.findByEmail(email);
-        UserResponseDto response = new UserResponseDto(user.getEmail(), user.getName());
+    ) {
+        SaceUser user = service.findByEmail(email);
+        SaceUserResponseDto response = new SaceUserResponseDto(user.getEmail(), user.getName());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

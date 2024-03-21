@@ -1,8 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtStatusEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,13 +12,12 @@ import java.util.Objects;
 @Table(name = Court.COURT_TABLE)
 public class Court extends BasicEntity {
 
-    private  static final String COURT_ID_COLUMN = "court_id";
+    public static final String COURT_TABLE = "court";
+    private static final String COURT_ID_COLUMN = "court_id";
     private static final String COURT_IMAGE_URL_TABLE = "court_image_url";
     private static final String NAME_COLUMN = "name";
     private static final String COURT_PROPERTY = "court";
     private static final String STATUS_COLUMN = "status";
-    public static final String COURT_TABLE = "court";
-
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
@@ -31,17 +31,17 @@ public class Court extends BasicEntity {
 
     @Column(name = STATUS_COLUMN, nullable = false)
     @Enumerated(EnumType.STRING)
-    private CourtStatusEnum courtStatusEnum;
+    private CourtAvailabilityStatusEnum courtAvailabilityStatusEnum;
 
-    public Court(){
+    public Court() {
     }
 
-    public Court(String name, List<String> imagesUrls){
+    public Court(String name, List<String> imagesUrls) {
         this.name = name;
         this.imagesUrls = imagesUrls;
     }
 
-    public void addImageUrl(String imageUrl){
+    public void addImageUrl(String imageUrl) {
         this.imagesUrls.add(imageUrl);
     }
 
@@ -69,12 +69,12 @@ public class Court extends BasicEntity {
         this.reservations = reservas;
     }
 
-    public CourtStatusEnum getCourtStatusEnum() {
-        return courtStatusEnum;
+    public CourtAvailabilityStatusEnum getCourtAvailabilityStatusEnum() {
+        return courtAvailabilityStatusEnum;
     }
 
-    public void setCourtStatusEnum(CourtStatusEnum courtStatusEnum) {
-        this.courtStatusEnum = courtStatusEnum;
+    public void setCourtAvailabilityStatusEnum(CourtAvailabilityStatusEnum courtStatusEnum) {
+        this.courtAvailabilityStatusEnum = courtStatusEnum;
     }
 
     @Override
@@ -83,12 +83,12 @@ public class Court extends BasicEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Court court = (Court) o;
-        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && courtStatusEnum == court.courtStatusEnum;
+        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && courtAvailabilityStatusEnum == court.courtAvailabilityStatusEnum;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, courtStatusEnum);
+        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, courtAvailabilityStatusEnum);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class Court extends BasicEntity {
                 "name='" + name + '\'' +
                 ", imagesUrls=" + imagesUrls +
                 ", reservas=" + reservations +
-                ", courtStatusEnum=" + courtStatusEnum +
+                ", courtStatusEnum=" + courtAvailabilityStatusEnum +
                 '}';
     }
 }

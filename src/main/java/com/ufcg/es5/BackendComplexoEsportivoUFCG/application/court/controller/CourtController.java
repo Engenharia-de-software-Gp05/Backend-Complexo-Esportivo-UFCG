@@ -1,8 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

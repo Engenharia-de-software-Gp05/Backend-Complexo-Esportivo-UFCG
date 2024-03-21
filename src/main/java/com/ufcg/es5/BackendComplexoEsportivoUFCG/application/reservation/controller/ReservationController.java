@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,6 +101,7 @@ public class ReservationController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "Reservation is deleted.")})
     public ResponseEntity<Void> deleteReservation(
+            @NotNull
             @RequestParam("id")
             Long id
     ) {
