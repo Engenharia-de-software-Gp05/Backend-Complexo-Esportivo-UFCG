@@ -5,7 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.Co
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.SystemInternalException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;

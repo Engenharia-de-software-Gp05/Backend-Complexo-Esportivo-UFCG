@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
@@ -6,6 +6,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNo
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,12 +18,12 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class ErrorHandlingControllerAdvice {
+public class ErrorHandlerControllerAdvice {
     private CustomErrorType defaultCustomErrorTypeConstruct(String message) {
         return new CustomErrorType(LocalDateTime.now(), message);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public CustomErrorType onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -35,7 +36,7 @@ public class ErrorHandlingControllerAdvice {
         return customErrorType;
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(value = ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public CustomErrorType onConstraintViolation(ConstraintViolationException e) {
@@ -48,16 +49,16 @@ public class ErrorHandlingControllerAdvice {
         return customErrorType;
     }
 
-    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    @ExceptionHandler(value = AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public CustomErrorType onAccessDeniedException(org.springframework.security.access.AccessDeniedException e) {
+    public CustomErrorType onAccessDeniedException(AccessDeniedException e) {
         return defaultCustomErrorTypeConstruct(
                 "Forbidden Exception: User does not have authorization to access this resource."
         );
     }
 
-    @ExceptionHandler(NoHandlerFoundException.class)
+    @ExceptionHandler(value = NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public CustomErrorType onResourceNotFoundException(NoHandlerFoundException e) {
@@ -75,7 +76,7 @@ public class ErrorHandlingControllerAdvice {
         );
     }
 
-    @ExceptionHandler(SaceResourceNotFoundException.class)
+    @ExceptionHandler(value = SaceResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public CustomErrorType onNotFoundException(SaceResourceNotFoundException e) {
@@ -84,7 +85,7 @@ public class ErrorHandlingControllerAdvice {
         );
     }
 
-    @ExceptionHandler(SaceConflictException.class)
+    @ExceptionHandler(value = SaceConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public CustomErrorType onConflictException(SaceConflictException e) {
@@ -93,7 +94,7 @@ public class ErrorHandlingControllerAdvice {
         );
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(value = RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public CustomErrorType onInternalServerError(RuntimeException e) {

@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler;
 
 public class SystemInternalException extends RuntimeException {
     public SystemInternalException() {
