@@ -2,14 +2,15 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.servic
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service.UserService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.enums.UserRoleEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,7 +26,7 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationRepository repository;
 
     @Autowired
-    private UserService userService;
+    private SaceUserService saceUserService;
 
     @Autowired
     private AuthenticatedUser authenticatedUser;
@@ -52,11 +53,16 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public Reservation createReservation(ReservationSaveDto reservationSaveDto) {
         Long userId = authenticatedUser.getAuthenticatedUserId();
-        User user = userService.findById(userId).orElseThrow();
+        SaceUser user = saceUserService.findById(userId).orElseThrow();
 
         Court court = courtService.findById(reservationSaveDto.courtId()).orElseThrow();
 
-        Reservation reservation = makeReservation(reservationSaveDto, court, user);
+        Reservation reservation = makeReservation(
+                reservationSaveDto,
+                court,
+                user,
+                ReservationAvailabilityStatusEnum.BOOKED
+        );
 
         return repository.save(reservation);
     }
@@ -68,7 +74,11 @@ public class ReservationServiceImpl implements ReservationService {
                 .findById(reservationMakeUnavailableDto.courtId())
                 .orElseThrow();
 
-        Reservation reservation = makeReservation(reservationMakeUnavailableDto, court, null);
+        Reservation reservation = makeReservation(
+                reservationMakeUnavailableDto,
+                court, null,
+                ReservationAvailabilityStatusEnum.UNAVAILABLE
+        );
 
         return repository.save(reservation);
     }
@@ -80,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = repository.findById(id).orElseThrow();
 
         Long userId = authenticatedUser.getAuthenticatedUserId();
-        if (isOwner(userId, reservation) || authenticatedUser.hasRole(UserRoleEnum.ROLE_ADMIN)) {
+        if (isOwner(userId, reservation) || authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
             repository.delete(reservation);
         } else {
             throw new RuntimeException("User has no permission to delete the reservation.");
@@ -88,15 +98,21 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private boolean isOwner(Long userId, Reservation reservation) {
-        return reservation.getUser().getId().equals(userId);
+        return reservation.getSaceUser().getId().equals(userId);
     }
 
-    private Reservation makeReservation(ReservationSaveDto reservationSaveDto, Court court, User user) {
+    private Reservation makeReservation(
+            ReservationSaveDto reservationSaveDto,
+            Court court,
+            SaceUser user,
+            ReservationAvailabilityStatusEnum status
+    ) {
         return new Reservation(
                 reservationSaveDto.startDateTime(),
                 reservationSaveDto.endDateTime(),
                 court,
-                user
+                user,
+                status
         );
     }
 

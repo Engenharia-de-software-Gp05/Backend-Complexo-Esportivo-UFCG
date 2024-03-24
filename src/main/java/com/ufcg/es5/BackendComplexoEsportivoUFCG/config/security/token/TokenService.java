@@ -3,8 +3,8 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.token;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service.UserService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,9 +25,9 @@ public class TokenService {
     private String secret;
 
     @Autowired
-    private UserService userService;
+    private SaceUserService userService;
 
-    public String generateToken(User user) {
+    public String generateToken(SaceUser user) {
         try {
             return JWT.create()
                     .withIssuer("auth-api")
@@ -61,7 +61,7 @@ public class TokenService {
 
     @Transactional
     public Authentication getAuthentication(String username) {
-        User user = userService.findByEmail(username);
+        SaceUser user = userService.findByEmail(username);
         Authentication authentication = null;
         if (user != null) {
             authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

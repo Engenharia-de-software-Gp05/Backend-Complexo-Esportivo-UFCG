@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
 

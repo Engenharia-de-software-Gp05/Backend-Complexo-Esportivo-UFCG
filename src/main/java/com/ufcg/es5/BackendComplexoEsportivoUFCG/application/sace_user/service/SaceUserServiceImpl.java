@@ -1,7 +1,7 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.service;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.repository.UserRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository.SaceUserRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class SaceUserServiceImpl implements SaceUserService {
 
     @Autowired
-    private UserRepository repository;
+    private SaceUserRepository repository;
 
     @Override
-    public JpaRepository<User, Long> getRepository() {
+    public JpaRepository<SaceUser, Long> getRepository() {
         return repository;
     }
 
@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService{
     public boolean existsByEmail(String email) {
         return repository.findByEmail(email) != null;
     }
+
     @Override
     public boolean existsByStudentId(String studentId) {
         return repository.findByStudentId(studentId).isPresent();
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public User findByEmail(String email) {
+    public SaceUser findByEmail(String email) {
         return repository.findByEmail(email);
     }
 

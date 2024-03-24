@@ -1,5 +1,6 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -13,5 +14,6 @@ public record CourtSaveDto(
         List<String> imagesUrls,
 
         @NotNull(message = "status cannot be null")
-        CourtStatusEnum courtStatusEnum
-) {}
+        CourtAvailabilityStatusEnum courtStatusEnum
+) {
+}

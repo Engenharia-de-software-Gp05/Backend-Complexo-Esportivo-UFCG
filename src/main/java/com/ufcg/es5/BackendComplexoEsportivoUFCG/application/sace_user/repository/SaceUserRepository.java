@@ -1,6 +1,6 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.user.repository;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.User;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface SaceUserRepository extends JpaRepository<SaceUser, Long> {
 
     @Query("""
                 SELECT userDetails
-                FROM User userDetails
+                FROM SaceUser userDetails
                 WHERE userDetails.email = :username
             """
     )
@@ -22,13 +22,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("username") String username
     );
 
-    User findByEmail(String email);
+    SaceUser findByEmail(String email);
 
-    Optional<User> findByStudentId(String StudentId);
+    Optional<SaceUser> findByStudentId(String StudentId);
 
     @Query("""
                 SELECT user.id AS id
-                FROM User user
+                FROM SaceUser user
                 WHERE user.email = :email
             """
     )

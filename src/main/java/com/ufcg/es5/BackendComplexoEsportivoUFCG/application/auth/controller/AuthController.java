@@ -6,7 +6,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginRequestDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterRequestDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterWithRolesRequestDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.UserResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -60,18 +60,18 @@ public class AuthController {
                     responseCode = "200",
                     description = "Successfully registered",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponseDto.class))}),
+                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "Failed authentication",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponseDto.class))})})
-    public ResponseEntity<UserResponseDto> register(
+                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+    public ResponseEntity<SaceUserResponseDto> register(
             @RequestBody
             @Valid
             RegisterRequestDto data
     ) {
-        UserResponseDto response = service.register(data);
+        SaceUserResponseDto response = service.register(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -82,19 +82,20 @@ public class AuthController {
                     responseCode = "200",
                     description = "Successfully registered",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponseDto.class))}),
+                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "Failed authentication",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponseDto.class))})})
-    public ResponseEntity<UserResponseDto> registerAddingRoles(
+                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+    public ResponseEntity<SaceUserResponseDto> registerAddingRoles(
             @RequestBody
             @Valid
             RegisterWithRolesRequestDto data
     ) {
-        UserResponseDto response = service.registerWithRoles(data);
+        SaceUserResponseDto response = service.registerWithRoles(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
 }

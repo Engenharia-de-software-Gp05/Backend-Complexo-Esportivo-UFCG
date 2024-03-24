@@ -2,8 +2,8 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.SystemInternalException;
 import jakarta.transaction.Transactional;

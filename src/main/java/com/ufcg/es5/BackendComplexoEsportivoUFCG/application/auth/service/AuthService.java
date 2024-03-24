@@ -4,12 +4,12 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginRequestDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterRequestDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterWithRolesRequestDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.user.UserResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 
 public interface AuthService {
     LoginResponseDto login(LoginRequestDto data);
 
-    UserResponseDto register(RegisterRequestDto data);
+    SaceUserResponseDto register(RegisterRequestDto data);
 
-    UserResponseDto registerWithRoles(RegisterWithRolesRequestDto data);
+    SaceUserResponseDto registerWithRoles(RegisterWithRolesRequestDto data);
 }
