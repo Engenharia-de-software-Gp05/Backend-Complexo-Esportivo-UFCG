@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
