@@ -19,5 +19,7 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     void deleteReservation(Long reservationId);
 
-
+    Boolean existByDateRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId);
+    
+    Boolean existByDate(LocalDateTime startDateTime, Long courtId, Long userId);
 }

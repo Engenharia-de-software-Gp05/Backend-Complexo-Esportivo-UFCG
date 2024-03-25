@@ -18,9 +18,13 @@ public class Court extends BasicEntity {
     private static final String NAME_COLUMN = "name";
     private static final String COURT_PROPERTY = "court";
     private static final String STATUS_COLUMN = "status";
+    private static final String MINIMUM_TIME_FOR_OTHER_RESERVATION = "min_time_for_other_reservation";
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
+
+    @Column(name = MINIMUM_TIME_FOR_OTHER_RESERVATION, nullable = false)
+    private Long minimumTimeForOtherReservation;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = COURT_IMAGE_URL_TABLE, joinColumns = @JoinColumn(name = COURT_ID_COLUMN))
@@ -75,6 +79,10 @@ public class Court extends BasicEntity {
 
     public void setCourtAvailabilityStatusEnum(CourtAvailabilityStatusEnum courtStatusEnum) {
         this.courtAvailabilityStatusEnum = courtStatusEnum;
+    }
+
+    public Long getMinimumTimeForOtherReservation() {
+        return this.minimumTimeForOtherReservation;
     }
 
     @Override

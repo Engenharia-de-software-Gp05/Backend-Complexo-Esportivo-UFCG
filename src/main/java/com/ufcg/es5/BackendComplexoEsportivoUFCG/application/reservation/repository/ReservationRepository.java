@@ -13,26 +13,57 @@ import java.util.Collection;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query("""
+        @Query("""
                 SELECT reservation
                 FROM Reservation reservation
                 WHERE reservation.saceUser.id = :saceUserId
-            """
-    )
-    Collection<ReservationResponseDto> findByUserId(
-            @Param("saceUserId") Long saceUserId
-    );
+                """
+        )
+        Collection<ReservationResponseDto> findByUserId(
+                @Param("saceUserId") Long saceUserId
+        );
 
-    @Query("""
+        @Query("""
                 SELECT reservation
                 FROM Reservation reservation
                 WHERE reservation.court.id = :courtId
                 AND reservation.startDateTime = :date
             """
-    )
-    Collection<ReservationResponseDto> findByCourtAndDateTime(
-            @Param("courtId") Long courtId,
-            @Param("date") LocalDateTime date
-    );
+        )
+        Collection<ReservationResponseDto> findByCourtAndDateTime(
+                @Param("courtId") Long courtId,
+                @Param("date") LocalDateTime date
+        );
+        // i want a sql query that get all reservations from a court that are from a specific user and verify if their startDateTime plus the minimumTimeForOtherReservation is less than the startDateTime of the new reservation
+        
+        @Query("""
+                SELECT reservation
+                FROM Reservation reservation
+                WHERE reservation.court.id = :courtId
+                AND reservation.saceUser.id = :userId
+                AND reservation.startDateTime > :maxDateBefore OR reservation.startDateTime < :minDateAfter
 
+            """
+        )
+        Collection<ReservationResponseDto> findByCourtAndDateTimeRange(
+                @Param("maxDateBefore") LocalDateTime maxDateBefore,
+                @Param("minDateAfter") LocalDateTime minDateAfter,
+                @Param("courtId") Long courtId,
+                @Param("userId") Long userId
+        );
+
+        @Query("""
+                SELECT CASE WHEN COUNT(reservation) > 0 THEN TRUE ELSE FALSE END
+                FROM Reservation reservation
+                WHERE reservation.startDateTime = :startDateTime
+                AND reservation.court.id = :courtId
+                AND reservation.saceUser.id = :userId
+            """
+        )
+        boolean existByDate(
+                @Param("startDateTime") LocalDateTime startDateTime,
+                @Param("courtId") Long courtId,
+                @Param("userId") Long userId
+        );
+        
 }
