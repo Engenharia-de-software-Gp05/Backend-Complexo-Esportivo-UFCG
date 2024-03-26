@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
-public record RegisterWithRolesRequestDto(
+public record AuthRegisterDataWithRolesDto(
         @NotNull
         String email,
         @NotNull

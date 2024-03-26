@@ -22,9 +22,9 @@ public interface SaceUserRepository extends JpaRepository<SaceUser, Long> {
             @Param("username") String username
     );
 
-    SaceUser findByEmail(String email);
+    Optional<SaceUser> findByEmail(String email);
 
-    Optional<SaceUser> findByStudentId(String StudentId);
+    Optional<SaceUser> findByStudentId(String studentId);
 
     @Query("""
                 SELECT user.id AS id

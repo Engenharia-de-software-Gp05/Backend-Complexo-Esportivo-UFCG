@@ -1,17 +1,17 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.annotations.AuthorizationNotRequired;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginRequestDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterRequestDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterWithRolesRequestDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,30 +30,28 @@ public class AuthController {
     @Autowired
     private AuthService service;
 
-    @AuthorizationNotRequired
     @PostMapping("/login")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Successfully authentication",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = LoginResponseDto.class))}),
+                            schema = @Schema(implementation = AuthTokenDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "Failed authentication",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = LoginResponseDto.class))})
+                            schema = @Schema(implementation = AuthTokenDto.class))})
     })
-    public ResponseEntity<LoginResponseDto> login(
+    public ResponseEntity<AuthTokenDto> login(
             @Valid
             @RequestBody
-            LoginRequestDto data
+            AuthUsernamePasswordDto data
     ) {
-        LoginResponseDto token = service.login(data);
+        AuthTokenDto token = service.login(data);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @AuthorizationNotRequired
     @PostMapping("/register")
     @ApiResponses(value = {
             @ApiResponse(
@@ -69,7 +67,7 @@ public class AuthController {
     public ResponseEntity<SaceUserResponseDto> register(
             @RequestBody
             @Valid
-            RegisterRequestDto data
+            AuthRegisterDataWithoutRolesDto data
     ) {
         SaceUserResponseDto response = service.register(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -91,11 +89,45 @@ public class AuthController {
     public ResponseEntity<SaceUserResponseDto> registerAddingRoles(
             @RequestBody
             @Valid
-            RegisterWithRolesRequestDto data
+            AuthRegisterDataWithRolesDto data
     ) {
         SaceUserResponseDto response = service.registerWithRoles(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PostMapping("/recover-password")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Recover password email successfully sent")
+            })
+    public ResponseEntity<Void> recoverPassword(
+            @NotBlank
+            String username
+    ){
+        service.recoverPassword(username);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/change-password")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User password successfully changed.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "User password failed changed.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+    public ResponseEntity<Void> updatePassword(
+            @NotBlank
+            String newPassword
+    ){
+        service.updatePassword(newPassword);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

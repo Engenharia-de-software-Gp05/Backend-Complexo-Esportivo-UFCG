@@ -2,7 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
 import jakarta.validation.constraints.NotNull;
 
-public record RegisterRequestDto(
+public record AuthRegisterDataWithoutRolesDto(
         @NotNull
         String email,
         @NotNull

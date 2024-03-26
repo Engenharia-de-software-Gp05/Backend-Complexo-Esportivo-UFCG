@@ -2,6 +2,8 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository.SaceUserRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +24,7 @@ public class SaceUserServiceImpl implements SaceUserService {
 
     @Override
     public boolean existsByEmail(String email) {
-        return repository.findByEmail(email) != null;
+        return repository.findByEmail(email).isPresent();
     }
 
     @Override
@@ -33,7 +35,9 @@ public class SaceUserServiceImpl implements SaceUserService {
     @Override
     @Transactional
     public SaceUser findByEmail(String email) {
-        return repository.findByEmail(email);
+        return repository.findByEmail(email).orElseThrow(
+                () -> new SaceResourceNotFoundException(String.format(SaceUserExceptionMessages.USER_WITH_EMAIL_NOT_FOUND, email))
+        );
     }
 
     @Override

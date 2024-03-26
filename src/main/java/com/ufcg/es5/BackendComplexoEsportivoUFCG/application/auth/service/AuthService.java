@@ -1,15 +1,19 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginRequestDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.LoginResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterRequestDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.RegisterWithRolesRequestDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 
 public interface AuthService {
-    LoginResponseDto login(LoginRequestDto data);
+    AuthTokenDto login(AuthUsernamePasswordDto data);
 
-    SaceUserResponseDto register(RegisterRequestDto data);
+    SaceUserResponseDto register(AuthRegisterDataWithoutRolesDto data);
 
-    SaceUserResponseDto registerWithRoles(RegisterWithRolesRequestDto data);
+    SaceUserResponseDto registerWithRoles(AuthRegisterDataWithRolesDto data);
+
+    void recoverPassword(String username);
+
+    void updatePassword(String newPassword);
 }

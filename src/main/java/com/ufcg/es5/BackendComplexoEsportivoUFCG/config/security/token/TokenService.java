@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,12 +29,12 @@ public class TokenService {
     @Autowired
     private SaceUserService userService;
 
-    public String generateToken(SaceUser user) {
+    public String generateToken(SaceUser user, Long expirationMinutes) {
         try {
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
-                    .withExpiresAt(generateExpirationDate())
+                    .withExpiresAt(generateExpirationDate(expirationMinutes))
                     .sign(getAlgorithm());
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Error while generating token.", exception);
@@ -55,17 +57,14 @@ public class TokenService {
         return Algorithm.HMAC256(secret);
     }
 
-    private Instant generateExpirationDate() {
-        return LocalDateTime.now().plusMinutes(30L).toInstant(ZoneOffset.of("-03:00"));
+    private Instant generateExpirationDate(Long expirationMinutes) {
+        return LocalDateTime.now().plusMinutes(expirationMinutes).toInstant(ZoneOffset.of("-03:00"));
     }
 
     @Transactional
     public Authentication getAuthentication(String username) {
         SaceUser user = userService.findByEmail(username);
-        Authentication authentication = null;
-        if (user != null) {
-            authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        }
-        return authentication;
+
+        return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
     }
 }

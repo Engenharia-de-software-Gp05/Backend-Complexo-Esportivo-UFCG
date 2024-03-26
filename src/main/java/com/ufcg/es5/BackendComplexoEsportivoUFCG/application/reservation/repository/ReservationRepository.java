@@ -34,5 +34,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("courtId") Long courtId,
             @Param("date") LocalDateTime date
     );
-
+    
 }
