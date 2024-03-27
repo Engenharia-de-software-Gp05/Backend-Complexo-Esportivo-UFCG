@@ -77,7 +77,8 @@ public class ReservationServiceImpl implements ReservationService {
 
         Reservation reservation = makeReservation(
                 reservationMakeUnavailableDto,
-                court, null,
+                court, 
+                null,
                 ReservationAvailabilityStatusEnum.UNAVAILABLE
         );
 
@@ -108,12 +109,14 @@ public class ReservationServiceImpl implements ReservationService {
             SaceUser user,
             ReservationAvailabilityStatusEnum status
     ) {
-        LocalDateTime startDateTime = reservationSaveDto.startDateTime().plusDays(-1*(court.getMinimumTimeForOtherReservation()));
-        LocalDateTime endDateTime = reservationSaveDto.endDateTime().plusDays(court.getMinimumTimeForOtherReservation());
-        Long userId = authenticatedUser.getAuthenticatedUserId();
-
-        checkByCourtAndDateTimeRange(startDateTime, endDateTime, court.getId(), userId);
-        checkByDate(reservationSaveDto.startDateTime(), court.getId(), userId);
+        if(user != null){
+            LocalDateTime startDateTime = reservationSaveDto.startDateTime().plusDays(-1*(court.getMinimumTimeForOtherReservation()));
+            LocalDateTime endDateTime = reservationSaveDto.endDateTime().plusDays(court.getMinimumTimeForOtherReservation());
+            Long userId = authenticatedUser.getAuthenticatedUserId();
+    
+            checkByDate(reservationSaveDto.startDateTime(), court.getId(), userId);
+            checkByCourtAndDateTimeRange(startDateTime, endDateTime, court.getId(), userId);
+        }
         
         return new Reservation(
                 reservationSaveDto.startDateTime(),
@@ -126,7 +129,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private void checkByCourtAndDateTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId) {
         if (existByDateRange(startDateTime, endDateTime, courtId, userId)) {
-            throw new RuntimeException("Reservation already exists for this date range.");
+            throw new RuntimeException("Reservation already exists for this date range. You have to wait for the minimum time between reservations.");
         }
     }
 
@@ -138,7 +141,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private void checkByDate(LocalDateTime startDateTime, Long courtId, Long userId) {
         if (this.existByDate(startDateTime, courtId, userId)) {
-            throw new RuntimeException("Reservation already exists for this date.");
+            throw new RuntimeException("Reservation already exists for this date. You have to wait for the minimum time between reservations.");
         }
     }
 
