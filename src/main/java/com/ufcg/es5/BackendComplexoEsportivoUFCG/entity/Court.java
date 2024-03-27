@@ -40,9 +40,10 @@ public class Court extends BasicEntity {
     public Court() {
     }
 
-    public Court(String name, List<String> imagesUrls) {
+    public Court(String name, List<String> imagesUrls, CourtAvailabilityStatusEnum status) {
         this.name = name;
         this.imagesUrls = imagesUrls;
+        this.courtAvailabilityStatusEnum = status;
     }
 
     public void addImageUrl(String imageUrl) {
