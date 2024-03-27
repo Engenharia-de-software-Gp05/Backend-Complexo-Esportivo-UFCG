@@ -4,7 +4,6 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.messages.basic
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 
 public class Cancellation extends Message {
-    private static final String CANCELLATION = "; Informamos o cancelamento da sua reserva /n";
 
     public Cancellation(String name, Reservation reservation) {
         setTitle("CANCELAMENTO DE RESERVA - COMPLEXO UFCG");

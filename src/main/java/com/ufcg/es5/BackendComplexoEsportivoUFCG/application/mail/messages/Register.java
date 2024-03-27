@@ -3,7 +3,6 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.messages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.messages.basic_message.Message;
 
 public class Register extends Message {
-    private static final String REGISTER = "; O Complexo esportivo da UFCG Informa que o seu código de acesso é: ";
 
     public Register(String name, String codigo) {
         setTitle("CÓDIGO PARA CADASTRO - COMPLEXO UFCG");

@@ -4,6 +4,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.messages.basic
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 
 public class Confirm extends Message {
+
     public Confirm(String name, Reservation reservation) {
         setTitle("COMFIRMAÇÃO DE RESERVA - COMPLEXO UFCG");
         setMessage(messageConfirmation(name, reservation));
