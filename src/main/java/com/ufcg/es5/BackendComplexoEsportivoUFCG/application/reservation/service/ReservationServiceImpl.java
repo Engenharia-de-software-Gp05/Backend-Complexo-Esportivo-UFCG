@@ -14,6 +14,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +78,8 @@ public class ReservationServiceImpl implements ReservationService {
 
         Reservation reservation = makeReservation(
                 reservationMakeUnavailableDto,
-                court, null,
+                court, 
+                null,
                 ReservationAvailabilityStatusEnum.UNAVAILABLE
         );
 
@@ -116,6 +118,15 @@ public class ReservationServiceImpl implements ReservationService {
             SaceUser user,
             ReservationAvailabilityStatusEnum status
     ) {
+        if(user != null){
+            LocalDateTime startDateTime = reservationSaveDto.startDateTime().plusDays(-1*(court.getMinimumTimeForOtherReservation()));
+            LocalDateTime endDateTime = reservationSaveDto.endDateTime().plusDays(court.getMinimumTimeForOtherReservation());
+            Long userId = authenticatedUser.getAuthenticatedUserId();
+    
+            checkByDate(reservationSaveDto.startDateTime(), court.getId(), userId);
+            checkByCourtAndDateTimeRange(startDateTime, endDateTime, court.getId(), userId);
+        }
+        
         return new Reservation(
                 reservationSaveDto.startDateTime(),
                 reservationSaveDto.endDateTime(),
@@ -123,6 +134,29 @@ public class ReservationServiceImpl implements ReservationService {
                 user,
                 status
         );
+    }
+
+    private void checkByCourtAndDateTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId) {
+        if (existByDateRange(startDateTime, endDateTime, courtId, userId)) {
+            throw new RuntimeException("Reservation already exists for this date range. You have to wait for the minimum time between reservations.");
+        }
+    }
+
+    @Override
+    public Boolean existByDateRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId) {
+        return repository.findByCourtAndDateTimeRange(startDateTime, endDateTime, courtId, userId) != null;
+    }
+
+
+    private void checkByDate(LocalDateTime startDateTime, Long courtId, Long userId) {
+        if (this.existByDate(startDateTime, courtId, userId)) {
+            throw new RuntimeException("Reservation already exists for this date. You have to wait for the minimum time between reservations.");
+        }
+    }
+
+    @Override
+    public Boolean existByDate(LocalDateTime startDateTime, Long courtId, Long userId) {
+        return repository.existByDate(startDateTime, courtId, userId);
     }
 
 }
