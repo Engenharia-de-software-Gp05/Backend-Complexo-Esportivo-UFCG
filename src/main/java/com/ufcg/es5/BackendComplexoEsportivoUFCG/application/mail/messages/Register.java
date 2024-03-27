@@ -11,12 +11,14 @@ public class Register extends Message {
     }
 
     private String messageRegister(String name, String codigo) {
-        return "<html>\n" +
-                "<body>\n" +
-                "    <h2 style=\"color:#008080;\">" + displayPeriodOfDay().toUpperCase() + ", Bem-vindo ao site do Complexo Esportivo da UFCG</h2>\n" +
-                "    <p style=\"color:#000000;\"> Olá, " + name.split(" ")[0] + "; Seu código de registro é: <strong>" + codigo + "</strong></p>\n" +
-                "</body>\n" +
-                "</html>";
+        return """
+            <html>
+            <body>
+                <h2 style="color:#008080;">%s, Bem-vindo ao site do Complexo Esportivo da UFCG</h2>
+                <p style="color:#000000;"> Olá, %s; Seu código de registro é: <strong>%s</strong></p>
+            </body>
+            </html>
+            """.formatted(displayPeriodOfDay().toUpperCase(), name.split(" ")[0], codigo);
     }
 
 }
