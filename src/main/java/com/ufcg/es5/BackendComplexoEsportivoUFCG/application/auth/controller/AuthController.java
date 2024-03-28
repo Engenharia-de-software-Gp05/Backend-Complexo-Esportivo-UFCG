@@ -1,10 +1,10 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -96,21 +96,22 @@ public class AuthController {
     }
 
     @PostMapping("/recover-password")
+    @PreAuthorize("hasRole('ROLE_PENDING')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Recover password email successfully sent")
-            })
+    })
     public ResponseEntity<Void> recoverPassword(
             @NotBlank
             String username
-    ){
+    ) {
         service.recoverPassword(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/change-password")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN') and hasRole('ROLE_ACTIVE')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -125,9 +126,9 @@ public class AuthController {
     public ResponseEntity<Void> updatePassword(
             @NotBlank
             String newPassword
-    ){
+    ) {
         service.updatePassword(newPassword);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    
 }

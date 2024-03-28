@@ -27,7 +27,6 @@ public class SaceUser extends BasicEntity implements UserDetails {
     private static final String USER_ID_COLUMN = "user_id";
     private static final String STUDENT_ID_COLUMN = "student_id";
     private static final String SACE_USER_PROPERTY = "saceUser";
-    private static final String STATUS_COLUMN = "status";
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
@@ -53,10 +52,6 @@ public class SaceUser extends BasicEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<SaceUserRoleEnum> roleEnums;
 
-    @Column(name = STATUS_COLUMN, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SaceUserAccountStatusEnum userAccountStatusEnum;
-
     public SaceUser() {
     }
 
@@ -81,11 +76,7 @@ public class SaceUser extends BasicEntity implements UserDetails {
         this.studentId = studentId;
         this.password = password;
         this.roleEnums = roleEnums;
-        this.userAccountStatusEnum = status;
     }
-
-    @Column(name = STATUS_COLUMN, nullable = false)
-    @Enumerated(EnumType.STRING)
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -176,26 +167,18 @@ public class SaceUser extends BasicEntity implements UserDetails {
         this.roleEnums = roleEnums;
     }
 
-    public SaceUserAccountStatusEnum getUserAccountStatusEnum() {
-        return userAccountStatusEnum;
-    }
-
-    public void setUserAccountStatusEnum(SaceUserAccountStatusEnum userAccountStatusEnum) {
-        this.userAccountStatusEnum = userAccountStatusEnum;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         SaceUser saceUser = (SaceUser) o;
-        return Objects.equals(name, saceUser.name) && Objects.equals(email, saceUser.email) && Objects.equals(phoneNumber, saceUser.phoneNumber) && Objects.equals(password, saceUser.password) && Objects.equals(studentId, saceUser.studentId) && Objects.equals(reservations, saceUser.reservations) && Objects.equals(roleEnums, saceUser.roleEnums) && userAccountStatusEnum == saceUser.userAccountStatusEnum;
+        return Objects.equals(name, saceUser.name) && Objects.equals(email, saceUser.email) && Objects.equals(phoneNumber, saceUser.phoneNumber) && Objects.equals(password, saceUser.password) && Objects.equals(studentId, saceUser.studentId) && Objects.equals(reservations, saceUser.reservations) && Objects.equals(roleEnums, saceUser.roleEnums);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, email, phoneNumber, password, studentId, reservations, roleEnums, userAccountStatusEnum);
+        return Objects.hash(super.hashCode(), name, email, phoneNumber, password, studentId, reservations, roleEnums);
     }
 
     @Override
@@ -208,7 +191,6 @@ public class SaceUser extends BasicEntity implements UserDetails {
                 ", studentId='" + studentId + '\'' +
                 ", reservations=" + reservations +
                 ", roleEnums=" + roleEnums +
-                ", userAccountStatusEnum=" + userAccountStatusEnum +
                 '}';
     }
 }
