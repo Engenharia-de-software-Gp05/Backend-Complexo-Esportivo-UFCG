@@ -17,7 +17,8 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     Reservation makeUnavailable(ReservationSaveDto reservationMakeUnavailableDto);
 
-    void deleteReservation(Long reservationId);
+    void deleteById(Long reservationId);
 
 
+    void adminDeleteById(Long id);
 }
