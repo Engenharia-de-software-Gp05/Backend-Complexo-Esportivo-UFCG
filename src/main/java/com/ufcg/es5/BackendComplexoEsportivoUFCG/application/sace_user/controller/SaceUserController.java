@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.List;
 
 @Validated
@@ -58,9 +59,9 @@ public class SaceUserController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "User username, name, studentId and phoneNumber returned.",
             content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = SaceUserDataResponseDto.class)))})})
-    public ResponseEntity<List<SaceUserDataResponseDto>> findByEmail() {
-        List<SaceUserDataResponseDto> response = service.findAllUsersAsDto();
+                    array = @ArraySchema(schema = @Schema(implementation = SaceUserDataDto.class)))})})
+    public ResponseEntity<Collection> findByEmail() {
+        List<SaceUserDataDto> response = service.findAllUsersAsDto();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

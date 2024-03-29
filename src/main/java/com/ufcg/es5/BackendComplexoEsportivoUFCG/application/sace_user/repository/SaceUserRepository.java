@@ -1,6 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceDataProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserDataProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -45,5 +45,5 @@ public interface SaceUserRepository extends JpaRepository<SaceUser, Long> {
                        user.roleEnums
                 FROM SaceUser user
             """)
-    Collection<SaceDataProjection> findAllUsersAsDto();
+    Collection<SaceUserDataProjection> findAllUsersAsDto();
 }

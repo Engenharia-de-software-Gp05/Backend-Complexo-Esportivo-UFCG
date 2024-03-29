@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 
 import java.util.List;
@@ -17,5 +17,5 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
 
     Optional<Long> findIdByEmail(String email);
 
-    List<SaceUserDataResponseDto> findAllUsersAsDto();
+    List<SaceUserDataDto> findAllUsersAsDto();
 }
