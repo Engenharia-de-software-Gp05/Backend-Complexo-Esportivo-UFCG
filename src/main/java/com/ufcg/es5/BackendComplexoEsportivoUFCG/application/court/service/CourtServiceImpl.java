@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,12 @@ public class CourtServiceImpl implements CourtService {
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
 
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        Court court = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
+        repository.delete(court);
+    }
 
     @Override
     public Court findByName(String name) {
