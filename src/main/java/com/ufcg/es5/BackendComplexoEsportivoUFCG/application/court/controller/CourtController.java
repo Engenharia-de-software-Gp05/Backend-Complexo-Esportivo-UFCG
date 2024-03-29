@@ -66,6 +66,7 @@ public class CourtController {
             @RequestBody
             CourtSaveDto data,
             @NotNull
+            @RequestParam("id")
             Long id
     ) {
         CourtResponseDto response = service.update(data, id);
