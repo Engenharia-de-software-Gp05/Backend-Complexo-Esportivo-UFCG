@@ -8,15 +8,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -46,6 +44,31 @@ public class CourtController {
             CourtSaveDto data
     ) {
         CourtResponseDto response = service.create(data);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully update court",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CourtResponseDto.class))}),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed update court",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CourtResponseDto.class))})
+    })
+    public ResponseEntity<CourtResponseDto> update(
+            @Valid
+            @RequestBody
+            CourtSaveDto data,
+            @NotNull
+            Long id
+    ) {
+        CourtResponseDto response = service.update(data, id);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

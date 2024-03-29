@@ -5,6 +5,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.Co
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,17 @@ public class CourtServiceImpl implements CourtService {
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
 
+    @Override
+    @Transactional
+    public CourtResponseDto update(CourtSaveDto data, Long id) {
+        Court court = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
+        updateCourtData(court, data);
+        repository.save(court);
+        return objectMapper.convertValue(court, CourtResponseDto.class);
+    }
+
+
+
 
     @Override
     public Court findByName(String name) {
@@ -49,6 +62,11 @@ public class CourtServiceImpl implements CourtService {
         if (existsByName(name)) {
             throw new SystemInternalException();
         }
+    }
+    private void updateCourtData(Court court, CourtSaveDto newData) {
+        court.setName(newData.name());
+        court.setImagesUrls(newData.imagesUrls());
+        court.setCourtAvailabilityStatusEnum(newData.courtStatusEnum());
     }
 
 }
