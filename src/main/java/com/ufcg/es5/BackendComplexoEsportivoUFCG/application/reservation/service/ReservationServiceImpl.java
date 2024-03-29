@@ -11,12 +11,17 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -104,6 +109,48 @@ public class ReservationServiceImpl implements ReservationService {
     public void adminDeleteById(Long id) {
         Reservation reservation = repository.findById(id).orElseThrow();
         repository.delete(reservation);
+    }
+
+    @Override
+    @Transactional
+    public void userDeleteById(Long userId, Long reservationId) throws SaceResourceNotFoundException, SaceForbiddenException {
+        checkUser(userId);
+        Reservation reservation = repository.findById(reservationId).orElseThrow(SaceResourceNotFoundException::new);
+        checkReservation(userId, reservation);
+        checkTime(reservation);
+
+        repository.delete(reservation);
+    }
+
+    private void checkTime(Reservation reservation) {
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime startTime = reservation.getStartDateTime();
+
+        LocalDateTime limitTime = now.plusHours(24);
+
+        if (startTime.isBefore(limitTime)) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_DELETION_PERMISSION_DENIED
+            );
+        }
+
+    }
+
+    private void checkReservation(Long userId, Reservation reservation) {
+        if (isOwner(userId, reservation)) {
+            throw new SaceResourceNotFoundException(
+                    SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND.formatted(userId)
+            );
+        }
+    }
+
+    private void checkUser(Long userId) {
+        if (saceUserService.exists(userId)) {
+            throw new SaceResourceNotFoundException(
+                    SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND.formatted(userId)
+            );
+        }
     }
 
     private boolean isOwner(Long userId, Reservation reservation) {

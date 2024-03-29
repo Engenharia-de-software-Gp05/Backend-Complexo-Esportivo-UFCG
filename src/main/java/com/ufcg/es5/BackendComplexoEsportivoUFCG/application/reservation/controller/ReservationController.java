@@ -123,4 +123,21 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping(value = "/delete/by/id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Delete a reservation.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204",
+            description = "User deleted Reservation.")})
+    public ResponseEntity<Void>userDeleteById(
+            @NotNull
+            @RequestParam("userId")
+            Long userId,
+            @NotNull
+            @RequestParam("reservationtId")
+            Long reservationtId
+            ) {
+        service.userDeleteById(userId, reservationtId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

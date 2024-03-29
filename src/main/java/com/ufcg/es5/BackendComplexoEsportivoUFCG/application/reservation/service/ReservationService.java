@@ -19,6 +19,7 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     void deleteById(Long reservationId);
 
-
     void adminDeleteById(Long id);
+
+    void userDeleteById(Long userId, Long reservationId);
 }
