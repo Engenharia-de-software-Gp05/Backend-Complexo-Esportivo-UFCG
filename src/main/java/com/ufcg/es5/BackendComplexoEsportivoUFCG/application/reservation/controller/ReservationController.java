@@ -124,7 +124,7 @@ public class ReservationController {
     }
 
     @DeleteMapping(value = "/delete/by/id")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "Delete a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
             description = "User deleted Reservation.")})
