@@ -47,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
         String encodedPassword = new BCryptPasswordEncoder().encode(credentials.password());
         SaceUser newUser = makeUser(credentials, encodedPassword);
         SaceUser user = saceUserService.save(newUser);
+
         return new SaceUserResponseDto(user.getEmail(), user.getPassword());
     }
 
