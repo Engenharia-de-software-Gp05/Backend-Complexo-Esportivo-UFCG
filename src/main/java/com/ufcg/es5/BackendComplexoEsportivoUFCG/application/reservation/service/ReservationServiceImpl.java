@@ -11,6 +11,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -90,10 +92,15 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = repository.findById(id).orElseThrow();
 
         Long userId = authenticatedUser.getAuthenticatedUserId();
-        if (isOwner(userId, reservation) || authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
-            repository.delete(reservation);
-        } else {
-            throw new RuntimeException("User has no permission to delete the reservation.");
+        checkPermission(userId, reservation);
+        repository.delete(reservation);
+    }
+
+    private void checkPermission(Long userId, Reservation reservation) {
+        if (!isOwner(userId, reservation) && !authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_DELETION_PERMISSION_DENIED
+            );
         }
     }
 

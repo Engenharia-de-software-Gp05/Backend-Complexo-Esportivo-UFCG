@@ -26,8 +26,8 @@ public class CourtServiceImpl implements CourtService {
         return this.repository;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
         Court court = objectMapper.convertValue(data, Court.class);

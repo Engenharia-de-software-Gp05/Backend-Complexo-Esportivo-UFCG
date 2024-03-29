@@ -1,17 +1,19 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
-import jakarta.validation.constraints.NotNull;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint.EmailConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstraint.PhoneNumberConstraint;
+import jakarta.validation.constraints.NotBlank;
 
 public record RegisterRequestDto(
-        @NotNull
+        @NotBlank @EmailConstraint
         String email,
-        @NotNull
+        @NotBlank
         String name,
-        @NotNull
+        @NotBlank @PhoneNumberConstraint
         String phoneNumber,
-        @NotNull
+        @NotBlank
         String studentId,
-        @NotNull
+        @NotBlank
         String password
 ) {
 }
