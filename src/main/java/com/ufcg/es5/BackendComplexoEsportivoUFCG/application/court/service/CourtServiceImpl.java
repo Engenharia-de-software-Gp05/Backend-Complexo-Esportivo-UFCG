@@ -38,7 +38,7 @@ public class CourtServiceImpl implements CourtService {
 
     @Override
     @Transactional
-    public CourtResponseDto update(CourtSaveDto data, Long id) {
+    public CourtResponseDto update(CourtSaveDto data, Long id) throws SaceResourceNotFoundException {
         Court court = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
         updateCourtData(court, data);
         repository.save(court);
