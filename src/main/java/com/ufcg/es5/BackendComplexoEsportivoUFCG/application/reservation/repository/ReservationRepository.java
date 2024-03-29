@@ -41,29 +41,28 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 FROM Reservation reservation
                 WHERE reservation.court.id = :courtId
                 AND reservation.saceUser.id = :userId
-                AND reservation.startDateTime > :maxDateBefore OR reservation.startDateTime < :minDateAfter
+                AND reservation.startDateTime > :startDateTime AND reservation.startDateTime < :endDateTime
 
             """
         )
         Collection<ReservationResponseDto> findByCourtAndDateTimeRange(
-                @Param("maxDateBefore") LocalDateTime maxDateBefore,
-                @Param("minDateAfter") LocalDateTime minDateAfter,
+                @Param("startDateTime") LocalDateTime startDateTime,
+                @Param("endDateTime") LocalDateTime endDateTime,
                 @Param("courtId") Long courtId,
                 @Param("userId") Long userId
         );
 
         @Query("""
-                SELECT CASE WHEN COUNT(reservation) > 0 THEN TRUE ELSE FALSE END
+                SELECT reservation
                 FROM Reservation reservation
                 WHERE reservation.startDateTime = :startDateTime
                 AND reservation.court.id = :courtId
                 AND reservation.saceUser.id = :userId
             """
         )
-        boolean existByDate(
+        Collection<ReservationResponseDto> findByCourtIdUserIdAndStartDateTime(
                 @Param("startDateTime") LocalDateTime startDateTime,
                 @Param("courtId") Long courtId,
                 @Param("userId") Long userId
         );
-        
 }
