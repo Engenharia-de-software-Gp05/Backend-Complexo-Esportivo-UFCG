@@ -60,7 +60,16 @@ public class AuthServiceImpl implements AuthService {
         SaceUser user = saceUserService.save(newUser);
         return new SaceUserResponseDto(user.getEmail(), user.getPassword());
     }
-
+    @Override
+    @Transactional
+    public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
+        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        ));
+        Long userId = authenticatedUser.getAuthenticatedUserId();
+        checkPermission(userId, reservation);
+        repository.delete(reservation);
+    }
     private void checkIfUserExists(String username) {
         if (saceUserService.existsByEmail(username)) {
             throw new IllegalArgumentException("Email already registered.");
