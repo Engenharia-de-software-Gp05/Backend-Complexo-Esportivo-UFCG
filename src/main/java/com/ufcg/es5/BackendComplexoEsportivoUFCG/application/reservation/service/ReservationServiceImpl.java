@@ -14,6 +14,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -90,8 +91,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteReservation(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
-
+        Reservation reservation = repository.findById(id).orElseThrow(() -> notFoundException(id));
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkPermission(userId, reservation);
         repository.delete(reservation);
@@ -100,7 +100,7 @@ public class ReservationServiceImpl implements ReservationService {
     private void checkPermission(Long userId, Reservation reservation) {
         if (!isOwner(userId, reservation) && !authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
             throw new SaceForbiddenException(
-                    ReservationExeceptionMessages.RESERVATION_DELETION_PERMISSION_DENIED
+                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
         }
     }
@@ -121,6 +121,12 @@ public class ReservationServiceImpl implements ReservationService {
                 court,
                 user,
                 status
+        );
+    }
+
+    private SaceResourceNotFoundException notFoundException(Long id) {
+        return new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
         );
     }
 
