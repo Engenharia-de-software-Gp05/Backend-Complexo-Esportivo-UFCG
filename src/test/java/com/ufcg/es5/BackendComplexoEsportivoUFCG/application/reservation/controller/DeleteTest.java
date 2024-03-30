@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DeleteTest extends BasicTestController {
 
     public static final long VALID_ID = 1L;
-    private static final String PATH = "/reservation/delete";
+    private static final String PATH = "/reservation/delete/by/id";
     private static final String ID_PROPERTY = "id";
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -45,7 +45,7 @@ class DeleteTest extends BasicTestController {
 
     @BeforeEach
     void setUp() {
-        Mockito.doNothing().when(reservationService).deleteReservation(VALID_ID);
+        Mockito.doNothing().when(reservationService).deleteById(VALID_ID);
     }
 
     @ParameterizedTest

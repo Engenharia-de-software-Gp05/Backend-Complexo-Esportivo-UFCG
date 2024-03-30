@@ -11,6 +11,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -86,15 +87,23 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void deleteReservation(Long id) {
-        Reservation reservation = repository.findById(id).orElseThrow();
+    public void deleteById(Long id) {
+        Reservation reservation = repository.findById(id).orElseThrow(
+                SaceResourceNotFoundException::new
+        );
 
         Long userId = authenticatedUser.getAuthenticatedUserId();
-        if (isOwner(userId, reservation) || authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
+        if (isOwner(userId, reservation)) {
             repository.delete(reservation);
         } else {
-            throw new RuntimeException("User has no permission to delete the reservation.");
+            throw new IllegalArgumentException("User has no permission to delete the reservation.");
         }
+    }
+
+    @Override
+    public void adminDeleteById(Long id) {
+        Reservation reservation = repository.findById(id).orElseThrow();
+        repository.delete(reservation);
     }
 
     private boolean isOwner(Long userId, Reservation reservation) {
