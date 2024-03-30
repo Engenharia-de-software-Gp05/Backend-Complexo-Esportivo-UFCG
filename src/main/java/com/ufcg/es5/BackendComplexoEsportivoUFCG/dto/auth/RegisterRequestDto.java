@@ -5,11 +5,11 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstrai
 import jakarta.validation.constraints.NotNull;
 
 public record RegisterRequestDto(
-        @NotNull @EmailConstraint
+        @NotNull
         String email,
         @NotNull
         String name,
-        @NotNull @PhoneNumberConstraint
+        @NotNull
         String phoneNumber,
         @NotNull
         String studentId,

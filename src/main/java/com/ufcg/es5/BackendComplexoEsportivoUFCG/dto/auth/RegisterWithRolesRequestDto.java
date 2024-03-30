@@ -8,11 +8,11 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 public record RegisterWithRolesRequestDto(
-        @NotNull @EmailConstraint
+        @NotNull
         String email,
         @NotNull
         String name,
-        @NotNull @PhoneNumberConstraint
+        @NotNull
         String phoneNumber,
         String studentId,
         @NotNull
