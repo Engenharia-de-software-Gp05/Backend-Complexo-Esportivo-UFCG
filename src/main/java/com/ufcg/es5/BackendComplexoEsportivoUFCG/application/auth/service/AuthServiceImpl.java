@@ -1,5 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.service.MailService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmation_code.service.SignUpConfirmationCodeService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.token.TokenService;
@@ -8,17 +10,16 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserAccountStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.RandomStringGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,13 @@ class AuthServiceImpl implements AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
+    private SignUpConfirmationCodeService confirmationCodeService;
+
+    @Override
     @Transactional
     public AuthTokenDto login(AuthUsernamePasswordDto credentials) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(credentials.username(), credentials.password());
@@ -62,8 +70,9 @@ class AuthServiceImpl implements AuthService {
 
         var token = tokenService
                 .generateToken(user, EXPIRATION_TIME_FOR_RECOVER_PASSWORD_TOKEN);
-
-        System.out.println(token);
+        // TODO
+        // fazer constantes pras urls e usar formatter pra criar o link aqui.
+        mailService.sendRecoverPasswordLinkEmail(user.getName(), token, user.getEmail());
     }
 
     @Override
@@ -83,6 +92,20 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
+    public void confirmEmailRegistered(String confirmationCode) {
+        Long requesterUserId = authenticatedUser.getAuthenticatedUserId();
+
+        if(!confirmationCodeService.existsByUserIdAndConfirmationCode(requesterUserId, confirmationCode)){
+            throw new SaceResourceNotFoundException(
+                    SaceUserExceptionMessages.CONFIRMATION_CODE_IS_NOT_RELATED_TO_USER_WITH_ID.formatted(confirmationCode, requesterUserId)
+            );
+        }
+
+        saceUserService.updateUserRolesById(Set.of(SaceUserRoleEnum.ROLE_USER), requesterUserId);
+    }
+
+    @Override
+    @Transactional
     public SaceUserResponseDto register(AuthRegisterDataWithoutRolesDto credentials) {
         this.checkIfUserExists(credentials.email());
 
@@ -90,7 +113,8 @@ class AuthServiceImpl implements AuthService {
         SaceUser newUser = makeUser(credentials, encodedPassword);
         SaceUser user = saceUserService.save(newUser);
 
-        return new SaceUserResponseDto(user.getEmail(), user.getPassword());
+        confirmationCodeService.generateAndSend(user.getId());
+        return new SaceUserResponseDto(user.getEmail(), user.getName());
     }
 
     @Override
@@ -98,10 +122,14 @@ class AuthServiceImpl implements AuthService {
     public SaceUserResponseDto registerWithRoles(AuthRegisterDataWithRolesDto credentials) {
         this.checkIfUserExists(credentials.email());
 
-        String encodedPassword = passwordEncoder.encode(credentials.password());
+        String temporaryPassword = RandomStringGenerator.randomIncludingSpecialCharacters(12);
+
+        String encodedPassword = passwordEncoder.encode(temporaryPassword);
         SaceUser newUser = makeUserWithRoles(credentials, encodedPassword);
         SaceUser user = saceUserService.save(newUser);
-        return new SaceUserResponseDto(user.getEmail(), user.getPassword());
+
+        mailService.sendSignUpTemporaryPasswordEmail(user.getName(), temporaryPassword, user.getEmail());
+        return new SaceUserResponseDto(user.getEmail(), user.getName());
     }
 
     private void checkIfUserExists(String username) {
@@ -117,8 +145,7 @@ class AuthServiceImpl implements AuthService {
                 data.phoneNumber(),
                 data.studentId(),
                 encodedPassword,
-                Set.of(SaceUserRoleEnum.ROLE_USER),
-                SaceUserAccountStatusEnum.PENDING
+                Set.of(SaceUserRoleEnum.ROLE_PENDING)
         );
     }
 
@@ -129,8 +156,8 @@ class AuthServiceImpl implements AuthService {
                 data.phoneNumber(),
                 data.studentId(),
                 encodedPassword,
-                data.userRoles(),
-                SaceUserAccountStatusEnum.PENDING
+                data.userRoles()
         );
     }
+
 }

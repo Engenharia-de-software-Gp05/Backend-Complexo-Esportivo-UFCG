@@ -110,7 +110,7 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/update/password")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN') and hasRole('ROLE_ACTIVE')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -130,5 +130,27 @@ public class AuthController {
         service.updatePassword(newPassword);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/confirm/register")
+    @PreAuthorize("hasRole('ROLE_PENDING')")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Register confirmed successfully.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "User password failed changed.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+    public ResponseEntity<Void> confirmRegisterCode(
+            @NotBlank
+            String confirmationCode
+    ) {
+        service.confirmEmailRegistered(confirmationCode);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     
 }

@@ -12,8 +12,8 @@ import java.util.Objects;
 public class Reservation extends BasicEntity {
 
     public static final String RESERVATION_TABLE = "reservation";
-    private static final String START_DATE_TIME_COLUMN = "startDateTime";
-    private static final String END_DATE_TIME_COLUMN = "endDateTime";
+    private static final String START_DATE_TIME_COLUMN = "start_date_time";
+    private static final String END_DATE_TIME_COLUMN = "end_date_time";
     private static final String COURT_ID_COLUMN = "court_id";
     private static final String SACE_USER_ID_COLUMN = "sace_user_id";
     private static final String STATUS_COLUMN = "status";

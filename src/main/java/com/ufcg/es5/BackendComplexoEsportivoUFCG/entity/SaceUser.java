@@ -68,8 +68,8 @@ public class SaceUser extends BasicEntity implements UserDetails {
             String phoneNumber,
             String studentId,
             String password,
-            Set<SaceUserRoleEnum> roleEnums,
-            SaceUserAccountStatusEnum status) {
+            Set<SaceUserRoleEnum> roleEnums
+    ) {
         this.email = email;
         this.name = name;
         this.phoneNumber = phoneNumber;

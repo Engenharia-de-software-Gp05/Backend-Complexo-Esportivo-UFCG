@@ -16,4 +16,6 @@ public interface AuthService {
     void recoverPassword(String username);
 
     void updatePassword(String newPassword);
+
+    void confirmEmailRegistered(String confirmationCode);
 }

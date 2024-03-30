@@ -14,8 +14,6 @@ public record AuthRegisterDataWithRolesDto(
         String phoneNumber,
         String studentId,
         @NotNull
-        String password,
-        @NotNull
         Set<SaceUserRoleEnum> userRoles
 ) {
 }
