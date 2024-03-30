@@ -40,7 +40,9 @@ public class CourtServiceImpl implements CourtService {
     @Override
     @Transactional
     public void delete(Long id) throws SaceResourceNotFoundException {
-        Court court = repository.findById(id).orElseThrow(() -> notFoundException(id));
+        Court court = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        ));
         repository.delete(court);
     }
 
@@ -62,9 +64,4 @@ public class CourtServiceImpl implements CourtService {
         }
     }
 
-    private SaceResourceNotFoundException notFoundException(Long id) {
-        return new SaceResourceNotFoundException(
-                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
-        );
-    }
 }
