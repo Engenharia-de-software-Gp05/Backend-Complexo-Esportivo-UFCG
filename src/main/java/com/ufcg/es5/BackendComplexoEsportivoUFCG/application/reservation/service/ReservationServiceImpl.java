@@ -92,10 +92,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = repository.findById(id).orElseThrow(() -> notFoundException(id));
+        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        ));
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkUserReservation(userId, reservation);
-        checkTime(reservation);
+        checkReservationTimeValidity(reservation);
         repository.delete(reservation);
     }
 
@@ -124,7 +126,7 @@ public class ReservationServiceImpl implements ReservationService {
         );
     }
 
-    private void checkTime(Reservation reservation) {
+    private void checkReservationTimeValidity(Reservation reservation) {
         LocalDateTime now = LocalDateTime.now();
 
         if (reservation.getStartDateTime().isBefore(now.plusHours(24))) {
@@ -140,12 +142,6 @@ public class ReservationServiceImpl implements ReservationService {
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
         }
-    }
-
-    private RuntimeException notFoundException(Long id) {
-        return new SaceResourceNotFoundException(
-                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
-        );
     }
 
 }
