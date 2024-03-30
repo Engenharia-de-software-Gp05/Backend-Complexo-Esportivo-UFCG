@@ -91,7 +91,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = repository.findById(id).orElseThrow(() -> notFoundException(id));
+        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        ));
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkPermission(userId, reservation);
         repository.delete(reservation);
@@ -127,12 +129,6 @@ public class ReservationServiceImpl implements ReservationService {
                 court,
                 user,
                 status
-        );
-    }
-
-    private SaceResourceNotFoundException notFoundException(Long id) {
-        return new SaceResourceNotFoundException(
-                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
         );
     }
 
