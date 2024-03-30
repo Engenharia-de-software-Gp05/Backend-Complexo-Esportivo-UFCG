@@ -96,7 +96,7 @@ public class AuthController {
     }
 
     @PostMapping("/recover-password")
-    @PreAuthorize("hasRole('ROLE_PENDING')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
