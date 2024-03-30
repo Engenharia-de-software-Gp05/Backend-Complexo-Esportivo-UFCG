@@ -3,20 +3,19 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint.EmailConstraint;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstraint.PhoneNumberConstraint;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
 public record RegisterWithRolesRequestDto(
-        @NotBlank @EmailConstraint
+        @NotNull @EmailConstraint
         String email,
-        @NotBlank
+        @NotNull
         String name,
-        @NotBlank @PhoneNumberConstraint
+        @NotNull @PhoneNumberConstraint
         String phoneNumber,
         String studentId,
-        @NotBlank
+        @NotNull
         String password,
         @NotNull
         Set<SaceUserRoleEnum> userRoles

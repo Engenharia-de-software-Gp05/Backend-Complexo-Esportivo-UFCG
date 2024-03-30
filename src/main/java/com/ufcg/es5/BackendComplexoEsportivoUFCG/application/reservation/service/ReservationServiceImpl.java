@@ -12,6 +12,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +89,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void deleteReservation(Long id) {
-        Reservation reservation = repository.findById(id).orElseThrow();
+    public void deleteReservation(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
+        Reservation reservation = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
 
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkPermission(userId, reservation);
