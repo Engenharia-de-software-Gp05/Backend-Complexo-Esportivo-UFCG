@@ -9,6 +9,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,9 +30,9 @@ public class CourtServiceImpl implements CourtService {
         return this.repository;
     }
 
-    @Transactional
     @Override
-    public CourtResponseDto create(CourtSaveDto data) {
+    @Transactional
+    public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
         Court court = objectMapper.convertValue(data, Court.class);
         repository.save(court);
@@ -58,7 +60,9 @@ public class CourtServiceImpl implements CourtService {
 
     private void checkByName(String name) {
         if (existsByName(name)) {
-            throw new SystemInternalException();
+            throw new SaceConflictException(
+                    CourtExceptionMessages.COURT_WITH_NAME_ALREADY_EXISTS.formatted(name)
+            );
         }
     }
     private void updateCourtData(Court court, CourtUpdateDto newData) {
