@@ -40,7 +40,9 @@ public class CourtServiceImpl implements CourtService {
     @Override
     @Transactional
     public CourtResponseDto update(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException {
-        Court court = this.findById(id).orElseThrow(() -> notFoundException(id));
+        Court court = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        ));
         updateCourtData(court, data);
         repository.save(court);
         return objectMapper.convertValue(court, CourtResponseDto.class);
@@ -65,12 +67,6 @@ public class CourtServiceImpl implements CourtService {
         court.setName(newData.name());
         court.setImagesUrls(newData.imagesUrls());
         court.setCourtAvailabilityStatusEnum(newData.courtStatusEnum());
-    }
-
-    private SaceResourceNotFoundException notFoundException(Long id) {
-        return new SaceResourceNotFoundException(
-                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
-        );
     }
 
 }

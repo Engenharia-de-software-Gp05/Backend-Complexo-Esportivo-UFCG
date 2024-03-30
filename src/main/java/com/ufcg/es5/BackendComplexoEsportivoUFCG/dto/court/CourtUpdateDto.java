@@ -7,13 +7,13 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record CourtUpdateDto(
-        @NotBlank(message = "name cannot be empty")
+        @NotBlank
         String name,
 
-        @NotNull(message = "images cannot be null")
+        @NotNull
         List<String> imagesUrls,
 
-        @NotNull(message = "status cannot be null")
+        @NotNull
         CourtAvailabilityStatusEnum courtStatusEnum
 ) {
 }
