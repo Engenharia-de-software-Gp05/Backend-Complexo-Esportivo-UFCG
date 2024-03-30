@@ -102,6 +102,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new SaceForbiddenException(
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
+        }
     }
 
     @Override
