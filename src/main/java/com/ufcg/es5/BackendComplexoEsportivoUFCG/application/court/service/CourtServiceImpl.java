@@ -9,6 +9,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictEx
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,8 +29,8 @@ public class CourtServiceImpl implements CourtService {
         return this.repository;
     }
 
-    @Transactional
     @Override
+    @Transactional
     public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
         Court court = objectMapper.convertValue(data, Court.class);
@@ -45,7 +46,7 @@ public class CourtServiceImpl implements CourtService {
         ));
         repository.delete(court);
     }
-
+  
     @Override
     public Court findByName(String name) {
         return repository.findByName(name);

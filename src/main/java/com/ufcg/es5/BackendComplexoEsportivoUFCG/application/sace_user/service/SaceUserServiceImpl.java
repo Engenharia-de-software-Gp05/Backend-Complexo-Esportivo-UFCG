@@ -1,12 +1,16 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository.SaceUserRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserDataProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +44,13 @@ public class SaceUserServiceImpl implements SaceUserService {
     @Transactional
     public Optional<Long> findIdByEmail(String email) {
         return repository.findIdByEmail(email);
+    }
+
+    @Override
+    @Transactional
+    public List<SaceUserDataDto> findAllUsersAsDto() {
+        Collection<SaceUserDataProjection> projections = repository.findAllUsersAsDto();
+        return projections.stream().map(SaceUserDataDto::new).toList();
     }
 
 }
