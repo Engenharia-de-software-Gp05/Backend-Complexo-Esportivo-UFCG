@@ -11,6 +11,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
@@ -90,12 +91,11 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
-        Reservation reservation = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
+    public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
+        Reservation reservation = repository.findById(id).orElseThrow(() -> notFoundException(id));
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkUserReservation(userId, reservation);
         checkTime(reservation);
-
         repository.delete(reservation);
     }
 
@@ -127,11 +127,7 @@ public class ReservationServiceImpl implements ReservationService {
     private void checkTime(Reservation reservation) {
         LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime startTime = reservation.getStartDateTime();
-
-        LocalDateTime limitTime = now.plusHours(24);
-
-        if (startTime.isBefore(limitTime)) {
+        if (reservation.getStartDateTime().isBefore(now.plusHours(24))) {
             throw new SaceForbiddenException(
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
@@ -144,6 +140,12 @@ public class ReservationServiceImpl implements ReservationService {
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
         }
+    }
+
+    private RuntimeException notFoundException(Long id) {
+        return new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        );
     }
 
 }
