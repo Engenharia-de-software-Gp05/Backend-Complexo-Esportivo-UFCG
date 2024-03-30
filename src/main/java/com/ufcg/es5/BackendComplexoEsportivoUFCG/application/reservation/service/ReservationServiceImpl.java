@@ -90,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void deleteReservation(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
+    public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
         Reservation reservation = repository.findById(id).orElseThrow(() -> notFoundException(id));
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkPermission(userId, reservation);
@@ -102,7 +102,12 @@ public class ReservationServiceImpl implements ReservationService {
             throw new SaceForbiddenException(
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
-        }
+    }
+
+    @Override
+    public void adminDeleteById(Long id) {
+        Reservation reservation = repository.findById(id).orElseThrow();
+        repository.delete(reservation);
     }
 
     private boolean isOwner(Long userId, Reservation reservation) {
