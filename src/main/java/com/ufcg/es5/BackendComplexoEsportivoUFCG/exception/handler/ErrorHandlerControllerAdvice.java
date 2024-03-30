@@ -1,6 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.InternalException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInternalException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
@@ -86,10 +86,10 @@ public class ErrorHandlerControllerAdvice {
         );
     }
 
-    @ExceptionHandler(value = InternalException.class)
+    @ExceptionHandler(value = SaceInternalException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public CustomErrorType onInternalException(InternalException e) {
+    public CustomErrorType onInternalException(SaceInternalException e) {
         return defaultCustomErrorTypeConstruct(
                 "Internal Error: " + e.getMessage()
         );
