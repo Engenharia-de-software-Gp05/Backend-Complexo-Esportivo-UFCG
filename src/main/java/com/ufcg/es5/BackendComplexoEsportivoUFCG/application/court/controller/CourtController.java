@@ -49,7 +49,7 @@ public class CourtController {
     }
 
     @DeleteMapping(value = "/delete")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a court.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
             description = "Court is deleted.")})

@@ -5,7 +5,9 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.Co
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ public class CourtServiceImpl implements CourtService {
 
     @Transactional
     @Override
-    public CourtResponseDto create(CourtSaveDto data) {
+    public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
         Court court = objectMapper.convertValue(data, Court.class);
         repository.save(court);
@@ -38,7 +40,7 @@ public class CourtServiceImpl implements CourtService {
     @Override
     @Transactional
     public void delete(Long id) throws SaceResourceNotFoundException {
-        Court court = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
+        Court court = repository.findById(id).orElseThrow(() -> notFoundException(id));
         repository.delete(court);
     }
 
@@ -54,8 +56,15 @@ public class CourtServiceImpl implements CourtService {
 
     private void checkByName(String name) {
         if (existsByName(name)) {
-            throw new SystemInternalException();
+            throw new SaceConflictException(
+                    CourtExceptionMessages.COURT_WITH_NAME_ALREADY_EXISTS.formatted(name)
+            );
         }
     }
 
+    private SaceResourceNotFoundException notFoundException(Long id) {
+        return new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        );
+    }
 }
