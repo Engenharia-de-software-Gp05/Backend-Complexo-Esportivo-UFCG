@@ -6,7 +6,7 @@ import com.github.mustachejava.MustacheFactory;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.constants.MailSubjectConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.constants.MailTemplatePathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.message.Message;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.InternalException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInternalException;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Transactional
-    public void sendMail(Message message, String mailDestiny) throws InternalException {
+    public void sendMail(Message message, String mailDestiny) throws SaceInternalException {
         try {
             var mail = javaMailSender.createMimeMessage();
             var helper = new MimeMessageHelper(mail, true, "UTF-8");
@@ -51,7 +51,7 @@ public class MailServiceImpl implements MailService {
 
             javaMailSender.send(mail);
         } catch (MessagingException e) {
-            throw new InternalException("Error sending mail" + e.getMessage());
+            throw new SaceInternalException("Error sending mail" + e.getMessage());
         }
     }
 

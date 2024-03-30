@@ -102,8 +102,11 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public void adminDeleteById(Long id) {
-        Reservation reservation = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
+        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        ));
         repository.delete(reservation);
     }
 
