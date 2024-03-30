@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +39,12 @@ public class CourtServiceImpl implements CourtService {
 
     @Override
     @Transactional
-    public CourtResponseDto update(CourtSaveDto data, Long id) throws SaceResourceNotFoundException {
-        Court court = repository.findById(id).orElseThrow(SaceResourceNotFoundException::new);
+    public CourtResponseDto update(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException {
+        Court court = this.findById(id).orElseThrow(() -> notFoundException(id));
         updateCourtData(court, data);
         repository.save(court);
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
-
-
-
 
     @Override
     public Court findByName(String name) {
@@ -63,10 +61,16 @@ public class CourtServiceImpl implements CourtService {
             throw new SystemInternalException();
         }
     }
-    private void updateCourtData(Court court, CourtSaveDto newData) {
+    private void updateCourtData(Court court, CourtUpdateDto newData) {
         court.setName(newData.name());
         court.setImagesUrls(newData.imagesUrls());
         court.setCourtAvailabilityStatusEnum(newData.courtStatusEnum());
+    }
+
+    private SaceResourceNotFoundException notFoundException(Long id) {
+        return new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        );
     }
 
 }
