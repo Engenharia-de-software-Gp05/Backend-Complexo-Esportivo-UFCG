@@ -54,6 +54,8 @@ public class GetTest {
     private static Court court2;
     Reservation reservation1User1;
     Reservation reservation2User1;
+    LocalDateTime startDateTime;
+    LocalDateTime endDateTime;    
 
     @Autowired
     private ReservationServiceImpl reservationService;
@@ -66,6 +68,7 @@ public class GetTest {
 
     @BeforeEach
     public void setup(){
+        createDateTimes();
         createUsers();  
         createCourts();
         createReservations();
@@ -93,15 +96,14 @@ public class GetTest {
     }
 
     @Test
-    public void getByCourtIdAndDateTimeShouldReturnSucess() {
-        List<ReservationResponseDto> reservations = (List<ReservationResponseDto>) reservationService.findByCourtAndDateTime(court.getId(), );
+    public void getByCourtIdUserIdAndDateTimeRageShouldReturnSucess() {
+        List<ReservationResponseDto> reservations = (List<ReservationResponseDto>) reservationService.findByCourtUserIdAndDateTimeRange(startDateTime, endDateTime, court.getId(), user1.getId());
 
         Assertions.assertNotNull(reservations);
         Assertions.assertEquals(1, reservations.size());
         ReservationResponseDto reservation = reservations.get(0);
-        Assertions.assertEquals(reservation1User1, reservation);    
+        Assertions.assertEquals(reservation1User1, reservation);
     }
-
 
     private void createUsers() {
         user1 = new SaceUser(
@@ -146,9 +148,12 @@ public class GetTest {
 
     }
 
+    private void createDateTimes(){
+        startDateTime = LocalDateTime.of(2024, 1, 1, 10, 0);
+        endDateTime = startDateTime.plusHours(2L);
+    }
+
     private void createReservations(){
-        LocalDateTime startDateTime = LocalDateTime.of(2024, 5, 1, 1, 0, 0);
-        LocalDateTime endDateTime = startDateTime.plusHours(2L);    
         reservation1User1 = new Reservation(
             startDateTime,
             endDateTime,

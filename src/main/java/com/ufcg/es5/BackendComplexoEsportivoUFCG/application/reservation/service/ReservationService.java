@@ -11,7 +11,7 @@ import java.util.Collection;
 public interface ReservationService extends BasicService<Reservation, Long> {
     Collection<ReservationResponseDto> findByCourtAndDateTime(Long courtId, LocalDateTime date);
     
-    Collection<ReservationResponseDto> findByCourtAndDateTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId);
+    Collection<ReservationResponseDto> findByCourtUserIdAndDateTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId);
 
     Collection<ReservationResponseDto> findByUserId(Long userId);
 

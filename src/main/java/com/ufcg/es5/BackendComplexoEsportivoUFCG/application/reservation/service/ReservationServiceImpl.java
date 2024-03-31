@@ -60,8 +60,8 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Collection<ReservationResponseDto> findByCourtAndDateTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId){
-        return repository.findByCourtAndDateTimeRange(startDateTime, endDateTime, courtId, userId);
+    public Collection<ReservationResponseDto> findByCourtUserIdAndDateTimeRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId){
+        return repository.findByCourtUserIdAndDateTimeRange(startDateTime, endDateTime, courtId, userId);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Boolean existsByCourtIdUserIdAndDateRange(LocalDateTime startDateTime, LocalDateTime endDateTime, Long courtId, Long userId) {
-        return this.findByCourtAndDateTimeRange(startDateTime, endDateTime, courtId, userId) != null;
+        return this.findByCourtUserIdAndDateTimeRange(startDateTime, endDateTime, courtId, userId) != null;
     }
 
 

@@ -40,11 +40,11 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 FROM Reservation reservation
                 WHERE reservation.court.id = :courtId
                 AND reservation.saceUser.id = :userId
-                AND reservation.startDateTime > :startDateTime AND reservation.startDateTime < :endDateTime
+                AND reservation.startDateTime >= :startDateTime AND reservation.startDateTime <= :endDateTime
 
             """
         )
-        Collection<ReservationResponseDto> findByCourtAndDateTimeRange(
+        Collection<ReservationResponseDto> findByCourtUserIdAndDateTimeRange(
                 @Param("startDateTime") LocalDateTime startDateTime,
                 @Param("endDateTime") LocalDateTime endDateTime,
                 @Param("courtId") Long courtId,
