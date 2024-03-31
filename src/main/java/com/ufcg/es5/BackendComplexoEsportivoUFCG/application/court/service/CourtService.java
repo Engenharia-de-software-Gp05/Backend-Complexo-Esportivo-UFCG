@@ -8,6 +8,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
 public interface CourtService extends BasicService<Court, Long> {
     CourtResponseDto create(CourtSaveDto data);
 
+    void delete(Long id);
+
     Court findByName(String name);
 
     Boolean existsByName(String name);

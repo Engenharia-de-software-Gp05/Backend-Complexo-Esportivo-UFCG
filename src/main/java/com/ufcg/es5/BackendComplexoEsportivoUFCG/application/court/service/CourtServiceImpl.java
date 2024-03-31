@@ -6,7 +6,10 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,6 +38,15 @@ public class CourtServiceImpl implements CourtService {
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
 
+    @Override
+    @Transactional
+    public void delete(Long id) throws SaceResourceNotFoundException {
+        Court court = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        ));
+        repository.delete(court);
+    }
+  
     @Override
     public Court findByName(String name) {
         return repository.findByName(name);
