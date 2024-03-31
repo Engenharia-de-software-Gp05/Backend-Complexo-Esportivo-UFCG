@@ -1,7 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.InternalException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInternalException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
