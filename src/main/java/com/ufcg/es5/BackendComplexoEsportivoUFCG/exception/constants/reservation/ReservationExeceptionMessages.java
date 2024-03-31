@@ -6,6 +6,7 @@ public class ReservationExeceptionMessages {
     public static final String RESERVATION_NOT_BELONGS_TO_USER = "Reservation with id '%s' does not belong to user '%s'.";
     public static final String RESERVATION_LIMIT_EXCEEDED_IN_COURT_BY_USER = "Reservation limit exceeded for court '%s' by user '%s'.";
     public static final String RESERVATION_TIME_CONFLICT = "Conflict with reservation, existing reservation for the specified time range.";
-
+    public static final String RESERVATION_PERMISSION_DENIED = "User has no permission the reservation.";
+  
     public ReservationExeceptionMessages(){}
 }
