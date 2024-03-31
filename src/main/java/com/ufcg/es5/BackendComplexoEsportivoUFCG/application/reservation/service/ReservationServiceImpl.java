@@ -11,7 +11,10 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,22 +44,34 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Collection<ReservationResponseDto> findByCourtAndDateTime(Long courtId, LocalDateTime date) {
-        return null;
+    @Transactional
+    public ReservationResponseDto findByCourtAndStartDateTime(Long courtId, LocalDateTime date) throws SaceResourceNotFoundException {
+        courtService.findById(courtId).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(courtId)
+        ));
+        return this.repository.findByCourtAndStartDateTime(courtId, date);
     }
 
     @Override
+    @Transactional
     public Collection<ReservationResponseDto> findByUserId(Long userId) {
         return repository.findByUserId(userId);
     }
 
     @Override
     @Transactional
-    public Reservation createReservation(ReservationSaveDto reservationSaveDto) {
+    public Reservation createReservation(ReservationSaveDto reservationSaveDto) throws
+            SaceResourceNotFoundException,
+            SaceConflictException
+    {
         Long userId = authenticatedUser.getAuthenticatedUserId();
         SaceUser user = saceUserService.findById(userId).orElseThrow();
 
-        Court court = courtService.findById(reservationSaveDto.courtId()).orElseThrow();
+        Court court = courtService.findById(reservationSaveDto.courtId()).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(reservationSaveDto.courtId())
+        ));
+
+        checkTimeAvailability(reservationSaveDto);
 
         Reservation reservation = makeReservation(
                 reservationSaveDto,
@@ -101,6 +116,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional
     public void adminDeleteById(Long id) {
         Reservation reservation = repository.findById(id).orElseThrow();
         repository.delete(reservation);
@@ -123,6 +139,15 @@ public class ReservationServiceImpl implements ReservationService {
                 user,
                 status
         );
+    }
+
+    private void checkTimeAvailability(ReservationSaveDto reservationSaveDto) {
+        if (
+                repository.findByCourtAndStartDateTime(reservationSaveDto.courtId(), reservationSaveDto.startDateTime()) != null ||
+                repository.findByCourtAndEndtDateTime(reservationSaveDto.courtId(), reservationSaveDto.endDateTime()) != null
+        ) {
+            throw new SaceConflictException(ReservationExeceptionMessages.RESERVATION_TIME_CONFLICT);
+        }
     }
 
 }

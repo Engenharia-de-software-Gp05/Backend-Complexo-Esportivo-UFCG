@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface ReservationService extends BasicService<Reservation, Long> {
-    Collection<ReservationResponseDto> findByCourtAndDateTime(Long courtId, LocalDateTime date);
+    ReservationResponseDto findByCourtAndStartDateTime(Long courtId, LocalDateTime date);
 
     Collection<ReservationResponseDto> findByUserId(Long userId);
 

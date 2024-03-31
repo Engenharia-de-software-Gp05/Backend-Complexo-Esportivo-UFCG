@@ -30,7 +30,19 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 AND reservation.startDateTime = :date
             """
     )
-    Collection<ReservationResponseDto> findByCourtAndDateTime(
+    ReservationResponseDto findByCourtAndStartDateTime(
+            @Param("courtId") Long courtId,
+            @Param("date") LocalDateTime date
+    );
+
+    @Query("""
+                SELECT reservation
+                FROM Reservation reservation
+                WHERE reservation.court.id = :courtId
+                AND reservation.endDateTime = :date
+            """
+    )
+    ReservationResponseDto findByCourtAndEndtDateTime(
             @Param("courtId") Long courtId,
             @Param("date") LocalDateTime date
     );

@@ -1,8 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository.SaceUserRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceDataProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserDataProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +48,9 @@ public class SaceUserServiceImpl implements SaceUserService {
 
     @Override
     @Transactional
-    public List<SaceUserDataResponseDto> findAllUsersAsDto() {
-        Collection<SaceDataProjection> projections = repository.findAllUsersAsDto();
-        return projections.stream().map(SaceUserDataResponseDto::new).toList();
+    public List<SaceUserDataDto> findAllUsersAsDto() {
+        Collection<SaceUserDataProjection> projections = repository.findAllUsersAsDto();
+        return projections.stream().map(SaceUserDataDto::new).toList();
     }
 
 }
