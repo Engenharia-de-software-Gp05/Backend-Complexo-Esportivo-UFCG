@@ -34,7 +34,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                 @Param("courtId") Long courtId,
                 @Param("date") LocalDateTime date
         );
-        // i want a sql query that get all reservations from a court that are from a specific user and verify if their startDateTime plus the minimumTimeForOtherReservation is less than the startDateTime of the new reservation
         
         @Query("""
                 SELECT reservation
