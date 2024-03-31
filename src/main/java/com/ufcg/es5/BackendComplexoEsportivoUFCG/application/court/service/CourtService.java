@@ -7,9 +7,12 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
 
 public interface CourtService extends BasicService<Court, Long> {
+  
     CourtResponseDto create(CourtSaveDto data);
 
     CourtResponseDto update(CourtUpdateDto data, Long id);
+  
+    void delete(Long id);
 
     Court findByName(String name);
 

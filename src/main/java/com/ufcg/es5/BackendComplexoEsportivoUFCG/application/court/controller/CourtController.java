@@ -4,6 +4,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.Court
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,7 +48,7 @@ public class CourtController {
         CourtResponseDto response = service.create(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
+  
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
@@ -72,6 +73,20 @@ public class CourtController {
     ) {
         CourtResponseDto response = service.update(data, id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Delete a court.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204",
+            description = "Court is deleted.")})
+    public ResponseEntity<Void> delete(
+            @NotNull
+            @RequestParam("id")
+            Long id
+    ) {
+        service.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
