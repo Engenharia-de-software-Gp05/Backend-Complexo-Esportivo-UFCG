@@ -63,6 +63,19 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
+    public Collection<ReservationResponseDto> findByCourtIdAndTimeInterval(
+            Long courtId,
+            LocalDateTime startDataTime,
+            LocalDateTime endDataTime
+    ) throws SaceResourceNotFoundException {
+        courtService.findById(courtId).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(courtId)
+        ));
+        return this.repository.findByCourtIdAndTimeInterval(courtId, startDataTime, endDataTime);
+    }
+
+    @Override
+    @Transactional
     public Collection<ReservationResponseDto> findByUserId(Long userId) {
         return repository.findByUserId(userId);
     }
@@ -119,14 +132,6 @@ public class ReservationServiceImpl implements ReservationService {
         repository.delete(reservation);
     }
 
-    private void checkPermission(Long userId, Reservation reservation) {
-        if (!isOwner(userId, reservation)) {
-            throw new SaceForbiddenException(
-                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
-            );
-        }
-    }
-
     @Override
     @Transactional
     public void adminDeleteById(Long id) throws SaceResourceNotFoundException {
@@ -144,6 +149,11 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Boolean existsByCourtIdAndEndDataTime(Long courtId, LocalDateTime localDateTime) {
         return findByCourtIdAndEndtDateTime(courtId, localDateTime) != null;
+    }
+
+    @Override
+    public Boolean existsByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDataTime, LocalDateTime endDataTime) {
+        return !findByCourtIdAndTimeInterval(courtId, startDataTime, endDataTime).isEmpty();
     }
 
     private boolean isOwner(Long userId, Reservation reservation) {
@@ -165,11 +175,16 @@ public class ReservationServiceImpl implements ReservationService {
         );
     }
 
+    private void checkPermission(Long userId, Reservation reservation) {
+        if (!isOwner(userId, reservation)) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
+            );
+        }
+    }
+
     private void checkTimeAvailability(ReservationSaveDto data) {
-        if (
-                existsByCourtIdAndStartDataTime(data.courtId(), data.startDateTime()) ||
-                existsByCourtIdAndEndDataTime(data.courtId(), data.endDateTime())
-        ) {
+        if (existsByCourtIdAndTimeInterval(data.courtId(), data.startDateTime(), data.endDateTime())) {
             throw new SaceConflictException(ReservationExeceptionMessages.RESERVATION_TIME_CONFLICT
                     .formatted(data.startDateTime(), data.endDateTime()));
         }

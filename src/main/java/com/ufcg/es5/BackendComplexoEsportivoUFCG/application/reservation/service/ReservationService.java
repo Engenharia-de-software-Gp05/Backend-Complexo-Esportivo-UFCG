@@ -13,7 +13,9 @@ import java.util.Collection;
 public interface ReservationService extends BasicService<Reservation, Long> {
     ReservationResponseDto findByCourtIdAndStartDateTime(Long courtId, LocalDateTime date);
 
-    ReservationResponseDto findByCourtIdAndEndtDateTime(Long courtId, LocalDateTime date) throws SaceResourceNotFoundException;
+    ReservationResponseDto findByCourtIdAndEndtDateTime(Long courtId, LocalDateTime date);
+
+    Collection<ReservationResponseDto> findByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDataTime, LocalDateTime endDataTime);
 
     Collection<ReservationResponseDto> findByUserId(Long userId);
 
@@ -28,4 +30,7 @@ public interface ReservationService extends BasicService<Reservation, Long> {
     Boolean existsByCourtIdAndStartDataTime(Long courtid, LocalDateTime localDateTime);
 
     Boolean existsByCourtIdAndEndDataTime(Long courtid, LocalDateTime localDateTime);
+
+    Boolean existsByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDataTime, LocalDateTime endDataTime);
+
 }

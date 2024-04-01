@@ -47,4 +47,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("date") LocalDateTime date
     );
 
+    @Query("""
+            SELECT reservation
+            FROM Reservation reservation
+            WHERE reservation.court.id = :courtId AND
+            reservation.startDateTime >= :startDateTime AND
+            reservation.endDateTime <= :endDateTime
+            """)
+    Collection<ReservationResponseDto> findByCourtIdAndTimeInterval(
+            @Param("courtId") Long courtId,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime
+    );
+
 }
