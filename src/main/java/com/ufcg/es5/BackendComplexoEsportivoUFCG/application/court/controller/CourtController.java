@@ -49,21 +49,21 @@ public class CourtController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
   
-    @PutMapping("/update")
+    @PutMapping("/update/by/id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successfully update court",
+                    description = "Successfully updated court",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = CourtResponseDto.class))}),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Failed update court",
+                    description = "Failed updated court",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = CourtResponseDto.class))})
     })
-    public ResponseEntity<CourtResponseDto> update(
+    public ResponseEntity<CourtResponseDto> updateById(
             @Valid
             @RequestBody
             CourtUpdateDto data,
@@ -71,21 +71,21 @@ public class CourtController {
             @RequestParam("id")
             Long id
     ) {
-        CourtResponseDto response = service.update(data, id);
+        CourtResponseDto response = service.updateById(data, id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete")
+    @DeleteMapping(value = "/delete/by/id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a court.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
             description = "Court is deleted.")})
-    public ResponseEntity<Void> delete(
+    public ResponseEntity<Void> deleteById(
             @NotNull
             @RequestParam("id")
             Long id
     ) {
-        service.delete(id);
+        service.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

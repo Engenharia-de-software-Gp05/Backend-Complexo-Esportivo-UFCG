@@ -44,7 +44,7 @@ public class CourtServiceImpl implements CourtService {
 
     @Override
     @Transactional
-    public CourtResponseDto update(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException {
+    public CourtResponseDto updateById(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException {
         Court court = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
         ));
@@ -55,11 +55,11 @@ public class CourtServiceImpl implements CourtService {
 
     @Override
     @Transactional
-    public void delete(Long id) throws SaceResourceNotFoundException {
-        Court court = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+    public void deleteById(Long id) throws SaceResourceNotFoundException {
+        repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
         ));
-        repository.delete(court);
+        repository.deleteById(id);
     }
   
     @Override
@@ -81,8 +81,9 @@ public class CourtServiceImpl implements CourtService {
     }
     private void updateCourtData(Court court, CourtUpdateDto newData) {
         court.setName(newData.name());
-        court.setImagesUrls(newData.imagesUrls());
         court.setCourtAvailabilityStatusEnum(newData.courtStatusEnum());
+        court.getImagesUrls().clear();
+        court.getImagesUrls().addAll(newData.imagesUrls());
     }
 
 }

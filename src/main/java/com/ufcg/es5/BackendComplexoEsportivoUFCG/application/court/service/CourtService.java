@@ -10,9 +10,9 @@ public interface CourtService extends BasicService<Court, Long> {
   
     CourtResponseDto create(CourtSaveDto data);
 
-    CourtResponseDto update(CourtUpdateDto data, Long id);
+    CourtResponseDto updateById(CourtUpdateDto data, Long id);
   
-    void delete(Long id);
+    void deleteById(Long id);
 
     Court findByName(String name);
 
