@@ -7,14 +7,12 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUs
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
 import jakarta.transaction.Transactional;
@@ -47,11 +45,20 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public ReservationResponseDto findByCourtAndStartDateTime(Long courtId, LocalDateTime date) throws SaceResourceNotFoundException {
+    public ReservationResponseDto findByCourtIdAndStartDateTime(Long courtId, LocalDateTime date) throws SaceResourceNotFoundException {
         courtService.findById(courtId).orElseThrow(() -> new SaceResourceNotFoundException(
                 CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(courtId)
         ));
-        return this.repository.findByCourtAndStartDateTime(courtId, date);
+        return this.repository.findByCourtIdAndStartDateTime(courtId, date);
+    }
+
+    @Override
+    @Transactional
+    public ReservationResponseDto findByCourtIdAndEndtDateTime(Long courtId, LocalDateTime date) throws SaceResourceNotFoundException {
+        courtService.findById(courtId).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(courtId)
+        ));
+        return this.repository.findByCourtIdAndEndtDateTime(courtId, date);
     }
 
     @Override
@@ -101,7 +108,6 @@ public class ReservationServiceImpl implements ReservationService {
         return repository.save(reservation);
     }
 
-
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
@@ -114,7 +120,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private void checkPermission(Long userId, Reservation reservation) {
-        if (!isOwner(userId, reservation) && !authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
+        if (!isOwner(userId, reservation)) {
             throw new SaceForbiddenException(
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
@@ -123,9 +129,21 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public void adminDeleteById(Long id) {
-        Reservation reservation = repository.findById(id).orElseThrow();
+    public void adminDeleteById(Long id) throws SaceResourceNotFoundException {
+        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        ));
         repository.delete(reservation);
+    }
+
+    @Override
+    public Boolean existsByCourtIdAndStartDataTime(Long courtid, LocalDateTime localDateTime) {
+        return findByCourtIdAndStartDateTime(courtid, localDateTime) != null;
+    }
+
+    @Override
+    public Boolean existsByCourtIdAndEndDataTime(Long courtId, LocalDateTime localDateTime) {
+        return findByCourtIdAndEndtDateTime(courtId, localDateTime) != null;
     }
 
     private boolean isOwner(Long userId, Reservation reservation) {
@@ -147,12 +165,13 @@ public class ReservationServiceImpl implements ReservationService {
         );
     }
 
-    private void checkTimeAvailability(ReservationSaveDto reservationSaveDto) {
+    private void checkTimeAvailability(ReservationSaveDto data) {
         if (
-                repository.findByCourtAndStartDateTime(reservationSaveDto.courtId(), reservationSaveDto.startDateTime()) != null ||
-                repository.findByCourtAndEndtDateTime(reservationSaveDto.courtId(), reservationSaveDto.endDateTime()) != null
+                existsByCourtIdAndStartDataTime(data.courtId(), data.startDateTime()) ||
+                existsByCourtIdAndEndDataTime(data.courtId(), data.endDateTime())
         ) {
-            throw new SaceConflictException(ReservationExeceptionMessages.RESERVATION_TIME_CONFLICT);
+            throw new SaceConflictException(ReservationExeceptionMessages.RESERVATION_TIME_CONFLICT
+                    .formatted(data.startDateTime(), data.endDateTime()));
         }
     }
 

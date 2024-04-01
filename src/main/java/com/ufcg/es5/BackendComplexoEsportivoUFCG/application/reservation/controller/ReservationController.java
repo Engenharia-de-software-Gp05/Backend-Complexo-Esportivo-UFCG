@@ -55,10 +55,10 @@ public class ReservationController {
             description = "Court reservations are returned.",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = ReservationResponseDto[].class)))})})
-    public ResponseEntity<ReservationResponseDto> findByCourtAndStartDateTime(
+    public ResponseEntity<ReservationResponseDto> findByCourtIdAndStartDateTime(
             @RequestParam Long courtId,
             @RequestParam LocalDateTime date) {
-        ReservationResponseDto response = service.findByCourtAndStartDateTime(courtId, date);
+        ReservationResponseDto response = service.findByCourtIdAndStartDateTime(courtId, date);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
