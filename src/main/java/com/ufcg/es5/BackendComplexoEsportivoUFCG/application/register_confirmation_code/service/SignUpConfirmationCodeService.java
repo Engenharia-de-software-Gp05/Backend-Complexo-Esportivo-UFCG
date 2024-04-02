@@ -5,7 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SignUpConfirmationCode;
 
 public interface SignUpConfirmationCodeService extends BasicService<SignUpConfirmationCode, Long> {
 
-    void generateAndSend(Long userId);
+    void generate(Long userId);
 
     SignUpConfirmationCode findByUserId(Long userId);
 

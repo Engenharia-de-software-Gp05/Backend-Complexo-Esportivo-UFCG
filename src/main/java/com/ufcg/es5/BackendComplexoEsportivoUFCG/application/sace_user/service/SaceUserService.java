@@ -3,6 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 
@@ -14,9 +15,9 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
 
     boolean existsByEmail(String email);
 
-    boolean existsByStudentId(String s);
+    boolean existsByStudentId(String studentId);
 
-    SaceUser findByEmail(String email);
+    Optional<SaceUser> findByEmail(String email);
 
     Optional<Long> findIdByEmail(String email);
 
@@ -25,4 +26,9 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
     SaceUserNameEmailDto findNameEmailById(Long id);
 
     void updateUserRolesById(Set<SaceUserRoleEnum> roleUser, Long id);
+
+    Optional<SaceUser> findByStudentId(String studentId);
+
+
+    SaceUserResponseDto findByEmailAsDto(String email);
 }

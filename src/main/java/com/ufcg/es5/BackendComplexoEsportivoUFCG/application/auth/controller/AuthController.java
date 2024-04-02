@@ -96,7 +96,6 @@ public class AuthController {
     }
 
     @PostMapping("/recover-password")
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -111,7 +110,7 @@ public class AuthController {
     }
 
     @PostMapping("/update/password")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN') and hasRole('ROLE_ACTIVE')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -152,5 +151,5 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    
+
 }

@@ -63,7 +63,13 @@ public class TokenService {
 
     @Transactional
     public Authentication getAuthentication(String username) {
-        SaceUser user = userService.findByEmail(username);
+        SaceUser user = userService.findByEmail(username).orElseGet(
+                () -> userService.findByStudentId(username).orElseThrow(
+                        () -> new SaceResourceNotFoundException(
+                                SaceUserExceptionMessages.USER_WITH_USERNAME_NOT_FOUND.formatted(username)
+                        )
+                )
+        );
 
         return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
     }

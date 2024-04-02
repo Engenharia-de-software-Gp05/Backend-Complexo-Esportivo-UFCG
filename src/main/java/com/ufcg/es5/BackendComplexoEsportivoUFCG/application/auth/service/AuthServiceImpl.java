@@ -5,10 +5,10 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmati
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.token.TokenService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
@@ -55,7 +55,9 @@ class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthTokenDto login(AuthUsernamePasswordDto credentials) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(credentials.username(), credentials.password());
+        SaceUser user = findUserByUsername(credentials.username());
+
+        var usernamePassword = new UsernamePasswordAuthenticationToken(user.getEmail(), credentials.password());
         var auth = authenticationManager.authenticate(usernamePassword);
         var token = tokenService
                 .generateToken((SaceUser) auth.getPrincipal(), EXPIRATION_TIME_FOR_LOGIN_TOKEN);
@@ -66,13 +68,23 @@ class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void recoverPassword(String username) {
-        SaceUser user = saceUserService.findByEmail(username);
+        SaceUser user = findUserByUsername(username);
 
         var token = tokenService
                 .generateToken(user, EXPIRATION_TIME_FOR_RECOVER_PASSWORD_TOKEN);
         // TODO
         // fazer constantes pras urls e usar formatter pra criar o link aqui.
         mailService.sendRecoverPasswordLinkEmail(user.getName(), token, user.getEmail());
+    }
+
+    public SaceUser findUserByUsername(String username) {
+        return saceUserService.findByEmail(username).orElseGet(
+                () -> saceUserService.findByStudentId(username).orElseThrow(
+                        () -> new SaceResourceNotFoundException(
+                                SaceUserExceptionMessages.USER_WITH_USERNAME_NOT_FOUND.formatted(username)
+                        )
+                )
+        );
     }
 
     @Override
@@ -95,7 +107,7 @@ class AuthServiceImpl implements AuthService {
     public void confirmEmailRegistered(String confirmationCode) {
         Long requesterUserId = authenticatedUser.getAuthenticatedUserId();
 
-        if(!confirmationCodeService.existsByUserIdAndConfirmationCode(requesterUserId, confirmationCode)){
+        if (!confirmationCodeService.existsByUserIdAndConfirmationCode(requesterUserId, confirmationCode)) {
             throw new SaceResourceNotFoundException(
                     SaceUserExceptionMessages.CONFIRMATION_CODE_IS_NOT_RELATED_TO_USER_WITH_ID.formatted(confirmationCode, requesterUserId)
             );
@@ -113,7 +125,7 @@ class AuthServiceImpl implements AuthService {
         SaceUser newUser = makeUser(credentials, encodedPassword);
         SaceUser user = saceUserService.save(newUser);
 
-        confirmationCodeService.generateAndSend(user.getId());
+        confirmationCodeService.generate(user.getId());
         return new SaceUserResponseDto(user.getEmail(), user.getName());
     }
 

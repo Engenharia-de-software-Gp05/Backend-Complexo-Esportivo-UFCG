@@ -3,7 +3,6 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.controll
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,8 +47,7 @@ public class SaceUserController {
             @RequestParam(EMAIL_PROPERTY)
             String email
     ) {
-        SaceUser user = service.findByEmail(email);
-        SaceUserResponseDto response = new SaceUserResponseDto(user.getEmail(), user.getName());
+        SaceUserResponseDto response = service.findByEmailAsDto(email);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

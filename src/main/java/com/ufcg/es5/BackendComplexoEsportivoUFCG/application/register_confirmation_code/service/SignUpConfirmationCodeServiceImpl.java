@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Service
-public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCodeService{
+public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCodeService {
 
 
     @Autowired
@@ -39,12 +39,16 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
 
     @Override
     @Transactional
-    public void generateAndSend(Long userId) {
+    public void generate(Long userId) {
         checkIfUserAlreadyHasCode(userId);
 
         String confirmationCode = RandomStringGenerator.randomAlphaNumeric(6);
         save(userId, confirmationCode);
 
+        publishSavedEvent(userId, confirmationCode);
+    }
+
+    private void publishSavedEvent(Long userId, String confirmationCode) {
         SignUpConfirmationCodeUserIdConfirmationCodeDto userIdConfirmationCodeDto = new SignUpConfirmationCodeUserIdConfirmationCodeDto(userId, confirmationCode);
         SavedEvent<SignUpConfirmationCodeUserIdConfirmationCodeDto> savedEvent = new SavedEvent<>(
                 userIdConfirmationCodeDto, SignUpConfirmationCodeUserIdConfirmationCodeDto.class
@@ -53,8 +57,9 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
         eventPublisher.publishEvent(savedEvent);
     }
 
+
     private void checkIfUserAlreadyHasCode(Long userId) {
-        if(existsByUserId(userId)){
+        if (existsByUserId(userId)) {
             throw new SaceConflictException(
                     SaceUserExceptionMessages.USER_WITH_ID_ALREADY_HAS_AN_ACTIVE_CODE.formatted(userId)
             );
@@ -99,7 +104,7 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
         collect(localDateTime);
     }
 
-    private void collect(LocalDateTime dateTime){
+    private void collect(LocalDateTime dateTime) {
         Collection<Long> confirmationCodesToDelete = repository.findAllBeforeDateTime(dateTime);
         repository.deleteAllById(confirmationCodesToDelete);
     }
