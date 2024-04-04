@@ -38,7 +38,7 @@ public class CourtServiceImpl implements CourtService {
     public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
         Court court = objectMapper.convertValue(data, Court.class);
-        repository.save(court);
+        this.save(court);
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
 
@@ -49,19 +49,17 @@ public class CourtServiceImpl implements CourtService {
                 CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
         ));
         updateCourtData(court, data);
-        repository.save(court);
+        this.save(court);
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException {
-        repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
-                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
-        ));
+        checkIfExistsById(id);
         repository.deleteById(id);
     }
-  
+
     @Override
     public Court findByName(String name) {
         return repository.findByName(name);
@@ -79,11 +77,20 @@ public class CourtServiceImpl implements CourtService {
             );
         }
     }
+
     private void updateCourtData(Court court, CourtUpdateDto newData) {
         court.setName(newData.name());
         court.setCourtAvailabilityStatusEnum(newData.courtStatusEnum());
         court.getImagesUrls().clear();
         court.getImagesUrls().addAll(newData.imagesUrls());
+    }
+
+    private void checkIfExistsById(Long id) {
+        if (this.exists(id)) {
+            throw new SaceResourceNotFoundException(
+                    CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+            );
+        }
     }
 
 }

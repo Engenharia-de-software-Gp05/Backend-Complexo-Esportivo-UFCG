@@ -68,7 +68,7 @@ public class ReservationServiceImpl implements ReservationService {
                 ReservationAvailabilityStatusEnum.BOOKED
         );
 
-        return repository.save(reservation);
+        return this.save(reservation);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+        Reservation reservation = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
         ));
         Long userId = authenticatedUser.getAuthenticatedUserId();
