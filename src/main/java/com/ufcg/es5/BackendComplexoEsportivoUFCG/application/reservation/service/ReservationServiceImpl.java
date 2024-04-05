@@ -69,7 +69,7 @@ public class ReservationServiceImpl implements ReservationService {
                 ReservationAvailabilityStatusEnum.BOOKED
         );
 
-        return repository.save(reservation);
+        return this.save(reservation);
     }
 
     @Override
@@ -92,13 +92,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+        Reservation reservation = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
         ));
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkUserReservation(userId, reservation);
-        checkReservationTimeValidity(reservation);
-        repository.delete(reservation);
+        checkCancellationTimeLimit(reservation);
+        this.deleteById(reservation.getId());
     }
 
     @Override
@@ -129,12 +129,12 @@ public class ReservationServiceImpl implements ReservationService {
         );
     }
 
-    private void checkReservationTimeValidity(Reservation reservation) {
+    private void checkCancellationTimeLimit(Reservation reservation) {
         LocalDateTime now = LocalDateTime.now();
 
         if (reservation.getStartDateTime().isBefore(now.plusHours(24))) {
             throw new SaceForbiddenException(
-                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
+                    ReservationExeceptionMessages.RESERVATION_CANCELLATION_TIME_EXPIRED
             );
         }
     }
@@ -142,7 +142,7 @@ public class ReservationServiceImpl implements ReservationService {
     private void checkUserReservation(Long userId, Reservation reservation) {
         if (!isOwner(userId, reservation)) {
             throw new SaceForbiddenException(
-                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
+                    ReservationExeceptionMessages.RESERVATION_NOT_BELONGS_TO_USER.formatted(reservation.getId(), userId)
             );
         }
     }
