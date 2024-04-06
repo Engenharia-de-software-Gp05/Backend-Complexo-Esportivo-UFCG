@@ -18,7 +18,7 @@ public class Court extends BasicEntity {
     private static final String NAME_COLUMN = "name";
     private static final String COURT_PROPERTY = "court";
     private static final String STATUS_COLUMN = "status";
-    private static final String MINIMUM_TIME_FOR_OTHER_RESERVATION = "min_time_for_other_reservation";
+    private static final String MINIMUM_TIME_FOR_OTHER_RESERVATION = "  ";
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
@@ -44,6 +44,13 @@ public class Court extends BasicEntity {
         this.name = name;
         this.imagesUrls = imagesUrls;
         this.courtAvailabilityStatusEnum = status;
+    }
+
+    public Court(String name, List<String> imagesUrls, CourtAvailabilityStatusEnum status, Long minimumTimeForOtherReservation) {
+        this.name = name;
+        this.imagesUrls = imagesUrls;
+        this.courtAvailabilityStatusEnum = status;
+        this.minimumTimeForOtherReservation = minimumTimeForOtherReservation;
     }
 
     public void addImageUrl(String imageUrl) {

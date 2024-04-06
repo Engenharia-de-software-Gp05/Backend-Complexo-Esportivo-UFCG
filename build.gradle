@@ -47,6 +47,7 @@ dependencies {
 	compileOnly'org.modelmapper:modelmapper:3.1.0'
 	implementation 'org.modelmapper:modelmapper:3.1.1'
 	implementation 'javax.servlet:javax.servlet-api:4.0.0'
+	implementation 'org.hibernate:hibernate-core:4.1.4.Final'
 
 	/*Object Mapper suporte para LocalDateTime*/
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'

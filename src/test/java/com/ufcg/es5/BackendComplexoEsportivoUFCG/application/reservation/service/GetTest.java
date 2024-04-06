@@ -2,19 +2,11 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.servic
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationServiceImpl;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
@@ -25,10 +17,11 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.Collection;
 
 @SpringBootTest
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE);
@@ -72,6 +65,11 @@ public class GetTest {
         createUsers();  
         createCourts();
         createReservations();
+    }
+
+    @Test
+    public void teste1(){
+        assertEquals(0, 0);
     }
     
     @Test
@@ -135,14 +133,16 @@ public class GetTest {
         court = new Court(
                 COURT_NAME,
                 List.of(COURT_IMAGE_URL),
-                CourtAvailabilityStatusEnum.AVAILABLE
+                CourtAvailabilityStatusEnum.AVAILABLE,
+                3L
         );
         court = courtService.save(court);
 
         court2 = new Court(
                 COURT_NAME_2,
                 List.of(COURT_IMAGE_URL),
-                CourtAvailabilityStatusEnum.AVAILABLE
+                CourtAvailabilityStatusEnum.AVAILABLE,
+                3L
         );
         court2 = courtService.save(court2);
 
