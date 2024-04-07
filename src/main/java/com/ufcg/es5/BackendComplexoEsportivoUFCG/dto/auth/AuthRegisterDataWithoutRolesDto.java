@@ -1,17 +1,19 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record AuthRegisterDataWithoutRolesDto(
-        @NotNull
+        @NotEmpty
         String email,
-        @NotNull
+        @NotEmpty
         String name,
-        @NotNull
+        @NotEmpty
         String phoneNumber,
-        @NotNull
+        @NotEmpty
         String studentId,
-        @NotNull
+        @NotEmpty
         String password
 ) {
 }

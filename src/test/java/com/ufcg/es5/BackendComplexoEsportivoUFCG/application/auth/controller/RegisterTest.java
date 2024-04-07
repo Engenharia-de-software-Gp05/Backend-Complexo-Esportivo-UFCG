@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
 import org.apache.http.HttpHeaders;
@@ -36,49 +37,49 @@ class RegisterTest extends BasicTestController {
     private ObjectMapper objectMapper;
 
     @ParameterizedTest
-    @DisplayName("Should return Success. Code: 200")
-    @MethodSource(value = "returnSuccess")
-    void returnSuccess(String username, String password) throws Exception {
-        String payload = makeRequestPayload(username, password);
-        AuthUsernamePasswordDto servicePayload = new AuthUsernamePasswordDto(username, password);
+    @DisplayName("Should return Created. Code: 201")
+    @MethodSource(value = "returnCreated")
+    void returnCreated(AuthRegisterDataWithoutRolesDto registerDataWithoutRolesDto) throws Exception {
+        String payload = makeRequestPayload(registerDataWithoutRolesDto);
+        System.out.println(payload);
         AuthTokenDto response = makeResponse();
 
-        Mockito.when(authService.login(servicePayload))
+        Mockito.when(authService.register(registerDataWithoutRolesDto))
                 .thenReturn(response);
 
-        callEndpoint(payload).andExpect(status().isOk()).andReturn();
+        callEndpoint(payload).andExpect(status().isCreated()).andReturn();
     }
 
-    private static Stream<Arguments> returnSuccess() {
+    private static Stream<Arguments> returnCreated() {
         return Stream.of(
-                Arguments.of("username", "password"),
-                Arguments.of("12121212", "password")
-        );
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email@gmail.com","name", "83966666666", "1212121212", "password"))
+                );
     }
 
-    private String makeRequestPayload(String username, String password) throws JsonProcessingException {
-        Map<String, Object> payload = new HashMap<>();
-
-        payload.put(PropertyConstants.USERNAME, username);
-        payload.put(PropertyConstants.PASSWORD, password);
-
+    private String makeRequestPayload(AuthRegisterDataWithoutRolesDto payload) throws JsonProcessingException {
         return objectMapper.writeValueAsString(payload);
     }
 
     @ParameterizedTest
     @DisplayName("Should return BadRequest ")
     @MethodSource(value = "returnBadRequest")
-    void returnBadRequest(String username, String password) throws Exception {
-        String payload = makeRequestPayload(username, password);
+    void returnBadRequest(AuthRegisterDataWithoutRolesDto registerDataWithoutRolesDto) throws Exception {
+        String payload = makeRequestPayload(registerDataWithoutRolesDto);
 
         callEndpoint(payload).andExpect(status().isBadRequest()).andReturn();
     }
     private static Stream<Arguments> returnBadRequest() {
         return Stream.of(
-                Arguments.of("", "password"),
-                Arguments.of("12121212", ""),
-                Arguments.of(null, "password"),
-                Arguments.of("12121212", null)
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("","name", "83966666666", "1212121212", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto(null,"name", "83966666666", "1212121212", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","", "83966666666", "1212121212", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email",null, "83966666666", "1212121212", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","name", "", "1212121212", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","name", null, "1212121212", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","name", "83966666666", "", "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","name", "83966666666", null, "password")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","name", "83966666666", "1212121212", "")),
+                Arguments.of(new AuthRegisterDataWithoutRolesDto("email","name", "83966666666", "1212121212", null))
         );
     }
     private ResultActions callEndpoint(String payload) throws Exception {
