@@ -1,19 +1,23 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
-import jakarta.validation.constraints.Min;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint.EmailConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstraint.PhoneNumberConstraint;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record AuthRegisterDataWithoutRolesDto(
-        @NotEmpty
+        @EmailConstraint
         String email,
         @NotEmpty
+        @Size(min = 8)
         String name,
-        @NotEmpty
+        @PhoneNumberConstraint
         String phoneNumber,
         @NotEmpty
+        @Size(min = 9, max = 9)
         String studentId,
         @NotEmpty
+        @Size(min = 8, max = 32)
         String password
 ) {
 }
