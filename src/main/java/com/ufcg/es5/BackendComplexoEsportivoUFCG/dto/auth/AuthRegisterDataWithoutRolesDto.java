@@ -11,7 +11,7 @@ public record AuthRegisterDataWithoutRolesDto(
         @NotEmpty
         @Size(min = 8)
         String name,
-        @PhoneNumberConstraint
+        @NotEmpty
         String phoneNumber,
         @NotEmpty
         @Size(min = 9, max = 9)
