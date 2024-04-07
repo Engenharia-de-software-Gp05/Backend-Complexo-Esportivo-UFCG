@@ -1,7 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.formatters.DateTimeUtils;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -19,9 +21,13 @@ public class Reservation extends BasicEntity {
     private static final String STATUS_COLUMN = "status";
 
     @Column(name = START_DATE_TIME_COLUMN, nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDateTime;
 
     @Column(name = END_DATE_TIME_COLUMN, nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDateTime;
 
     @ManyToOne

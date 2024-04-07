@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ import java.util.Set;
 class AuthServiceImpl implements AuthService {
 
     private static final Long EXPIRATION_TIME_FOR_LOGIN_TOKEN = 120L;
+    private static final Long EXPIRATION_TIME_FOR_REGISTER_TOKEN = 15L;
     private static final Long EXPIRATION_TIME_FOR_RECOVER_PASSWORD_TOKEN = 5L;
 
     @Autowired
@@ -57,9 +59,9 @@ class AuthServiceImpl implements AuthService {
     public AuthTokenDto login(AuthUsernamePasswordDto credentials) {
         SaceUser user = findUserByUsername(credentials.username());
 
-        var usernamePassword = new UsernamePasswordAuthenticationToken(user.getEmail(), credentials.password());
-        var auth = authenticationManager.authenticate(usernamePassword);
-        var token = tokenService
+        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(user.getEmail(), credentials.password());
+        Authentication auth = authenticationManager.authenticate(usernamePassword);
+        String token = tokenService
                 .generateToken((SaceUser) auth.getPrincipal(), EXPIRATION_TIME_FOR_LOGIN_TOKEN);
 
         return new AuthTokenDto(token);
@@ -70,7 +72,7 @@ class AuthServiceImpl implements AuthService {
     public void recoverPassword(String username) {
         SaceUser user = findUserByUsername(username);
 
-        var token = tokenService
+        String token = tokenService
                 .generateToken(user, EXPIRATION_TIME_FOR_RECOVER_PASSWORD_TOKEN);
         // TODO
         // fazer constantes pras urls e usar formatter pra criar o link aqui.
@@ -118,7 +120,7 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public SaceUserResponseDto register(AuthRegisterDataWithoutRolesDto credentials) {
+    public AuthTokenDto register(AuthRegisterDataWithoutRolesDto credentials) {
         this.checkIfUserExists(credentials.email());
 
         String encodedPassword = passwordEncoder.encode(credentials.password());
@@ -126,12 +128,16 @@ class AuthServiceImpl implements AuthService {
         SaceUser user = saceUserService.save(newUser);
 
         confirmationCodeService.generate(user.getId());
-        return new SaceUserResponseDto(user.getEmail(), user.getName());
+
+        String token = tokenService
+                .generateToken(user, EXPIRATION_TIME_FOR_REGISTER_TOKEN);
+
+        return new AuthTokenDto(token);
     }
 
     @Override
     @Transactional
-    public SaceUserResponseDto registerWithRoles(AuthRegisterDataWithRolesDto credentials) {
+    public SaceUserResponseDto registerByAdmin(AuthRegisterDataWithRolesDto credentials) {
         this.checkIfUserExists(credentials.email());
 
         String temporaryPassword = RandomStringGenerator.randomIncludingSpecialCharacters(12);

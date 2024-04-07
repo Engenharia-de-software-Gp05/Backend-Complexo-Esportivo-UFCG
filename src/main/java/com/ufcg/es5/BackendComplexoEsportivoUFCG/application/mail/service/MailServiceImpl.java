@@ -39,9 +39,7 @@ public class MailServiceImpl implements MailService {
         this.javaMailSender = javaMailSender;
     }
 
-    @Override
-    @Transactional
-    public void sendMail(Message message, String mailDestiny) throws InternalException {
+    private void sendMail(Message message, String mailDestiny) throws InternalException {
         try {
             var mail = javaMailSender.createMimeMessage();
             var helper = new MimeMessageHelper(mail, true, "UTF-8");
