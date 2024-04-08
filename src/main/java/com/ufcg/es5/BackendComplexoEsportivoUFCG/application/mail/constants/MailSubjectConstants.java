@@ -9,5 +9,5 @@ public class MailSubjectConstants {
     public static final String RESERVATION_CANCELLED_BY_ADMIN_SUBJECT = "Reserva cancelada.";
     public static final String RECOVER_PASSWORD_LINK_SUBJECT = "Recuperação de senha.";
 
-    public MailSubjectConstants(){}
+    private MailSubjectConstants(){}
 }

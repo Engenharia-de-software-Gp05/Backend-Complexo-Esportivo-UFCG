@@ -89,5 +89,4 @@ public class SaceUserServiceImpl implements SaceUserService {
         SaceUser user = findByEmail(email).orElseThrow();
         return objectMapper.convertValue(user, SaceUserResponseDto.class);
     }
-
 }

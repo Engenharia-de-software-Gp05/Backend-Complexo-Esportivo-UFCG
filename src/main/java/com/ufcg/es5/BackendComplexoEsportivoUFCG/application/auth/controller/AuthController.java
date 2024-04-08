@@ -17,14 +17,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
 @RequestMapping("auth")
+
 public class AuthController {
 
     @Autowired
@@ -58,22 +56,22 @@ public class AuthController {
                     responseCode = "200",
                     description = "Successfully registered",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
+                            schema = @Schema(implementation = AuthTokenDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "Failed authentication",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
-    public ResponseEntity<SaceUserResponseDto> register(
+                            schema = @Schema(implementation = AuthTokenDto.class))})})
+    public ResponseEntity<AuthTokenDto> register(
             @RequestBody
             @Valid
             AuthRegisterDataWithoutRolesDto data
     ) {
-        SaceUserResponseDto response = service.register(data);
+        AuthTokenDto response = service.register(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/register/admin")
+    @PostMapping("/register/by/admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -86,12 +84,12 @@ public class AuthController {
                     description = "Failed authentication",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = SaceUserResponseDto.class))})})
-    public ResponseEntity<SaceUserResponseDto> registerAddingRoles(
+    public ResponseEntity<SaceUserResponseDto> registerByAdmin(
             @RequestBody
             @Valid
             AuthRegisterDataWithRolesDto data
     ) {
-        SaceUserResponseDto response = service.registerWithRoles(data);
+        SaceUserResponseDto response = service.registerByAdmin(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -103,6 +101,7 @@ public class AuthController {
     })
     public ResponseEntity<Void> recoverPassword(
             @NotBlank
+            @RequestParam("username")
             String username
     ) {
         service.recoverPassword(username);
@@ -124,6 +123,7 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserResponseDto.class))})})
     public ResponseEntity<Void> updatePassword(
             @NotBlank
+            @RequestParam("newPassword")
             String newPassword
     ) {
         service.updatePassword(newPassword);
@@ -145,11 +145,11 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserResponseDto.class))})})
     public ResponseEntity<Void> confirmRegisterCode(
             @NotBlank
+            @RequestParam("confirmationCode")
             String confirmationCode
     ) {
         service.confirmEmailRegistered(confirmationCode);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
 }

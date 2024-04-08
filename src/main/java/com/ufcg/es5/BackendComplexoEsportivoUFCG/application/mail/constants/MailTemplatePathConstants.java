@@ -9,5 +9,5 @@ public class MailTemplatePathConstants {
     public static final String RESERVATION_CANCELLED_BY_ADMIN_TEMPLATE_PATH = "src/main/resources/email_templates/reservation_cancelled_by_admin/reservation-cancelled-by-admin-email.minified.html";
     public static final String RECOVER_PASSWORD_LINK_TEMPLATE_PATH = "src/main/resources/email_templates/recover_password_link/recover-password-link-email-minified.html";
 
-    public MailTemplatePathConstants(){}
+    private MailTemplatePathConstants(){}
 }

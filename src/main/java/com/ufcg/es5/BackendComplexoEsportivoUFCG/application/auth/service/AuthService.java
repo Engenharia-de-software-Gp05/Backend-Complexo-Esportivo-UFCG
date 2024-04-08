@@ -9,9 +9,9 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseD
 public interface AuthService {
     AuthTokenDto login(AuthUsernamePasswordDto data);
 
-    SaceUserResponseDto register(AuthRegisterDataWithoutRolesDto data);
+    AuthTokenDto register(AuthRegisterDataWithoutRolesDto data);
 
-    SaceUserResponseDto registerWithRoles(AuthRegisterDataWithRolesDto data);
+    SaceUserResponseDto registerByAdmin(AuthRegisterDataWithRolesDto data);
 
     void recoverPassword(String username);
 

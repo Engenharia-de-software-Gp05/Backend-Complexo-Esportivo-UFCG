@@ -1,11 +1,11 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record AuthUsernamePasswordDto(
-        @NotNull
+        @NotBlank
         String username,
-        @NotNull
+        @NotBlank
         String password
 ) {
 }
