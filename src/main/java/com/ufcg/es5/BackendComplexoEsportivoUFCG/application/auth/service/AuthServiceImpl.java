@@ -81,7 +81,7 @@ class AuthServiceImpl implements AuthService {
         return saceUserService.findByEmail(username).orElseGet(
                 () -> saceUserService.findByStudentId(username).orElseThrow(
                         () -> new SaceResourceNotFoundException(
-                                SaceUserExceptionMessages.USER_WITH_USERNAME_NOT_FOUND.formatted(username)
+                                String.format(SaceUserExceptionMessages.USER_WITH_USERNAME_NOT_FOUND, username)
                         )
                 )
         );
@@ -146,7 +146,9 @@ class AuthServiceImpl implements AuthService {
 
     private void checkIfUserExists(String username) {
         if (saceUserService.existsByEmail(username)) {
-            throw new SaceConflictException(SaceUserExceptionMessages.USER_WITH_EMAIL_ALREADY_EXISTS);
+            throw new SaceConflictException(
+                    String.format(SaceUserExceptionMessages.USER_WITH_EMAIL_ALREADY_EXISTS, username)
+            );
         }
     }
 
