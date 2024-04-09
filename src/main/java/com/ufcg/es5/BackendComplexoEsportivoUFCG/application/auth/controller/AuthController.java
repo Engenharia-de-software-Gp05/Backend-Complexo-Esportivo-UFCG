@@ -1,6 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
@@ -21,14 +23,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Validated
-@RequestMapping("auth")
-
+@RequestMapping(AuthPathConstants.PREFIX)
 public class AuthController {
 
     @Autowired
     private AuthService service;
 
-    @PostMapping("/login")
+    @PostMapping(AuthPathConstants.LOGIN_PATH)
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -50,7 +51,7 @@ public class AuthController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
+    @PostMapping(AuthPathConstants.REGISTER_PATH)
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -71,7 +72,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/register/by/admin")
+    @PostMapping(AuthPathConstants.REGISTER_ADMIN_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -93,7 +94,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/recover-password")
+    @PostMapping(AuthPathConstants.RECOVER_PASSWORD_PATH)
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -101,14 +102,14 @@ public class AuthController {
     })
     public ResponseEntity<Void> recoverPassword(
             @NotBlank
-            @RequestParam("username")
+            @RequestParam(PropertyConstants.USERNAME)
             String username
     ) {
         service.recoverPassword(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/update/password")
+    @PostMapping(AuthPathConstants.UPDATE_PASSWORD_PATH)
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -123,14 +124,14 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserResponseDto.class))})})
     public ResponseEntity<Void> updatePassword(
             @NotBlank
-            @RequestParam("newPassword")
+            @RequestParam(PropertyConstants.NEW_PASSWORD)
             String newPassword
     ) {
         service.updatePassword(newPassword);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/confirm/register")
+    @PostMapping(AuthPathConstants.CONFIRM_REGISTER_PATH)
     @PreAuthorize("hasRole('ROLE_PENDING')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -145,11 +146,10 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserResponseDto.class))})})
     public ResponseEntity<Void> confirmRegisterCode(
             @NotBlank
-            @RequestParam("confirmationCode")
+            @RequestParam(PropertyConstants.CONFIRMATION_CODE)
             String confirmationCode
     ) {
         service.confirmEmailRegistered(confirmationCode);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

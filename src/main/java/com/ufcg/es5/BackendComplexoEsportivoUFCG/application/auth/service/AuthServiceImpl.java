@@ -32,6 +32,7 @@ class AuthServiceImpl implements AuthService {
     private static final Long EXPIRATION_TIME_FOR_LOGIN_TOKEN = 120L;
     private static final Long EXPIRATION_TIME_FOR_REGISTER_TOKEN = 15L;
     private static final Long EXPIRATION_TIME_FOR_RECOVER_PASSWORD_TOKEN = 5L;
+    private static final int PASSWORD_SIZE = 12;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -140,7 +141,7 @@ class AuthServiceImpl implements AuthService {
     public SaceUserResponseDto registerByAdmin(AuthRegisterDataWithRolesDto credentials) {
         this.checkIfUserExists(credentials.email());
 
-        String temporaryPassword = RandomStringGenerator.randomIncludingSpecialCharacters(12);
+        String temporaryPassword = RandomStringGenerator.randomIncludingSpecialCharacters(PASSWORD_SIZE);
 
         String encodedPassword = passwordEncoder.encode(temporaryPassword);
         SaceUser newUser = makeUserWithRoles(credentials, encodedPassword);
@@ -174,7 +175,6 @@ class AuthServiceImpl implements AuthService {
                 data.email(),
                 data.name(),
                 data.phoneNumber(),
-                data.studentId(),
                 encodedPassword,
                 data.userRoles()
         );

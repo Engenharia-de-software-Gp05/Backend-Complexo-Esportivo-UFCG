@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmation_code.job;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.job;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmation_code.service.SignUpConfirmationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,21 +7,24 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @EnableScheduling
 @Profile("!test")
-public class ConfirmationCodeGarbageCollector {
+public class GarbageCollector {
 
     @Autowired
     SignUpConfirmationCodeService confirmationCodeService;
 
     /**
-     * Delete confirmation codes with more than 5 minutes
+     * Collect garbage
      * <p>
-     * Every 1 minute at :00
+     * Every 00:00
      */
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void collect() {
-        confirmationCodeService.collect();
+        LocalDateTime dateTime = LocalDateTime.now();
+        confirmationCodeService.collect(dateTime);
     }
 }

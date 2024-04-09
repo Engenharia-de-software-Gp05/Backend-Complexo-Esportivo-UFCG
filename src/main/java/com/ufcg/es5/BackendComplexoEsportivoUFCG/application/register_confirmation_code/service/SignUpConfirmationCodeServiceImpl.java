@@ -18,10 +18,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCodeService {
 
+
+    private static final long EXPIRATION_TIME = 5L;
+    private static final int CONFIRMATION_CODE_SIZE = 6;
 
     @Autowired
     private SignUpConfirmationCodeRepository repository;
@@ -31,6 +35,7 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+    private long EXPIRATION;
 
     @Override
     public JpaRepository<SignUpConfirmationCode, Long> getRepository() {
@@ -40,12 +45,11 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     @Override
     @Transactional
     public void generate(Long userId) {
-        checkIfUserAlreadyHasCode(userId);
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(EXPIRATION_TIME);
 
-        String confirmationCode = RandomStringGenerator.randomAlphaNumeric(6);
-        save(userId, confirmationCode);
+        SignUpConfirmationCode confirmationCode = save(userId, expiresAt);
 
-        publishSavedEvent(userId, confirmationCode);
+        publishSavedEvent(userId, confirmationCode.getConfirmationCode());
     }
 
     private void publishSavedEvent(Long userId, String confirmationCode) {
@@ -58,54 +62,64 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     }
 
 
-    private void checkIfUserAlreadyHasCode(Long userId) {
-        if (existsByUserId(userId)) {
+    private void checkIfUserHasActiveCode(SignUpConfirmationCode confirmationCode, Long userId) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        checkIfUserHasActiveCode(confirmationCode, currentTime, userId);
+    }
+
+    private void checkIfUserHasActiveCode(SignUpConfirmationCode confirmationCode, LocalDateTime currentTime, Long userId) {
+        if (confirmationCode.getExpiresAt().isBefore(currentTime)) {
             throw new SaceConflictException(
-                    SaceUserExceptionMessages.USER_WITH_ID_ALREADY_HAS_AN_ACTIVE_CODE.formatted(userId)
+                    String.format(SaceUserExceptionMessages.USER_WITH_ID_ALREADY_HAS_AN_ACTIVE_CODE, userId)
             );
         }
     }
 
     @Override
-    public SignUpConfirmationCode findByUserId(Long userId) {
+    public Optional<SignUpConfirmationCode> findByUserId(Long userId) {
         return repository.findByUserId(userId);
     }
 
     @Override
     public boolean existsByUserId(Long userId) {
-        return this.findByUserId(userId) != null;
+        return this.findByUserId(userId).isEmpty();
     }
 
     @Override
-    public SignUpConfirmationCode findByUserIdAndConfirmationCode(Long userId, String confirmationCode) {
+    public Optional<SignUpConfirmationCode> findByUserIdAndConfirmationCode(Long userId, String confirmationCode) {
         return repository.findByUserIdAndConfirmationCode(userId, confirmationCode);
     }
 
     @Override
     public boolean existsByUserIdAndConfirmationCode(Long userId, String confirmationCode) {
-        return this.findByUserIdAndConfirmationCode(userId, confirmationCode) != null;
+        return this.findByUserIdAndConfirmationCode(userId, confirmationCode).isEmpty();
     }
 
     @Override
     @Transactional
-    public void save(Long userId, String confirmationCode) {
+    public SignUpConfirmationCode save(Long userId, LocalDateTime expiresAt) {
+
         SaceUser user = userService.findById(userId).orElseThrow(
-                () -> new SaceResourceNotFoundException(SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND.formatted(userId))
+                () -> new SaceResourceNotFoundException(String.format(SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND, userId))
         );
 
-        SignUpConfirmationCode signUpConfirmationCode = new SignUpConfirmationCode(user, confirmationCode);
-        repository.save(signUpConfirmationCode);
+        SignUpConfirmationCode signUpConfirmationCode = findByUserId(userId).orElseGet(
+                () -> new SignUpConfirmationCode(expiresAt)
+        );
+
+        checkIfUserHasActiveCode(signUpConfirmationCode, userId);
+        String confirmationCode = RandomStringGenerator.randomAlphaNumeric(CONFIRMATION_CODE_SIZE);
+
+        signUpConfirmationCode.setUser(user);
+        signUpConfirmationCode.setConfirmationCode(confirmationCode);
+
+        return this.repository.save(signUpConfirmationCode);
     }
 
     @Override
     @Transactional
-    public void collect() {
-        LocalDateTime localDateTime = LocalDateTime.now().minusMinutes(5);
-        collect(localDateTime);
-    }
-
-    private void collect(LocalDateTime dateTime) {
-        Collection<Long> confirmationCodesToDelete = repository.findAllBeforeDateTime(dateTime);
+    public void collect(LocalDateTime dateTime) {
+        Collection<Long> confirmationCodesToDelete = repository.findAllBeforeDateTime(dateTime.minusMinutes(5L));
         repository.deleteAllById(confirmationCodesToDelete);
     }
 }

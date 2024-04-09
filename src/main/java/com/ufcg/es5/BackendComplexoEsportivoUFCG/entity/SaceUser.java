@@ -1,6 +1,5 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserAccountStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
@@ -40,7 +39,7 @@ public class SaceUser extends BasicEntity implements UserDetails {
     @Column(name = PASSWORD_COLUMN, nullable = false)
     private String password;
 
-    @Column(name = STUDENT_ID_COLUMN, unique = true)
+    @Column(name = STUDENT_ID_COLUMN, nullable = true, unique = true)
     private String studentId;
 
     @OneToMany(mappedBy = SACE_USER_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -55,11 +54,9 @@ public class SaceUser extends BasicEntity implements UserDetails {
     public SaceUser() {
     }
 
-    public SaceUser(String username, Collection<String> rolesString) {
+    public SaceUser(String username, Set<SaceUserRoleEnum> roles) {
         this.email = username;
-        this.roleEnums = rolesString.stream()
-                .map(SaceUserRoleEnum::valueOf)
-                .collect(Collectors.toSet());
+        this.roleEnums = roles;
     }
 
     public SaceUser(
@@ -74,6 +71,20 @@ public class SaceUser extends BasicEntity implements UserDetails {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.studentId = studentId;
+        this.password = password;
+        this.roleEnums = roleEnums;
+    }
+
+    public SaceUser(
+            String email,
+            String name,
+            String phoneNumber,
+            String password,
+            Set<SaceUserRoleEnum> roleEnums
+    ) {
+        this.email = email;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
         this.password = password;
         this.roleEnums = roleEnums;
     }
