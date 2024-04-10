@@ -28,9 +28,9 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberCons
         if (phoneNumber == null) return false;
 
         phoneNumber = phoneNumber.replace(" ", "");
-        phoneNumber = phoneNumber.replace("(", "");
-        phoneNumber = phoneNumber.replace(")", "");
-        phoneNumber = phoneNumber.replace("-", "");
+        phoneNumber = phoneNumber.replaceFirst("\\(", "");
+        phoneNumber = phoneNumber.replaceFirst("\\)", "");
+        phoneNumber = phoneNumber.replaceFirst("-", "");
 
         if (phoneNumber.length() != 11) return false;
 
@@ -39,10 +39,6 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberCons
 
         if (phoneNumber.charAt(2) != '9') return false;
 
-        for (int i = 3; i < phoneNumber.length(); i++) {
-            if (!Character.isDigit(phoneNumber.charAt(i))) return false;
-        }
-
-        return true;
+        return phoneNumber.substring(phoneNumber.length() - 8).matches("\\d{8}");
     }
 }

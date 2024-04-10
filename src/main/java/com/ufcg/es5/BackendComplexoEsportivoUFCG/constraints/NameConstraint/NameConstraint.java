@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.NameConstraint;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -8,13 +8,11 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = EmailValidator.class)
-public @interface EmailConstraint {
-    String message() default "invalid email";
+@Constraint(validatedBy = NameValidator.class)
+public @interface NameConstraint {
+    String message() default "username is invalid";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }
-
-
