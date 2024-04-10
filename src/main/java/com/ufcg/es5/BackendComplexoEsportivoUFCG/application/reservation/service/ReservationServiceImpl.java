@@ -96,7 +96,7 @@ public class ReservationServiceImpl implements ReservationService {
                 ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
         ));
         Long userId = authenticatedUser.getAuthenticatedUserId();
-        checkUserReservation(userId, reservation);
+        checkIfReservationBelongsToUser(userId, reservation);
         checkCancellationTimeLimit(reservation);
         this.deleteById(reservation.getId());
     }
@@ -139,7 +139,7 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    private void checkUserReservation(Long userId, Reservation reservation) {
+    private void checkIfReservationBelongsToUser(Long userId, Reservation reservation) {
         if (!isOwner(userId, reservation)) {
             throw new SaceForbiddenException(
                     ReservationExeceptionMessages.RESERVATION_NOT_BELONGS_TO_USER.formatted(reservation.getId(), userId)
