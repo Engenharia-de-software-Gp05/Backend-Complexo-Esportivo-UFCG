@@ -5,10 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmati
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.token.TokenService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
@@ -92,15 +89,17 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void updatePassword(String newPassword) {
-        Long requesterUserId = authenticatedUser.getAuthenticatedUserId();
-        SaceUser requesterUser = saceUserService.findById(requesterUserId)
+    public void updatePassword(AuthPasswordUpdateDto passwordUpdateDto) {
+        String requesterUserUsername = authenticatedUser.getAuthenticatedUserUsername();
+
+        String currentPassword = passwordEncoder.encode(passwordUpdateDto.currentPassword());
+        SaceUser requesterUser = saceUserService.findByEmailAndPassword(requesterUserUsername, currentPassword)
                 .orElseThrow(
-                        () -> new SaceResourceNotFoundException(String.format(SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND, requesterUserId))
+                        () -> new SaceResourceNotFoundException(String.format(SaceUserExceptionMessages.USER_WITH_USERNAME_NOT_FOUND, requesterUserUsername))
                 );
 
-        String encodedPassword = passwordEncoder.encode(newPassword);
-        requesterUser.setPassword(encodedPassword);
+        String encodedNewPassword = passwordEncoder.encode(passwordUpdateDto.newPassword());
+        requesterUser.setPassword(encodedNewPassword);
 
         saceUserService.save(requesterUser);
     }

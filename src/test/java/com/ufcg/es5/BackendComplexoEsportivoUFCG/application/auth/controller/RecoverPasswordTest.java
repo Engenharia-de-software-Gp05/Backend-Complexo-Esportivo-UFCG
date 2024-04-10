@@ -5,8 +5,6 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.Auth
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,10 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthAttributesConstants.*;
+import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthAttributesConstants.VALID_STUDENT_EMAIL;
+import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthAttributesConstants.VALID_STUDENT_ID;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class LoginTest extends BasicTestController {
+public class RecoverPasswordTest extends BasicTestController {
 
     @MockBean
     private AuthService authService;
@@ -33,13 +32,10 @@ class LoginTest extends BasicTestController {
     @ParameterizedTest
     @DisplayName("Should return Success. Code: 200")
     @MethodSource(value = "returnSuccess")
-    void returnSuccess(String username, String password) throws Exception {
-        String payload = makeRequestPayload(username, password);
-        AuthUsernamePasswordDto servicePayload = new AuthUsernamePasswordDto(username, password);
-        AuthTokenDto response = makeResponse();
+    void returnSuccess(String username) throws Exception {
+        String payload = makeRequestPayload(username);
 
-        Mockito.when(authService.login(servicePayload))
-                .thenReturn(response);
+        Mockito.doNothing().when(authService).recoverPassword(username);
 
         callEndpoint(payload).andExpect(status().isOk()).andReturn();
     }
@@ -47,47 +43,41 @@ class LoginTest extends BasicTestController {
     @ParameterizedTest
     @DisplayName("Should return BadRequest ")
     @MethodSource(value = "returnBadRequest")
-    void returnBadRequest(String username, String password) throws Exception {
-        String payload = makeRequestPayload(username, password);
+    void returnBadRequest(String username) throws Exception {
 
-        callEndpoint(payload).andExpect(status().isBadRequest()).andReturn();
+        callEndpoint(username).andExpect(status().isBadRequest()).andReturn();
     }
 
     private static Stream<Arguments> returnSuccess() {
         return Stream.of(
-                Arguments.of(VALID_STUDENT_EMAIL, VALID_PASSWORD),
-                Arguments.of(VALID_STUDENT_ID, VALID_PASSWORD)
+                Arguments.of(VALID_STUDENT_EMAIL),
+                Arguments.of(VALID_STUDENT_ID)
         );
     }
 
     private static Stream<Arguments> returnBadRequest() {
         return Stream.of(
-                Arguments.of("", VALID_PASSWORD),
-                Arguments.of(VALID_STUDENT_ID, ""),
-                Arguments.of(null, VALID_PASSWORD),
-                Arguments.of(VALID_STUDENT_ID, null)
+                Arguments.of(""),
+                Arguments.of("      "),
+                null
         );
     }
 
-    private String makeRequestPayload(String username, String password) throws JsonProcessingException {
+    private String makeRequestPayload(String username) throws JsonProcessingException {
         Map<String, Object> payload = new HashMap<>();
 
         payload.put(PropertyConstants.USERNAME, username);
-        payload.put(PropertyConstants.PASSWORD, password);
 
         return objectMapper.writeValueAsString(payload);
     }
 
-    private AuthTokenDto makeResponse() {
-        return new AuthTokenDto(FAKE_TOKEN);
-    }
-
-    private ResultActions callEndpoint(String payload) throws Exception {
+    private ResultActions callEndpoint(String username) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .post(AuthPathConstants.LOGIN_FULL_PATH)
-                .content(payload)
+                .post(AuthPathConstants.RECOVER_PASSWORD_FULL_PATH)
+                .param(PropertyConstants.USERNAME, username)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
     }
+
 }

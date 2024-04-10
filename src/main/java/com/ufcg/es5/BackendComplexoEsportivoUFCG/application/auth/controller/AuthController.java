@@ -3,10 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -109,25 +107,20 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(AuthPathConstants.UPDATE_PASSWORD_PATH)
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @PutMapping(AuthPathConstants.UPDATE_PASSWORD_PATH)
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "User password successfully changed.",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
+                    description = "User password successfully changed."),
             @ApiResponse(
                     responseCode = "403",
-                    description = "User password failed changed.",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+                    description = "User password failed changed.")})
     public ResponseEntity<Void> updatePassword(
-            @NotBlank
-            @RequestParam(PropertyConstants.NEW_PASSWORD)
-            String newPassword
+            @Valid
+            AuthPasswordUpdateDto passwordUpdateDto
     ) {
-        service.updatePassword(newPassword);
+        service.updatePassword(passwordUpdateDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -146,6 +139,7 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserResponseDto.class))})})
     public ResponseEntity<Void> confirmRegisterCode(
             @NotBlank
+            @Size(min = 6, max = 6)
             @RequestParam(PropertyConstants.CONFIRMATION_CODE)
             String confirmationCode
     ) {

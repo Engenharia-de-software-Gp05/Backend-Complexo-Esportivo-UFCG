@@ -31,4 +31,6 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
 
 
     SaceUserResponseDto findByEmailAsDto(String email);
+
+    Optional<SaceUser> findByEmailAndPassword(String email, String password);
 }

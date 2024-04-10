@@ -30,11 +30,52 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class RegisterAdminTest extends BasicTestController {
 
-    private static AuthRegisterDataWithRolesDto VALID_PAYLOAD;
-    private static Set<String> VALID_ROLES;
+    private static AuthRegisterDataWithRolesDto validPayload;
+    private static Set<String> validRoles;
 
     @MockBean
     private AuthService authService;
+
+    @BeforeEach
+    void makeScenario() {
+        validPayload = new AuthRegisterDataWithRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, Set.of(SaceUserRoleEnum.ROLE_ADMIN));
+        validRoles = Set.of(ROLE_ADMIN);
+    }
+
+    @ParameterizedTest
+    @DisplayName("Should return Created. Code: 201")
+    @MethodSource(value = "returnCreated")
+    void returnCreated(Set<String> roles) throws Exception {
+        SecurityContextUtils.fakeAuthentication(roles);
+        String payload = makeRequestPayload(validPayload);
+        SaceUserResponseDto response = makeResponse();
+
+        Mockito.when(authService.registerByAdmin(validPayload))
+                .thenReturn(response);
+
+        callEndpoint(payload).andExpect(status().isCreated()).andReturn();
+    }
+
+    @ParameterizedTest
+    @DisplayName("Should return BadRequest ")
+    @MethodSource(value = "returnBadRequest")
+    void returnBadRequest(AuthRegisterDataWithRolesDto registerDataWithRolesDto) throws Exception {
+        SecurityContextUtils.fakeAuthentication(validRoles);
+        String payload = makeRequestPayload(registerDataWithRolesDto);
+
+        callEndpoint(payload).andExpect(status().isBadRequest()).andReturn();
+    }
+
+    @ParameterizedTest
+    @DisplayName("Should return BadRequest ")
+    @MethodSource(value = "returnForbidden")
+    void returnForbidden(Set<String> roles) throws Exception {
+        SecurityContextUtils.fakeAuthentication(roles);
+
+        String payload = makeRequestPayload(validPayload);
+
+        callEndpoint(payload).andExpect(status().isForbidden()).andReturn();
+    }
 
     private static Stream<Arguments> returnCreated() {
         return Stream.of(
@@ -62,47 +103,6 @@ public class RegisterAdminTest extends BasicTestController {
                 Arguments.of(Set.of(ROLE_USER)),
                 Arguments.of(Set.of(ROLE_PENDING))
         );
-    }
-
-    @BeforeEach
-    void makeScenario() {
-        VALID_PAYLOAD = new AuthRegisterDataWithRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, Set.of(SaceUserRoleEnum.ROLE_ADMIN));
-        VALID_ROLES = Set.of(ROLE_ADMIN);
-    }
-
-    @ParameterizedTest
-    @DisplayName("Should return Created. Code: 201")
-    @MethodSource(value = "returnCreated")
-    void returnCreated(Set<String> roles) throws Exception {
-        SecurityContextUtils.fakeAuthentication(roles);
-        String payload = makeRequestPayload(VALID_PAYLOAD);
-        SaceUserResponseDto response = makeResponse();
-
-        Mockito.when(authService.registerByAdmin(VALID_PAYLOAD))
-                .thenReturn(response);
-
-        callEndpoint(payload).andExpect(status().isCreated()).andReturn();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Should return BadRequest ")
-    @MethodSource(value = "returnBadRequest")
-    void returnBadRequest(AuthRegisterDataWithRolesDto registerDataWithRolesDto) throws Exception {
-        SecurityContextUtils.fakeAuthentication(VALID_ROLES);
-        String payload = makeRequestPayload(registerDataWithRolesDto);
-
-        callEndpoint(payload).andExpect(status().isBadRequest()).andReturn();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Should return BadRequest ")
-    @MethodSource(value = "returnForbidden")
-    void returnForbidden(Set<String> roles) throws Exception {
-        SecurityContextUtils.fakeAuthentication(roles);
-
-        String payload = makeRequestPayload(VALID_PAYLOAD);
-
-        callEndpoint(payload).andExpect(status().isForbidden()).andReturn();
     }
 
     private String makeRequestPayload(AuthRegisterDataWithRolesDto payload) throws JsonProcessingException {

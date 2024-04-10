@@ -75,4 +75,15 @@ public interface SaceUserRepository extends JpaRepository<SaceUser, Long> {
     SaceUserNameEmailProjection findNameEmailById(
             @Param("id") Long id
     );
+
+    @Query(
+            """
+                    SELECT user
+                    FROM SaceUser user
+                    WHERE user.email = :email AND user.password = :password
+                    """
+    )
+    Optional<SaceUser> findByEmailAndPassword(
+            @Param("email") String email,
+            @Param("password") String password);
 }

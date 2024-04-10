@@ -89,4 +89,9 @@ public class SaceUserServiceImpl implements SaceUserService {
         SaceUser user = findByEmail(email).orElseThrow();
         return objectMapper.convertValue(user, SaceUserResponseDto.class);
     }
+
+    @Override
+    public Optional<SaceUser> findByEmailAndPassword(String requesterUserUsername, String password) {
+        return repository.findByEmailAndPassword(requesterUserUsername, password);
+    }
 }
