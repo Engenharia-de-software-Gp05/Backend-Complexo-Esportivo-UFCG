@@ -35,7 +35,6 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    private long EXPIRATION;
 
     @Override
     public JpaRepository<SignUpConfirmationCode, Long> getRepository() {
