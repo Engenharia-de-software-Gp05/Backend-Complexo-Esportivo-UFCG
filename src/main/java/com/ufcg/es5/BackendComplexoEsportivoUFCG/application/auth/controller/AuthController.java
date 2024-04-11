@@ -36,10 +36,7 @@ public class AuthController {
                             schema = @Schema(implementation = AuthTokenDto.class))}),
             @ApiResponse(
                     responseCode = "403",
-                    description = "Failed authentication",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AuthTokenDto.class))})
-    })
+                    description = "Failed authentication")})
     public ResponseEntity<AuthTokenDto> login(
             @Valid
             @RequestBody
@@ -58,9 +55,7 @@ public class AuthController {
                             schema = @Schema(implementation = AuthTokenDto.class))}),
             @ApiResponse(
                     responseCode = "403",
-                    description = "Failed authentication",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AuthTokenDto.class))})})
+                    description = "Failed authentication")})
     public ResponseEntity<AuthTokenDto> register(
             @RequestBody
             @Valid
@@ -80,9 +75,7 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserResponseDto.class))}),
             @ApiResponse(
                     responseCode = "403",
-                    description = "Failed authentication",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+                    description = "Failed authentication")})
     public ResponseEntity<SaceUserResponseDto> registerByAdmin(
             @RequestBody
             @Valid
@@ -135,8 +128,7 @@ public class AuthController {
             @ApiResponse(
                     responseCode = "403",
                     description = "User password failed changed.",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))})})
+                    content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Void> confirmRegisterCode(
             @NotBlank
             @Size(min = 6, max = 6)

@@ -92,7 +92,7 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
 
     @Override
     public boolean existsByUserIdAndConfirmationCode(Long userId, String confirmationCode) {
-        return this.findByUserIdAndConfirmationCode(userId, confirmationCode).isEmpty();
+        return this.findByUserIdAndConfirmationCode(userId, confirmationCode).isPresent();
     }
 
     @Override

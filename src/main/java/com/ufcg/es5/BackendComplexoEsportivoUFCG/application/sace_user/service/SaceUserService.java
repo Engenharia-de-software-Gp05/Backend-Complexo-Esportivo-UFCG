@@ -21,7 +21,7 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
 
     Optional<Long> findIdByEmail(String email);
 
-    List<SaceUserDataDto> findAllUsersAsDto();
+    List<SaceUserDataDto> findAllAsDto();
 
     SaceUserNameEmailDto findNameEmailById(Long id);
 

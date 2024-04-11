@@ -56,7 +56,7 @@ public class SaceUserServiceImpl implements SaceUserService {
     }
 
     @Override
-    public List<SaceUserDataDto> findAllUsersAsDto() {
+    public List<SaceUserDataDto> findAllAsDto() {
         Collection<SaceUserDataProjection> projections = repository.findAllUsersAsDto();
         return projections.stream().map(SaceUserDataDto::new).toList();
     }

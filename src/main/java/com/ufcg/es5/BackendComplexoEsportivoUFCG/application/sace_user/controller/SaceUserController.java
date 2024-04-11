@@ -51,15 +51,15 @@ public class SaceUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/by/users")
+    @GetMapping(value = "/data")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get user username, name, studentId and phoneNumber")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
-            description = "User username, name, studentId and phoneNumber returned.",
+            description = "User email, name, studentId and phoneNumber returned.",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = SaceUserDataDto.class)))})})
-    public ResponseEntity<Collection> findByEmail() {
-        List<SaceUserDataDto> response = service.findAllUsersAsDto();
+    public ResponseEntity<Collection> findAllAsDto() {
+        List<SaceUserDataDto> response = service.findAllAsDto();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
