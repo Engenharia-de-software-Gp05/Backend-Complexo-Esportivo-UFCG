@@ -130,7 +130,7 @@ public class ReservationServiceImpl implements ReservationService {
         Long userId = authenticatedUser.getAuthenticatedUserId();
         checkIfReservationBelongsToUser(userId, reservation);
         checkCancellationTimeLimit(reservation);
-        this.deleteById(reservation.getId());
+        this.repository.deleteById(reservation.getId());
     }
   
     @Override
@@ -174,14 +174,6 @@ public class ReservationServiceImpl implements ReservationService {
                 user,
                 status
         );
-    }
-  
-    private void checkPermission(Long userId, Reservation reservation) {
-        if (!isOwner(userId, reservation)) {
-            throw new SaceForbiddenException(
-                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
-            );
-        }
     }
 
     private void checkTimeAvailability(ReservationSaveDto data) {
