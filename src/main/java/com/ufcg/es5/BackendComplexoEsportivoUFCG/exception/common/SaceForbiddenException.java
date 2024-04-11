@@ -4,4 +4,5 @@ public class SaceForbiddenException extends RuntimeException {
     public SaceForbiddenException() {super("Request denied");}
 
     public SaceForbiddenException(String message) {super(message);}
-}
+
+    }

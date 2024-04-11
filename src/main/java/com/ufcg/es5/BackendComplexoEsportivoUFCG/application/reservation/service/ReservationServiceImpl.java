@@ -102,7 +102,7 @@ public class ReservationServiceImpl implements ReservationService {
                 ReservationAvailabilityStatusEnum.BOOKED
         );
 
-        return repository.save(reservation);
+        return this.save(reservation);
     }
 
     @Override
@@ -124,14 +124,15 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = repository.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+        Reservation reservation = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
         ));
         Long userId = authenticatedUser.getAuthenticatedUserId();
-        checkPermission(userId, reservation);
-        repository.delete(reservation);
+        checkIfReservationBelongsToUser(userId, reservation);
+        checkCancellationTimeLimit(reservation);
+        this.deleteById(reservation.getId());
     }
-
+  
     @Override
     @Transactional
     public void adminDeleteById(Long id) throws SaceResourceNotFoundException {
@@ -174,7 +175,7 @@ public class ReservationServiceImpl implements ReservationService {
                 status
         );
     }
-
+  
     private void checkPermission(Long userId, Reservation reservation) {
         if (!isOwner(userId, reservation)) {
             throw new SaceForbiddenException(
@@ -187,6 +188,24 @@ public class ReservationServiceImpl implements ReservationService {
         if (existsByCourtIdAndTimeInterval(data.courtId(), data.startDateTime(), data.endDateTime())) {
             throw new SaceConflictException(ReservationExeceptionMessages.RESERVATION_TIME_CONFLICT
                     .formatted(data.startDateTime(), data.endDateTime()));
+        }
+    }
+
+    private void checkCancellationTimeLimit(Reservation reservation) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (reservation.getStartDateTime().isBefore(now.plusHours(24))) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_CANCELLATION_TIME_EXPIRED
+            );
+        }
+    }
+
+    private void checkIfReservationBelongsToUser(Long userId, Reservation reservation) {
+        if (!isOwner(userId, reservation)) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_NOT_BELONGS_TO_USER.formatted(reservation.getId(), userId)
+            );
         }
     }
 

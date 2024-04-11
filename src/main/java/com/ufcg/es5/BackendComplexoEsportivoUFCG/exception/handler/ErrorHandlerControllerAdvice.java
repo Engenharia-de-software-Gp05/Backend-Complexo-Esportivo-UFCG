@@ -1,5 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInternalException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
@@ -74,6 +75,15 @@ public class ErrorHandlerControllerAdvice {
     public CustomErrorType onBadRequestException(SaceInvalidArgumentException e) {
         return defaultCustomErrorTypeConstruct(
                 "Bad request" + e.getMessage()
+        );
+    }
+
+    @ExceptionHandler(SaceForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public CustomErrorType onForbiddenException(SaceForbiddenException e) {
+        return defaultCustomErrorTypeConstruct(
+                "Forbidden request" + e.getMessage()
         );
     }
 
