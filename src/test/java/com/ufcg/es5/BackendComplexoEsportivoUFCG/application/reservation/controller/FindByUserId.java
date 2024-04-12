@@ -26,7 +26,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUt
 import io.swagger.v3.oas.annotations.Parameter;
 
 @SpringBootTest
-public class GetTest extends BasicTestController{
+public class FindByUserId extends BasicTestController{
 
     public static final long VALID_ID = 1L;
     private static final String ID_PROPERTY = "id";
