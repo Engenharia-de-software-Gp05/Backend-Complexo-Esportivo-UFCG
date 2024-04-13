@@ -21,10 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.constants.ReservationPathConstants;
 
 @Validated
 @RestController
-@RequestMapping("/reservation")
+@RequestMapping(ReservationPathConstants.PREFIX)
 public class ReservationController {
 
     private static final String USER_ID_PROPERTY = "userId";
@@ -32,7 +33,7 @@ public class ReservationController {
     @Autowired
     private ReservationService service;
 
-    @GetMapping(value = "/by/user-id")
+    @GetMapping(ReservationPathConstants.BY_ID_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get reservations by user id.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -48,7 +49,7 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/by/court")
+    @GetMapping(ReservationPathConstants.BY_COURT_PATH)
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get reservations by court and date time.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -79,7 +80,7 @@ public class ReservationController {
     }
 
 
-    @PostMapping(value = "/create")
+    @PostMapping(ReservationPathConstants.CREATE_PATH)
     @PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "Create a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
@@ -95,7 +96,7 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/delete/by/id")
+    @DeleteMapping(ReservationPathConstants.DELETE_BY_ID_PATH)
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
@@ -109,7 +110,7 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping(value = "/admin/delete/by/id")
+    @DeleteMapping(ReservationPathConstants.ADMIN_DELETE_BY_ID_PATH)
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",

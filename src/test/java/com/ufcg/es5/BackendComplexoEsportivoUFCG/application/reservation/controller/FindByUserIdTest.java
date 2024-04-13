@@ -39,9 +39,6 @@ public class FindByUserIdTest extends BasicTestController{
     private static final String ID_PROPERTY = "id";
     private static final String PATH_BY_USERID = "/reservation/by/id";
     private static final String PATH_BY_COURT_AND_DATE = "/reservation/by/court";
-    private static final String ROLE_USER = "ROLE_USER";
-    private static final String ROLE_ADMIN = "ROLE_ADMIN";
-    private static final String ROLE_INVALID = "ROLE_INVALID";
 
     @MockBean
     private ReservationService reservationService;
@@ -49,19 +46,37 @@ public class FindByUserIdTest extends BasicTestController{
     @ParameterizedTest
     @DisplayName("Should return Sucess. Code :200")
     @MethodSource("returnSuccess")
-    void returnSuccess(Long userId){
-
+    void returnSuccess(Long userId) throws Exception{
+        //TODO
     }
 
-    
+
+    @ParameterizedTest
+    @DisplayName("Should return Bad Request. Code :400")
+    @MethodSource("returnBadRequest")
+    void returnBadRequest(Long userId) throws Exception {
+        //TODO
+    }
+
     private static Stream<Arguments> returnSuccess() {
         return Stream.of(
-                Arguments.of(List.of(ROLE_USER)),
-                Arguments.of(List.of(ROLE_ADMIN)),
-                Arguments.of(List.of(ROLE_USER, ROLE_USER))
+                Arguments.of(),
+                Arguments.of(),
+                Arguments.of()
         );
     }
 
+    private static Stream<Arguments> returnBadRequest() {
+        return Stream.of(
+                Arguments.of(),
+                Arguments.of(),
+                Arguments.of()
+        );
+    }
+
+    private void makeResponse(){
+        //TODO
+    }
     
     // seria utilizado apenas caso houvesse algum body.
     // private String makeRequestPayload(Long userId) throws JsonProcessingException {
