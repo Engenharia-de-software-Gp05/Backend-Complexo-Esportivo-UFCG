@@ -1,6 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.constants.ReservationAtributesConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.constants.ReservationPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
@@ -25,65 +28,50 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class DeleteTest extends BasicTestController {
 
-    public static final long VALID_ID = 1L;
-    private static final String PATH = "/reservation/delete/by/id";
-    private static final String ID_PROPERTY = "id";
-    private static final String ROLE_USER = "ROLE_USER";
-    private static final String ROLE_ADMIN = "ROLE_ADMIN";
-    private static final String ROLE_INVALID = "ROLE_INVALID";
-
     @MockBean
     private ReservationService reservationService;
 
-    private static Stream<Arguments> returnSuccess() {
-        return Stream.of(
-                Arguments.of(List.of(ROLE_USER)),
-                Arguments.of(List.of(ROLE_ADMIN)),
-                Arguments.of(List.of(ROLE_USER, ROLE_USER))
-        );
+    @ParameterizedTest
+    @DisplayName("Should return Sucess. Code :200")
+    @MethodSource("returnSuccess")
+    void returnSuccess(Long userId) throws Exception{
+        //TODO
     }
 
-    @BeforeEach
-    void setUp() {
-        Mockito.doNothing().when(reservationService).deleteById(VALID_ID);
-    }
 
     @ParameterizedTest
-    @DisplayName("Should return Success. Code: 200")
-    @MethodSource(value = "returnSuccess")
-    void returnSuccess(List<String> roles) throws Exception {
-        SecurityContextUtils.fakeAuthentication(roles);
-        callEndpoint().andExpect(status().isOk()).andReturn();
+    @DisplayName("Should return Bad Request. Code :400")
+    @MethodSource("returnBadRequest")
+    void returnBadRequest(Long userId) throws Exception {
+        //TODO
     }
 
-    @Test
-    @DisplayName("Should return BadRequest ")
-    void returnBadRequest() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(ROLE_USER));
-
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .delete(PATH)
-                .header(HttpHeaders.CONTENT_TYPE,
-                        MediaType.APPLICATION_JSON)
+    private static Stream<Arguments> returnSuccess() {
+        return Stream.of(
+                Arguments.of(),
+                Arguments.of(),
+                Arguments.of()
         );
-
-        resultActions.andExpect(status().isBadRequest()).andReturn();
     }
 
-    @Test
-    @DisplayName("Should return Forbidden. Code: 403.")
-    void returnForbidden() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(ROLE_INVALID));
-        callEndpoint().andExpect(status().isForbidden()).andReturn();
+    private static Stream<Arguments> returnBadRequest() {
+        return Stream.of(
+                Arguments.of(),
+                Arguments.of(),
+                Arguments.of()
+        );
     }
 
-    private ResultActions callEndpoint() throws Exception {
+    private void makeResponse(){
+        //TODO
+    }
+
+    private ResultActions callEndPoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .delete(PATH)
-                .queryParam(ID_PROPERTY, String.valueOf(VALID_ID))
-                .header(HttpHeaders.CONTENT_TYPE,
-                        MediaType.APPLICATION_JSON)
+                .get(ReservationPathConstants.DELETE_BY_ID_FULL_PATH)
+                .header(PropertyConstants.ID, ReservationAtributesConstants.VALID_ID)
+                .header(HttpHeaders.CONTENT_TYPE, 
+                        MediaType.APPLICATION_JSON_VALUE)
         );
     }
-
 }

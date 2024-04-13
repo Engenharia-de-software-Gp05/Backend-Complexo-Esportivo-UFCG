@@ -11,6 +11,10 @@ public class ReservationPathConstants {
     public static final String DELETE_BY_ID_PATH = "/delete/by/id";
     public static final String ADMIN_PATH = "/admin";
     public static final String ADMIN_DELETE_BY_ID_PATH = "/admin/delete/by/id";
+    public static final String GET_BY_ID_FULL_PATH = PREFIX + BY_ID_PATH;
+    public static final String GET_BY_COURT_FULL_PATH = PREFIX + BY_COURT_PATH;
+    public static final String DELETE_BY_ID_FULL_PATH = PREFIX + DELETE_BY_ID_PATH;
+    public static final String CREATE_FULL_PATH = PREFIX + CREATE_PATH;
 
     private ReservationPathConstants() {
     }

@@ -27,6 +27,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.Ba
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.constants.ReservationAtributesConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.constants.ReservationAtributesConstants.*;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.constants.ReservationPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 
@@ -34,11 +35,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 
 @SpringBootTest
 public class FindByUserIdTest extends BasicTestController{
-
-    public static final long VALID_ID = 1L;
-    private static final String ID_PROPERTY = "id";
-    private static final String PATH_BY_USERID = "/reservation/by/id";
-    private static final String PATH_BY_COURT_AND_DATE = "/reservation/by/court";
 
     @MockBean
     private ReservationService reservationService;
@@ -77,19 +73,10 @@ public class FindByUserIdTest extends BasicTestController{
     private void makeResponse(){
         //TODO
     }
-    
-    // seria utilizado apenas caso houvesse algum body.
-    // private String makeRequestPayload(Long userId) throws JsonProcessingException {
-    //     Map<String, Object> payload = new HashMap<>();
-    //     payload.put(ID_PROPERTY, String.valueOf(userId));
-
-    //     ObjectMapper objectMapper = new ObjectMapper();
-    //     return objectMapper.writeValueAsString(payload);
-    // }
 
     private ResultActions callEndPoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .get(PATH_BY_USERID)
+                .get(ReservationPathConstants.GET_BY_ID_FULL_PATH)
                 .header(PropertyConstants.ID, ReservationAtributesConstants.VALID_ID)
                 .header(HttpHeaders.CONTENT_TYPE, 
                         MediaType.APPLICATION_JSON_VALUE)
