@@ -110,6 +110,7 @@ public class AuthController {
                     responseCode = "403",
                     description = "User password failed changed.")})
     public ResponseEntity<Void> updatePassword(
+            @RequestBody
             @Valid
             AuthPasswordUpdateDto passwordUpdateDto
     ) {
