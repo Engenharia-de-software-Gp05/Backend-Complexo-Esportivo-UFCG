@@ -121,7 +121,7 @@ class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthTokenDto register(AuthRegisterDataWithoutRolesDto credentials) {
-        this.checkIfUserExists(credentials.email());
+        this.checkIfUserExists(credentials.email(), credentials.studentId());
 
         String encodedPassword = passwordEncoder.encode(credentials.password());
         SaceUser newUser = makeUser(credentials, encodedPassword);
@@ -131,14 +131,14 @@ class AuthServiceImpl implements AuthService {
 
         String token = tokenService
                 .generateToken(user, EXPIRATION_TIME_FOR_REGISTER_TOKEN);
-
+        
         return new AuthTokenDto(token);
     }
 
     @Override
     @Transactional
     public SaceUserResponseDto registerByAdmin(AuthRegisterDataWithRolesDto credentials) {
-        this.checkIfUserExists(credentials.email());
+        this.checkIfUserExistsByEmail(credentials.email());
 
         String temporaryPassword = RandomStringGenerator.randomIncludingSpecialCharacters(PASSWORD_SIZE);
 
@@ -150,10 +150,23 @@ class AuthServiceImpl implements AuthService {
         return new SaceUserResponseDto(user.getEmail(), user.getName());
     }
 
-    private void checkIfUserExists(String username) {
-        if (saceUserService.existsByEmail(username)) {
+    private void checkIfUserExists(String email, String studentId) {
+        checkIfUserExistsByEmail(email);
+        checkIfUserExistsByStudentId(studentId);
+    }
+
+    private void checkIfUserExistsByStudentId(String studentId) {
+        if (saceUserService.existsByStudentId(studentId)) {
             throw new SaceConflictException(
-                    String.format(SaceUserExceptionMessages.USER_WITH_EMAIL_ALREADY_EXISTS, username)
+                    String.format(SaceUserExceptionMessages.USER_WITH_STUDENT_ID_ALREADY_EXISTS, studentId)
+            );
+        }
+    }
+
+    private void checkIfUserExistsByEmail(String email) {
+        if (saceUserService.existsByEmail(email)) {
+            throw new SaceConflictException(
+                    String.format(SaceUserExceptionMessages.USER_WITH_EMAIL_ALREADY_EXISTS, email)
             );
         }
     }
