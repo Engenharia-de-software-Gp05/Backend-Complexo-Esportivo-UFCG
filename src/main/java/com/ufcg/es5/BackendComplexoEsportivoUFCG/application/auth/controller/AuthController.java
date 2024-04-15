@@ -4,7 +4,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.Auth
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.*;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -72,16 +72,16 @@ public class AuthController {
                     responseCode = "200",
                     description = "Successfully registered",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
+                            schema = @Schema(implementation = SaceUserNameEmailDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "Failed authentication")})
-    public ResponseEntity<SaceUserResponseDto> registerByAdmin(
+    public ResponseEntity<SaceUserNameEmailDto> registerByAdmin(
             @RequestBody
             @Valid
             AuthRegisterDataWithRolesDto data
     ) {
-        SaceUserResponseDto response = service.registerByAdmin(data);
+        SaceUserNameEmailDto response = service.registerByAdmin(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -125,7 +125,7 @@ public class AuthController {
                     responseCode = "200",
                     description = "Register confirmed successfully.",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = SaceUserResponseDto.class))}),
+                            schema = @Schema(implementation = SaceUserNameEmailDto.class))}),
             @ApiResponse(
                     responseCode = "403",
                     description = "User password failed changed.",

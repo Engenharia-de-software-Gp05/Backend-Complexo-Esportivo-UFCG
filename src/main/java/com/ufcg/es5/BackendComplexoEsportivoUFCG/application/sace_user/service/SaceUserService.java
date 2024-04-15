@@ -3,7 +3,6 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 
@@ -30,7 +29,7 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
     Optional<SaceUser> findByStudentId(String studentId);
 
 
-    SaceUserResponseDto findByEmailAsDto(String email);
+    SaceUserNameEmailDto findByEmailAsDto(String email);
 
     Optional<SaceUser> findByEmailAndPassword(String email, String password);
 }

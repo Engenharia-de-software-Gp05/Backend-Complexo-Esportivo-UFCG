@@ -67,7 +67,8 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     }
 
     private void checkIfUserHasActiveCode(SignUpConfirmationCode confirmationCode, LocalDateTime currentTime, Long userId) {
-        if (confirmationCode.getExpiresAt().isBefore(currentTime)) {
+        LocalDateTime expiresAt = confirmationCode.getExpiresAt();
+        if (expiresAt != null && expiresAt.isBefore(currentTime)) {
             throw new SaceConflictException(
                     String.format(SaceUserExceptionMessages.USER_WITH_ID_ALREADY_HAS_AN_ACTIVE_CODE, userId)
             );
@@ -103,10 +104,13 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
         );
 
         SignUpConfirmationCode signUpConfirmationCode = findByUserId(userId).orElseGet(
-                () -> new SignUpConfirmationCode(expiresAt)
+                SignUpConfirmationCode::new
         );
 
         checkIfUserHasActiveCode(signUpConfirmationCode, userId);
+
+        signUpConfirmationCode.setExpiresAt(expiresAt);
+
         String confirmationCode = RandomStringGenerator.randomAlphaNumeric(CONFIRMATION_CODE_SIZE);
 
         signUpConfirmationCode.setUser(user);

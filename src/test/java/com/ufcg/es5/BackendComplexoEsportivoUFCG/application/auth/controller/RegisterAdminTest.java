@@ -5,7 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.Auth
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
@@ -48,7 +48,7 @@ public class RegisterAdminTest extends BasicTestController {
     void returnCreated(Set<String> roles) throws Exception {
         SecurityContextUtils.fakeAuthentication(roles);
         String payload = makeRequestPayload(validPayload);
-        SaceUserResponseDto response = makeResponse();
+        SaceUserNameEmailDto response = makeResponse();
 
         Mockito.when(authService.registerByAdmin(validPayload))
                 .thenReturn(response);
@@ -109,8 +109,8 @@ public class RegisterAdminTest extends BasicTestController {
         return objectMapper.writeValueAsString(payload);
     }
 
-    private SaceUserResponseDto makeResponse() {
-        return new SaceUserResponseDto(VALID_NAME, VALID_STUDENT_EMAIL);
+    private SaceUserNameEmailDto makeResponse() {
+        return new SaceUserNameEmailDto(VALID_NAME, VALID_STUDENT_EMAIL);
     }
 
     private ResultActions callEndpoint(String payload) throws Exception {

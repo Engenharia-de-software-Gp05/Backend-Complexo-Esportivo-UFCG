@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository.SaceUserRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserDataProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserNameEmailProjection;
@@ -85,9 +84,9 @@ public class SaceUserServiceImpl implements SaceUserService {
     }
 
     @Override
-    public SaceUserResponseDto findByEmailAsDto(String email) {
+    public SaceUserNameEmailDto findByEmailAsDto(String email) {
         SaceUser user = findByEmail(email).orElseThrow();
-        return objectMapper.convertValue(user, SaceUserResponseDto.class);
+        return objectMapper.convertValue(user, SaceUserNameEmailDto.class);
     }
 
     @Override

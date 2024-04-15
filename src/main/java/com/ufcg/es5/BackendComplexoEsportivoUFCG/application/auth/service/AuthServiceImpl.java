@@ -6,10 +6,12 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.S
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.token.TokenService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.*;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SignUpConfirmationCode;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.RandomStringGenerator;
@@ -21,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -109,13 +112,24 @@ class AuthServiceImpl implements AuthService {
     public void confirmEmailRegistered(String confirmationCode) {
         Long requesterUserId = authenticatedUser.getAuthenticatedUserId();
 
-        if (!confirmationCodeService.existsByUserIdAndConfirmationCode(requesterUserId, confirmationCode)) {
-            throw new SaceResourceNotFoundException(
-                    SaceUserExceptionMessages.CONFIRMATION_CODE_IS_NOT_RELATED_TO_USER_WITH_ID.formatted(confirmationCode, requesterUserId)
-            );
-        }
+        checkIfConfirmationCodeIsValid(confirmationCode, requesterUserId);
 
         saceUserService.updateUserRolesById(Set.of(SaceUserRoleEnum.ROLE_USER), requesterUserId);
+    }
+
+    private void checkIfConfirmationCodeIsValid(String confirmationCode, Long requesterUserId) {
+        SignUpConfirmationCode signUpConfirmationCode = confirmationCodeService.findByUserIdAndConfirmationCode(requesterUserId, confirmationCode)
+                .orElseThrow(
+                        () -> new SaceResourceNotFoundException(
+                                SaceUserExceptionMessages.CONFIRMATION_CODE_IS_NOT_RELATED_TO_USER_WITH_ID.formatted(confirmationCode, requesterUserId)
+                        )
+                );
+
+        if (signUpConfirmationCode.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new SaceInvalidArgumentException(
+                    SaceUserExceptionMessages.CONFIRMATION_CODE_EXPIRED
+            );
+        }
     }
 
     @Override
@@ -131,13 +145,13 @@ class AuthServiceImpl implements AuthService {
 
         String token = tokenService
                 .generateToken(user, EXPIRATION_TIME_FOR_REGISTER_TOKEN);
-        
+
         return new AuthTokenDto(token);
     }
 
     @Override
     @Transactional
-    public SaceUserResponseDto registerByAdmin(AuthRegisterDataWithRolesDto credentials) {
+    public SaceUserNameEmailDto registerByAdmin(AuthRegisterDataWithRolesDto credentials) {
         this.checkIfUserExistsByEmail(credentials.email());
 
         String temporaryPassword = RandomStringGenerator.randomIncludingSpecialCharacters(PASSWORD_SIZE);
@@ -147,7 +161,7 @@ class AuthServiceImpl implements AuthService {
         SaceUser user = saceUserService.save(newUser);
 
         mailService.sendSignUpTemporaryPasswordEmail(user.getName(), temporaryPassword, user.getEmail());
-        return new SaceUserResponseDto(user.getEmail(), user.getName());
+        return new SaceUserNameEmailDto(user.getEmail(), user.getName());
     }
 
     private void checkIfUserExists(String email, String studentId) {
