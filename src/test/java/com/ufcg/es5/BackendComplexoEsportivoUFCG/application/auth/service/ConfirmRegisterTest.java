@@ -47,7 +47,7 @@ class ConfirmRegisterTest extends BasicTestService {
 
     @BeforeEach
     @Transactional
-    void prepareTestScenario() {
+    void makeTestScenario() {
 
         String encodedPassword = passwordEncoder.encode(USER_PASSWORD);
         HashSet<SaceUserRoleEnum> saceUserRoleEnums = new HashSet<>();

@@ -36,7 +36,7 @@ class RegisterAdminTest extends BasicTestService {
 
     @BeforeEach
     @Transactional
-    void prepareTestScenario() {
+    void makeTestScenario() {
         authRegisterDataWithRolesDto = new AuthRegisterDataWithRolesDto(
                 USER_EMAIL,
                 NAME,

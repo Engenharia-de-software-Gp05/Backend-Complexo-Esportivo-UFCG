@@ -8,6 +8,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserDataProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.projections.SaceUserNameEmailProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import jakarta.transaction.Transactional;
@@ -90,7 +91,27 @@ public class SaceUserServiceImpl implements SaceUserService {
     }
 
     @Override
-    public Optional<SaceUser> findByEmailAndPassword(String requesterUserUsername, String password) {
-        return repository.findByEmailAndPassword(requesterUserUsername, password);
+    @Transactional
+    public void updatePasswordById(Long id, String currentPassword, String newPassword) {
+        SaceUser user = findById(id).orElseThrow(
+                () -> new SaceResourceNotFoundException(
+                        SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND.formatted(id)
+                )
+        );
+
+        checkIfPasswordMatches(user, currentPassword);
+
+        user.setPassword(newPassword);
+
+        save(user);
     }
+
+    private void checkIfPasswordMatches(SaceUser user, String providedPassword) {
+        if (!user.getPassword().equals(providedPassword)) {
+            throw new SaceForbiddenException(
+                    SaceUserExceptionMessages.WRONG_PASSWORD_FOR_USER_WITH_ID.formatted(user.getId())
+            );
+        }
+    }
+
 }

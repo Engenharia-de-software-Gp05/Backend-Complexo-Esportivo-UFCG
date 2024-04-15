@@ -93,19 +93,14 @@ class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void updatePassword(AuthPasswordUpdateDto passwordUpdateDto) {
-        String requesterUserUsername = authenticatedUser.getAuthenticatedUserUsername();
+        Long requesterId = authenticatedUser.getAuthenticatedUserId();
 
         String currentPassword = passwordEncoder.encode(passwordUpdateDto.currentPassword());
-        SaceUser requesterUser = saceUserService.findByEmailAndPassword(requesterUserUsername, currentPassword)
-                .orElseThrow(
-                        () -> new SaceResourceNotFoundException(String.format(SaceUserExceptionMessages.USER_WITH_USERNAME_NOT_FOUND, requesterUserUsername))
-                );
-
         String encodedNewPassword = passwordEncoder.encode(passwordUpdateDto.newPassword());
-        requesterUser.setPassword(encodedNewPassword);
 
-        saceUserService.save(requesterUser);
+        saceUserService.updatePasswordById(requesterId, currentPassword, encodedNewPassword);
     }
+
 
     @Override
     @Transactional
