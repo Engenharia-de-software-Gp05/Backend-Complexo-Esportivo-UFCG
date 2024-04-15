@@ -1,6 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
-public record LoginResponseDto(
+public record AuthTokenDto(
         String token
 ) {
 }

@@ -21,6 +21,11 @@ public class AuthenticatedUser {
         return saceUserService.findIdByEmail(userName).orElseThrow();
     }
 
+    public String getAuthenticatedUserUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
     public boolean hasRole(SaceUserRoleEnum role) {
         Long userId = getAuthenticatedUserId();
         Set<SaceUserRoleEnum> roles = saceUserService.findById(userId).get().getRoleEnums();

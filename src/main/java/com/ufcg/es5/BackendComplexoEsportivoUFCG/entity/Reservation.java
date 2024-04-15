@@ -1,7 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.formatters.DateTimeUtils;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -12,16 +14,20 @@ import java.util.Objects;
 public class Reservation extends BasicEntity {
 
     public static final String RESERVATION_TABLE = "reservation";
-    private static final String START_DATE_TIME_COLUMN = "startDateTime";
-    private static final String END_DATE_TIME_COLUMN = "endDateTime";
+    private static final String START_DATE_TIME_COLUMN = "start_date_time";
+    private static final String END_DATE_TIME_COLUMN = "end_date_time";
     private static final String COURT_ID_COLUMN = "court_id";
     private static final String SACE_USER_ID_COLUMN = "sace_user_id";
     private static final String STATUS_COLUMN = "status";
 
     @Column(name = START_DATE_TIME_COLUMN, nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDateTime;
 
     @Column(name = END_DATE_TIME_COLUMN, nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING,
+            pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDateTime;
 
     @ManyToOne
