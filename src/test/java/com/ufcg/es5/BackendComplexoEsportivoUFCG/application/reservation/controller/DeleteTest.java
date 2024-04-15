@@ -39,13 +39,13 @@ class DeleteTest extends BasicTestController {
 
     @ParameterizedTest
     @DisplayName("Should return Success. Code: 200")
-    @MethodSource(value = "returnSuccess")
-    void returnSuccess(List<String> roles) throws Exception {
+    @MethodSource(value = "returnNoContent")
+    void returnNoContent(List<String> roles) throws Exception {
         SecurityContextUtils.fakeAuthentication(roles);
-        callEndpoint().andExpect(status().isOk()).andReturn();
+        callEndpoint().andExpect(status().isNoContent()).andReturn();
     }
 
-    private static Stream<Arguments> returnSuccess() {
+    private static Stream<Arguments> returnNoContent() {
         return Stream.of(
                 Arguments.of(List.of(PropertyConstants.ROLE_USER)),
                 Arguments.of(List.of(PropertyConstants.ROLE_ADMIN)),

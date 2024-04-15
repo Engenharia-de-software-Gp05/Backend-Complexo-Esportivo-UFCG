@@ -40,16 +40,16 @@ public class UpdatePasswordTest extends BasicTestController {
     }
 
     @ParameterizedTest
-    @DisplayName("Should return Success. Code: 200")
-    @MethodSource(value = "returnSuccess")
-    void returnSuccess(Set<String> roles) throws Exception {
+    @DisplayName("Should return Success. Code: 204")
+    @MethodSource(value = "returnNoContent")
+    void returnNoContent(Set<String> roles) throws Exception {
         SecurityContextUtils.fakeAuthentication(roles);
 
         String payload = makeRequestPayload(validPayload);
 
         Mockito.doNothing().when(authService).updatePassword(validPayload);
 
-        callEndpoint(payload).andExpect(status().isOk()).andReturn();
+        callEndpoint(payload).andExpect(status().isNoContent()).andReturn();
     }
 
     @ParameterizedTest
@@ -73,7 +73,7 @@ public class UpdatePasswordTest extends BasicTestController {
         callEndpoint(payload).andExpect(status().isForbidden()).andReturn();
     }
 
-    private static Stream<Arguments> returnSuccess() {
+    private static Stream<Arguments> returnNoContent() {
         return Stream.of(
                 Arguments.of(Set.of(ROLE_ADMIN)),
                 Arguments.of(Set.of(ROLE_USER)),

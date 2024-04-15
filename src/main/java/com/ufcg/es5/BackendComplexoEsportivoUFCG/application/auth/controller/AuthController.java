@@ -104,7 +104,7 @@ public class AuthController {
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "User password successfully changed."),
             @ApiResponse(
                     responseCode = "403",
@@ -115,7 +115,7 @@ public class AuthController {
             AuthPasswordUpdateDto passwordUpdateDto
     ) {
         service.updatePassword(passwordUpdateDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping(AuthPathConstants.CONFIRM_REGISTER_PATH)
