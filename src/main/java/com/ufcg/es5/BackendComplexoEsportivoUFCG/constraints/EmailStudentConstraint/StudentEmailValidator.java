@@ -4,7 +4,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.UtilConstraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class EmailStudentValidator implements ConstraintValidator<EmailStudentConstraint, String> {
+public class StudentEmailValidator implements ConstraintValidator<StudentEmailConstraint, String> {
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
         if (

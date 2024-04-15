@@ -8,8 +8,8 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = EmailStudentValidator.class)
-public @interface EmailStudentConstraint {
+@Constraint(validatedBy = StudentEmailValidator.class)
+public @interface StudentEmailConstraint {
     String message() default "invalid student email";
 
     Class<?>[] groups() default {};
