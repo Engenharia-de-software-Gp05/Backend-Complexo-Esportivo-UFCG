@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.0.5'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'org.graalvm.buildtools.native' version '0.9.20'
+    id 'org.liquibase.gradle' version '2.2.1'
 }
 
 group = 'com.ufcg.es5'
@@ -18,6 +19,7 @@ compileJava.options.encoding = 'UTF-8'
 bootRun.systemProperties['file.encoding'] = 'UTF-8'
 
 configurations {
+    liquibaseRuntime.extendsFrom runtime
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -46,7 +48,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     compileOnly 'org.modelmapper:modelmapper:3.1.0'
     implementation 'org.modelmapper:modelmapper:3.1.1'
-    implementation 'javax.servlet:javax.servlet-api:4.0.0'
 
     /*Object Mapper suporte para LocalDateTime*/
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
@@ -61,6 +62,13 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.apache.httpcomponents.client5:httpclient5'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.1.0'
+
+    liquibaseRuntime 'org.liquibase:liquibase-core:4.16.1'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:3.0.2'
+    liquibaseRuntime 'info.picocli:picocli:4.6.1'
+    liquibaseRuntime 'mysql:mysql-connector-java:5.1.34'
+    liquibaseRuntime group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+
 }
 
 dependencyManagement {

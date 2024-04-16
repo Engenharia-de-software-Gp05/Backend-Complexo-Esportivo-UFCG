@@ -9,6 +9,8 @@ import java.util.Objects;
 @MappedSuperclass
 public class BasicEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -28,10 +30,10 @@ public class BasicEntity implements Serializable {
     )
     protected LocalDateTime updatedAt;
 
-    public BasicEntity(){
+    public BasicEntity() {
     }
 
-    public BasicEntity(BasicEntity entity){
+    public BasicEntity(BasicEntity entity) {
         this.id = entity.id;
         this.createdAt = entity.createdAt;
         this.updatedAt = entity.updatedAt;
