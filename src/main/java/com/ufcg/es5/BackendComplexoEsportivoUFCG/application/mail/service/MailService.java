@@ -4,11 +4,10 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.mail.message.Messag
 import jakarta.mail.MessagingException;
 
 public interface MailService {
-    void sendMail(Message message, String mailDestiny) throws MessagingException;
 
     void sendSignUpConfirmationCodeEmail(String name, String code, String mailDestiny);
 
-    void sendSignUpFirstAccessLinkEmail(String name, String link, String mailDestiny);
+    void sendSignUpTemporaryPasswordEmail(String name, String temporaryPassword, String mailDestiny);
 
     void sendReservationConfirmedEmail(String name, String date, String hour, String courtName, String mailDestiny);
 

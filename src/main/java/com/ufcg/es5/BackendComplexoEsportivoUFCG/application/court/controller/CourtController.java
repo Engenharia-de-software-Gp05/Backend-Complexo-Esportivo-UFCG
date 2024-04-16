@@ -3,6 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,18 +48,44 @@ public class CourtController {
         CourtResponseDto response = service.create(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
-    @DeleteMapping(value = "/delete")
+  
+    @PutMapping("/update/by/id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Delete a court.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "204",
-            description = "Court is deleted.")})
-    public ResponseEntity<Void> delete(
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully updated court",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CourtResponseDto.class))}),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed updated court",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CourtResponseDto.class))})
+    })
+    public ResponseEntity<CourtResponseDto> updateById(
+            @Valid
+            @RequestBody
+            CourtUpdateDto data,
             @NotNull
             @RequestParam("id")
             Long id
     ) {
-        service.delete(id);
+        CourtResponseDto response = service.updateById(data, id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/delete/by/id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Delete a court.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204",
+            description = "Court is deleted.")})
+    public ResponseEntity<Void> deleteById(
+            @NotNull
+            @RequestParam("id")
+            Long id
+    ) {
+        service.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

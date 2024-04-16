@@ -59,5 +59,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime
     );
-
 }

@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberConstraint, String> {
 
-    private final Set<String> Ddds = new HashSet<>(Set.of(
+    private final Set<String> DDDS = new HashSet<>(Set.of(
             "61", "62", "64", "65", "66", "67",
             "82", "71", "73", "74", "75", "77", "85", "88", "98", "99",
             "83", "81", "87", "86", "89", "84", "79",
@@ -28,21 +28,17 @@ public class PhoneNumberValidator implements ConstraintValidator<PhoneNumberCons
         if (phoneNumber == null) return false;
 
         phoneNumber = phoneNumber.replace(" ", "");
-        phoneNumber = phoneNumber.replace("(", "");
-        phoneNumber = phoneNumber.replace(")", "");
-        phoneNumber = phoneNumber.replace("-", "");
+        phoneNumber = phoneNumber.replaceFirst("\\(", "");
+        phoneNumber = phoneNumber.replaceFirst("\\)", "");
+        phoneNumber = phoneNumber.replaceFirst("-", "");
 
         if (phoneNumber.length() != 11) return false;
 
         String ddd = phoneNumber.substring(0, 2);
-        if (!Ddds.contains(ddd)) return false;
+        if (!DDDS.contains(ddd)) return false;
 
         if (phoneNumber.charAt(2) != '9') return false;
 
-        for (int i = 3; i < phoneNumber.length(); i++) {
-            if (!Character.isDigit(phoneNumber.charAt(i))) return false;
-        }
-
-        return true;
+        return phoneNumber.substring(phoneNumber.length() - 8).matches("\\d{8}");
     }
 }

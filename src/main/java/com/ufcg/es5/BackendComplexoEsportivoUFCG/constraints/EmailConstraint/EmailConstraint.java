@@ -10,13 +10,11 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = EmailValidator.class)
 public @interface EmailConstraint {
-
     String message() default "invalid email";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }
 
 
