@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = NameValidator.class)
 public @interface NameConstraint {
-    String message() default "username is invalid";
+    String message() default "Invalid name";
 
     Class<?>[] groups() default {};
 

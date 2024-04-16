@@ -1,6 +1,5 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.StudentIdConstraint;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstraint.PhoneNumberValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -12,7 +11,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = StudentIdValidator.class)
 public @interface StudentIdConstraint {
 
-    String message() default "invalid student id";
+    String message() default "Student-Id invalid.";
 
     Class<?>[] groups() default {};
 

@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = StudentEmailValidator.class)
 public @interface StudentEmailConstraint {
-    String message() default "invalid student email";
+    String message() default "Invalid student email.";
 
     Class<?>[] groups() default {};
 

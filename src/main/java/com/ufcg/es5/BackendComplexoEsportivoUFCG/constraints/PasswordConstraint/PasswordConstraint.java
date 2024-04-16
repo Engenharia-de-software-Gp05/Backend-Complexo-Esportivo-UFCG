@@ -1,6 +1,5 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PasswordConstraint;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.NameConstraint.NameValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -11,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @Constraint(validatedBy = PasswordValidator.class)
 public @interface PasswordConstraint {
-    String message() default "password is invalid";
+    String message() default "Invalid password.";
 
     Class<?>[] groups() default {};
 
