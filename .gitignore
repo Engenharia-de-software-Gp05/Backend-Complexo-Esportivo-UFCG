@@ -58,3 +58,4 @@ out/
 /nbbuild/
 /dist/
 
+.env
