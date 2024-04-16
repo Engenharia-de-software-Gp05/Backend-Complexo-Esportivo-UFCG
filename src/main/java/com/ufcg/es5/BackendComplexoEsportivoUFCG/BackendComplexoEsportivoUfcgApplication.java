@@ -11,8 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-//@EntityScan(basePackages = "com.ufcg.es5.BackendComplexoEsportivoUFCG")
-//@EnableJpaRepositories
 @SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Authorization", in = SecuritySchemeIn.HEADER)
 @OpenAPIDefinition(info = @Info(title = "SACE back-end", version = "v1.0.0"), security = {@SecurityRequirement(name = "Authorization")})
 public class BackendComplexoEsportivoUfcgApplication {
