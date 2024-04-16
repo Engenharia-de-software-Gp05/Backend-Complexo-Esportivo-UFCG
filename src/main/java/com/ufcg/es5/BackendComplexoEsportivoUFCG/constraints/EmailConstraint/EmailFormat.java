@@ -3,6 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.UtilConstraint;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 
 import java.io.IOException;
@@ -33,8 +34,7 @@ public class EmailFormat {
 
     public static boolean validateEmailLogical(String email) {
         String regex = "^[A-Za-z0-9_.-]+@[A-Za-z0-9-.]+\\.[A-Za-z.]+$";
-        return !email.contains(" ") && email.matches(regex) && email.indexOf('@') < email.lastIndexOf('.');
+        return UtilConstraint.isNotBlank(email) && !email.contains(" ") && email.matches(regex) &&
+                email.indexOf('@') < email.lastIndexOf('.');
     }
-
-
 }
