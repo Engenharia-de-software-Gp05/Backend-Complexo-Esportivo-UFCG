@@ -80,13 +80,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         Reservation reservation = makeReservation(
                 reservationMakeUnavailableDto,
-                court, null,
+                court,
+                null,
                 ReservationAvailabilityStatusEnum.UNAVAILABLE
         );
 
         return repository.save(reservation);
     }
-
 
     @Override
     @Transactional

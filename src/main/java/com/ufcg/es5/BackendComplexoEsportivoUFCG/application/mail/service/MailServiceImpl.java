@@ -28,6 +28,7 @@ public class MailServiceImpl implements MailService {
     private static final String MOTIVE = "motive";
     private static final String CODE = "code";
     private static final String LINK = "link";
+    private static final String TEMPORARY_PASSWORD = "temporaryPassword";
 
     @Autowired
     private final JavaMailSender javaMailSender;
@@ -38,9 +39,7 @@ public class MailServiceImpl implements MailService {
         this.javaMailSender = javaMailSender;
     }
 
-    @Override
-    @Transactional
-    public void sendMail(Message message, String mailDestiny) throws SaceInternalException {
+    private void sendMail(Message message, String mailDestiny) throws SaceInternalException {
         try {
             var mail = javaMailSender.createMimeMessage();
             var helper = new MimeMessageHelper(mail, true, "UTF-8");
@@ -73,15 +72,15 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendSignUpFirstAccessLinkEmail(String name, String link, String mailDestiny) {
+    public void sendSignUpTemporaryPasswordEmail(String name, String temporaryPassword, String mailDestiny) {
         Map<String, Object> dataToInject = new HashMap<>();
 
         dataToInject.put(NAME, name);
-        dataToInject.put(LINK, link);
+        dataToInject.put(TEMPORARY_PASSWORD, temporaryPassword);
 
         Message message = makeMessage(
-                MailSubjectConstants.SIGN_UP_FIRST_ACCESS_LINK_EMAIL_SUBJECT,
-                MailTemplatePathConstants.SIGN_UP_FIRST_ACCESS_LINK_EMAIL_TEMPLATE_PATH,
+                MailSubjectConstants.SIGN_UP_TEMPORARY_PASSWORD_EMAIL_SUBJECT,
+                MailTemplatePathConstants.SIGN_UP_TEMPORARY_PASSWORD_EMAIL_TEMPLATE_PATH,
                 dataToInject
         );
 

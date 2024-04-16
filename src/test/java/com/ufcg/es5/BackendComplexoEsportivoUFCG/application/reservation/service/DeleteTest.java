@@ -133,8 +133,7 @@ class DeleteTest extends BasicTestService {
                 USER_PHONE_NUMBER_1,
                 USER_STUDENT_ID_1,
                 USER_PASSWORD_1,
-                Set.of(SaceUserRoleEnum.ROLE_USER),
-                SaceUserAccountStatusEnum.VALID
+                Set.of(SaceUserRoleEnum.ROLE_USER)
         );
 
         user1 = userService.save(user1);
@@ -145,8 +144,7 @@ class DeleteTest extends BasicTestService {
                 USER_PHONE_NUMBER_2,
                 USER_STUDENT_ID_2,
                 USER_PASSWORD_2,
-                Set.of(SaceUserRoleEnum.ROLE_USER),
-                SaceUserAccountStatusEnum.VALID
+                Set.of(SaceUserRoleEnum.ROLE_USER)
         );
 
         user2 = userService.save(user2);
