@@ -11,11 +11,11 @@ import java.util.Objects;
 @Entity
 @Table(name = UnavailableReservation.UNAVAILABLE_RESERVATION_TABLE)
 public class UnavailableReservation extends BasicEntity {
+
     public static final String UNAVAILABLE_RESERVATION_TABLE = "unavailable_reservation";
     private static final String START_DATE_TIME_COLUMN = "start_date_time";
     private static final String END_DATE_TIME_COLUMN = "end_date_time";
     private static final String COURT_ID_COLUMN = "court_id";
-    private static final String STATUS_COLUMN = "status";
 
     @Column(name = START_DATE_TIME_COLUMN, nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING,
