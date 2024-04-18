@@ -14,7 +14,7 @@ CREATE TABLE reservation
 );
 
 ALTER TABLE reservation
-    ADD CONSTRAINT FK_RESERVATION_ON_COURT FOREIGN KEY (court_id) REFERENCES court (id);
+    ADD CONSTRAINT fk_reservation_on_court FOREIGN KEY (court_id) REFERENCES court (id);
 
 ALTER TABLE reservation
-    ADD CONSTRAINT FK_RESERVATION_ON_SACE_USER FOREIGN KEY (sace_user_id) REFERENCES sace_user (id);
+    ADD CONSTRAINT fk_reservation_on_user FOREIGN KEY (sace_user_id) REFERENCES sace_user (id);
