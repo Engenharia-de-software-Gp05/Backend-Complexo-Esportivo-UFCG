@@ -29,17 +29,24 @@ public class Court extends BasicEntity {
     @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Reservation> reservations = new ArrayList<>();
 
+    @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UnavailableReservation> unavailableReservations = new ArrayList<>();
+
     @Column(name = STATUS_COLUMN, nullable = false)
     @Enumerated(EnumType.STRING)
     private CourtAvailabilityStatusEnum courtAvailabilityStatusEnum;
 
+    @Column(name = "reservation_duration", nullable = false)
+    private Long reservationDuration;
+
     public Court() {
     }
 
-    public Court(String name, List<String> imagesUrls, CourtAvailabilityStatusEnum status) {
+    public Court(String name, List<String> imagesUrls, CourtAvailabilityStatusEnum status, Long reservationDuration) {
         this.name = name;
         this.imagesUrls = imagesUrls;
         this.courtAvailabilityStatusEnum = status;
+        this.reservationDuration = reservationDuration;
     }
 
     public void addImageUrl(String imageUrl) {
@@ -74,6 +81,22 @@ public class Court extends BasicEntity {
         return courtAvailabilityStatusEnum;
     }
 
+    public List<UnavailableReservation> getUnavailableReservations() {
+        return unavailableReservations;
+    }
+
+    public void setUnavailableReservations(List<UnavailableReservation> unavailableReservations) {
+        this.unavailableReservations = unavailableReservations;
+    }
+
+    public Long getReservationDuration() {
+        return reservationDuration;
+    }
+
+    public void setReservationDuration(Long reservationDuration) {
+        this.reservationDuration = reservationDuration;
+    }
+
     public void setCourtAvailabilityStatusEnum(CourtAvailabilityStatusEnum courtStatusEnum) {
         this.courtAvailabilityStatusEnum = courtStatusEnum;
     }
@@ -84,12 +107,12 @@ public class Court extends BasicEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Court court = (Court) o;
-        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && courtAvailabilityStatusEnum == court.courtAvailabilityStatusEnum;
+        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && Objects.equals(unavailableReservations, court.unavailableReservations) && courtAvailabilityStatusEnum == court.courtAvailabilityStatusEnum && Objects.equals(reservationDuration, court.reservationDuration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, courtAvailabilityStatusEnum);
+        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, unavailableReservations, courtAvailabilityStatusEnum, reservationDuration);
     }
 
     @Override
@@ -97,8 +120,10 @@ public class Court extends BasicEntity {
         return "Court{" +
                 "name='" + name + '\'' +
                 ", imagesUrls=" + imagesUrls +
-                ", reservas=" + reservations +
-                ", courtStatusEnum=" + courtAvailabilityStatusEnum +
+                ", reservations=" + reservations +
+                ", unavailableReservations=" + unavailableReservations +
+                ", courtAvailabilityStatusEnum=" + courtAvailabilityStatusEnum +
+                ", reservationDuration=" + reservationDuration +
                 '}';
     }
 }

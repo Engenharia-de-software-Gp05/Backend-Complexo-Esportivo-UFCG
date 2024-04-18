@@ -6,11 +6,11 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.S
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserAccountStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,7 +97,7 @@ class DeleteTest extends BasicTestService {
         Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user2.getId());
 
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                SaceForbiddenException.class,
                 () -> reservationService.deleteById(reservation.getId())
         );
 
@@ -120,7 +120,8 @@ class DeleteTest extends BasicTestService {
         court = new Court(
                 COURT_NAME,
                 List.of(COURT_IMAGE_URL),
-                CourtAvailabilityStatusEnum.AVAILABLE
+                CourtAvailabilityStatusEnum.AVAILABLE,
+                90L
         );
 
         court = courtService.save(court);

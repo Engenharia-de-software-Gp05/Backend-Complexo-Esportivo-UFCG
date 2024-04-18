@@ -9,14 +9,13 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = Reservation.RESERVATION_TABLE)
-public class Reservation extends BasicEntity {
+@Table(name = UnavailableReservation.UNAVAILABLE_RESERVATION_TABLE)
+public class UnavailableReservation extends BasicEntity {
 
-    public static final String RESERVATION_TABLE = "reservation";
+    public static final String UNAVAILABLE_RESERVATION_TABLE = "unavailable_reservation";
     private static final String START_DATE_TIME_COLUMN = "start_date_time";
     private static final String END_DATE_TIME_COLUMN = "end_date_time";
     private static final String COURT_ID_COLUMN = "court_id";
-    private static final String SACE_USER_ID_COLUMN = "sace_user_id";
 
     @Column(name = START_DATE_TIME_COLUMN, nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING,
@@ -32,24 +31,18 @@ public class Reservation extends BasicEntity {
     @JoinColumn(name = COURT_ID_COLUMN, nullable = false)
     private Court court;
 
-    @ManyToOne
-    @JoinColumn(name = SACE_USER_ID_COLUMN, nullable = false)
-    private SaceUser saceUser;
-
-    public Reservation() {
+    public UnavailableReservation() {
     }
 
-    public Reservation(
+    public UnavailableReservation(
             LocalDateTime startDateTime,
             LocalDateTime endDateTime,
             Court court,
-            SaceUser saceUser,
             ReservationAvailabilityStatusEnum status
     ) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.court = court;
-        this.saceUser = saceUser;
     }
 
     public LocalDateTime getStartDateTime() {
@@ -76,26 +69,18 @@ public class Reservation extends BasicEntity {
         this.court = court;
     }
 
-    public SaceUser getSaceUser() {
-        return saceUser;
-    }
-
-    public void setSaceUser(SaceUser user) {
-        this.saceUser = user;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        Reservation that = (Reservation) o;
-        return Objects.equals(startDateTime, that.startDateTime) && Objects.equals(endDateTime, that.endDateTime) && Objects.equals(court, that.court) && Objects.equals(saceUser, that.saceUser);
+        UnavailableReservation that = (UnavailableReservation) o;
+        return Objects.equals(startDateTime, that.startDateTime) && Objects.equals(endDateTime, that.endDateTime) && Objects.equals(court, that.court);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), startDateTime, endDateTime, court, saceUser);
+        return Objects.hash(super.hashCode(), startDateTime, endDateTime, court);
     }
 
     @Override
@@ -104,7 +89,6 @@ public class Reservation extends BasicEntity {
                 "startDateTime=" + startDateTime +
                 ", endDateTime=" + endDateTime +
                 ", court=" + court +
-                ", saceUser=" + saceUser +
                 '}';
     }
 }

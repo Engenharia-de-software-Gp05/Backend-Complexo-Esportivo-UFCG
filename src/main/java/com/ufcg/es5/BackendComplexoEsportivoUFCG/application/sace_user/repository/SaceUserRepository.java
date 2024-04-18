@@ -55,11 +55,11 @@ public interface SaceUserRepository extends JpaRepository<SaceUser, Long> {
             @Param("email") String email);
 
     @Query("""
-                SELECT user.name,
-                       user.studentId,
-                       user.email,
-                       user.phoneNumber,
-                       user.roleEnums
+                SELECT user.name as name,
+                       user.studentId as studentId,
+                       user.email as email,
+                       user.phoneNumber as phoneNumber,
+                       user.roleEnums as roleEnums
                 FROM SaceUser user
             """)
     Collection<SaceUserDataProjection> findAllUsersAsDto();
