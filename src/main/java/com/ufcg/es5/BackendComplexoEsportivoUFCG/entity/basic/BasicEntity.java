@@ -1,6 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,6 +23,7 @@ public class BasicEntity implements Serializable {
             insertable = false,
             updatable = false
     )
+    @CreationTimestamp
     protected LocalDateTime createdAt;
 
     @Column(
@@ -28,6 +31,7 @@ public class BasicEntity implements Serializable {
             insertable = false,
             updatable = false
     )
+    @UpdateTimestamp
     protected LocalDateTime updatedAt;
 
     public BasicEntity() {

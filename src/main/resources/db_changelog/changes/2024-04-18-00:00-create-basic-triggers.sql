@@ -27,6 +27,7 @@ CREATE TRIGGER court_updated_at_column
 
 -- UpdateColumnTrigger for Reservation
 
+
 CREATE TRIGGER reservation_updated_at_column
     BEFORE UPDATE
     ON reservation
