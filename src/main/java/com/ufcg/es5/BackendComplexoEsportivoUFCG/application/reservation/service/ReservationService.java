@@ -9,16 +9,13 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface ReservationService extends BasicService<Reservation, Long> {
-    Collection<ReservationResponseDto> findByCourtAndDateTime(Long courtId, LocalDateTime date);
+    Collection<ReservationResponseDto> findByCourtIdAndDateRange(Long courtId, LocalDateTime startDate, LocalDateTime endDate);
 
     Collection<ReservationResponseDto> findByUserId(Long userId);
 
     Reservation createReservation(ReservationSaveDto reservationSaveDto);
 
-    Reservation makeUnavailable(ReservationSaveDto reservationMakeUnavailableDto);
-
     void deleteById(Long reservationId);
-
 
     void adminDeleteById(Long id);
 }

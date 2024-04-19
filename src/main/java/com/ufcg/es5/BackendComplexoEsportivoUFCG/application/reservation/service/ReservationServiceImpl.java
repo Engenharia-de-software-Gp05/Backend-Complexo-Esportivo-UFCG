@@ -11,6 +11,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRol
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
@@ -44,8 +45,9 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Collection<ReservationResponseDto> findByCourtAndDateTime(Long courtId, LocalDateTime date) {
-        return null;
+    public Collection<ReservationResponseDto> findByCourtIdAndDateRange(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Collection<ReservationResponseProjection> projections = repository.findByCourtIdAndDateRange(courtId, startDateTime, endDateTime);
+        return projections.stream().map(ReservationResponseDto::new).toList();
     }
 
     @Override
@@ -73,23 +75,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public Reservation makeUnavailable(ReservationSaveDto reservationMakeUnavailableDto) {
-        Court court = courtService
-                .findById(reservationMakeUnavailableDto.courtId())
-                .orElseThrow();
-
-        Reservation reservation = makeReservation(
-                reservationMakeUnavailableDto,
-                court,
-                null,
-                ReservationAvailabilityStatusEnum.UNAVAILABLE
-        );
-
-        return repository.save(reservation);
-    }
-
-    @Override
-    @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
         Reservation reservation = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
@@ -100,7 +85,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private void checkPermission(Long userId, Reservation reservation) {
-        if (!isOwner(userId, reservation) && !authenticatedUser.hasRole(SaceUserRoleEnum.ROLE_ADMIN)) {
+        if (!isOwner(userId, reservation)) {
             throw new SaceForbiddenException(
                     ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
             );
