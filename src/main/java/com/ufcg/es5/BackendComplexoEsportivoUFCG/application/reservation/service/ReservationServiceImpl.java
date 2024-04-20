@@ -6,13 +6,13 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.S
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -51,45 +52,77 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Collection<ReservationResponseDto> findByUserId(Long userId) {
-        return repository.findByUserId(userId);
+    public Collection<ReservationResponseDto> findByCourtIdUserId(Long courtId, Long userId) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        Collection<ReservationResponseProjection> projections = repository.findByCourtIdUserIdAndDateTime(courtId, userId, startOfDay);
+        return projections.stream().map(ReservationResponseDto::new).toList();
     }
 
     @Override
     @Transactional
     public Reservation createReservation(ReservationSaveDto reservationSaveDto) {
-        Long userId = authenticatedUser.getAuthenticatedUserId();
-        SaceUser user = saceUserService.findById(userId).orElseThrow();
+        SaceUser user = getAuthenticatedUser();
+        Court court = getCourt(reservationSaveDto);
 
-        Court court = courtService.findById(reservationSaveDto.courtId()).orElseThrow();
+        LocalDateTime startDateTime = reservationSaveDto.startDateTime();
+        LocalDateTime endDateTime = startDateTime.plusMinutes(court.getReservationDuration());
+
+        checkTimeAvailability(court.getId(), startDateTime, endDateTime);
+        checkIfUserCanBook(court, user.getId(), startDateTime);
 
         Reservation reservation = makeReservation(
-                reservationSaveDto,
+                startDateTime,
+                endDateTime,
                 court,
-                user,
-                ReservationAvailabilityStatusEnum.BOOKED
+                user
         );
 
         return this.save(reservation);
     }
 
     @Override
-    @Transactional
-    public void deleteById(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
-        Reservation reservation = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
-                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
-        ));
-        Long userId = authenticatedUser.getAuthenticatedUserId();
-        checkPermission(userId, reservation);
-        repository.delete(reservation);
+    public Boolean existsByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return !findByCourtIdAndTimeInterval(courtId, startDateTime, endDateTime).isEmpty();
     }
 
-    private void checkPermission(Long userId, Reservation reservation) {
-        if (!isOwner(userId, reservation)) {
-            throw new SaceForbiddenException(
-                    ReservationExeceptionMessages.RESERVATION_PERMISSION_DENIED
-            );
-        }
+    @Override
+    public Collection<ReservationResponseDto> findByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Collection<ReservationResponseProjection> projections = repository.findByCourtIdAndTimeInterval(courtId, startDateTime, endDateTime);
+        return projections.stream().map(ReservationResponseDto::new).toList();
+    }
+
+    @Override
+    public Boolean existsByUserIdAndStartDateTime(Long userId, LocalDateTime startDateTime) {
+        return !findByUserIdAndStartDateTime(userId, startDateTime).isEmpty();
+    }
+
+    @Override
+    public Collection<ReservationResponseDto> findByUserIdAndStartDateTime(Long userId, LocalDateTime startDateTime) {
+        Collection<ReservationResponseProjection> projections = repository.findByUserIdAndStartDateTime(userId, startDateTime);
+        return projections.stream().map(ReservationResponseDto::new).toList();
+    }
+
+    @Override
+    public Boolean existsByCourtIdUserIdAndTimeInterval(Long courtId, Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        return !findByCourtIdUserIdAndTimeInterval(courtId, userId, startDateTime, endDateTime).isEmpty();
+    }
+
+    @Override
+    public Collection<ReservationResponseDto> findByCourtIdUserIdAndTimeInterval(Long courtId, Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Collection<ReservationResponseProjection> projections = repository.findByCourtIdUserIdAndTimeInterval(courtId, userId, startDateTime, endDateTime);
+        return projections.stream().map(ReservationResponseDto::new).toList();
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
+        Reservation reservation = getReservation(id);
+        Long userId = authenticatedUser.getAuthenticatedUserId();
+
+        checkIfReservationBelongsToUser(userId, reservation);
+        checkCancellationTimeLimit(reservation);
+
+        repository.delete(reservation);
     }
 
     @Override
@@ -98,22 +131,87 @@ public class ReservationServiceImpl implements ReservationService {
         repository.delete(reservation);
     }
 
+    private Court getCourt(ReservationSaveDto reservationSaveDto) {
+        return courtService.findById(reservationSaveDto.courtId()).orElseThrow(
+                () -> new SaceResourceNotFoundException(
+                        ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(reservationSaveDto.courtId())
+                )
+        );
+    }
+
+    private SaceUser getAuthenticatedUser() {
+        Long userId = authenticatedUser.getAuthenticatedUserId();
+        return saceUserService.findById(userId).orElseThrow(
+                () -> new SaceResourceNotFoundException(
+                        SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND.formatted(userId)
+                )
+        );
+    }
+
     private boolean isOwner(Long userId, Reservation reservation) {
         return reservation.getSaceUser().getId().equals(userId);
     }
 
+    private void checkCancellationTimeLimit(Reservation reservation) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (reservation.getStartDateTime().isBefore(now.plusHours(24))) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_CANCELLATION_TIME_EXPIRED
+            );
+        }
+    }
+
+    private Reservation getReservation(Long id) {
+        return this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+        ));
+    }
+
+    private void checkIfReservationBelongsToUser(Long userId, Reservation reservation) {
+        if (!isOwner(userId, reservation)) {
+            throw new SaceForbiddenException(
+                    ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_BELONGS_TO_USER_WITH_ID.formatted(reservation.getId(), userId)
+            );
+        }
+    }
+
+    private void checkTimeAvailability(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (existsByCourtIdAndTimeInterval(courtId, startDateTime, endDateTime)) {
+            throw new SaceConflictException(ReservationExeceptionMessages.RESERVATION_TIME_CONFLICT
+                    .formatted(startDateTime, endDateTime));
+        }
+    }
+
+    private void checkIfUserCanBook(Court court, Long userId, LocalDateTime startDateTime) {
+        Long minimumTimeBetweenReservation = court.getMinimumIntervalBetweenReservation();
+        LocalDateTime earliestAllowedReservationTime = startDateTime.minusDays(minimumTimeBetweenReservation);
+        LocalDateTime latestAllowedReservationTime = startDateTime.plusDays(minimumTimeBetweenReservation);
+
+        if (existsByCourtIdUserIdAndTimeInterval(court.getId(), userId, earliestAllowedReservationTime, latestAllowedReservationTime)) {
+            throw new SaceInvalidArgumentException(
+                    ReservationExeceptionMessages.RESERVATION_LIMIT_EXCEEDED_FOR_INTERVAL_TIME_BETWEEN_RESERVATIONS
+            );
+        }
+
+        if (existsByUserIdAndStartDateTime(userId, startDateTime)) {
+            throw new SaceInvalidArgumentException(
+                    ReservationExeceptionMessages.USER_WITH_ID_ALREADY_HAS_A_RESERVATION_FOR_START_DATE_TIME.formatted(userId, startDateTime)
+            );
+        }
+    }
+
     private Reservation makeReservation(
-            ReservationSaveDto reservationSaveDto,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
             Court court,
-            SaceUser user,
-            ReservationAvailabilityStatusEnum status
+            SaceUser user
     ) {
         return new Reservation(
-                reservationSaveDto.startDateTime(),
-                reservationSaveDto.endDateTime(),
+                startDateTime,
+                endDateTime,
                 court,
-                user,
-                status
+                user
         );
     }
 

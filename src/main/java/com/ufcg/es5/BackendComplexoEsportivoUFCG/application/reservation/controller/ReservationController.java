@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +33,12 @@ public class ReservationController {
 
     @GetMapping(value = "/by/court-id/user-id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Get reservations by user id.")
+    @Operation(summary = "Get reservations by court id and user id.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "User reservations are returned.",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = ReservationResponseDto[].class)))})})
-    public ResponseEntity<Collection<ReservationResponseDto>> findByUserId(
+    public ResponseEntity<Collection<ReservationResponseDto>> findByCourtIdUserId(
             @NotNull
             @RequestParam(PropertyConstants.COURT_ID)
             Long courtId,
@@ -47,7 +46,7 @@ public class ReservationController {
             @RequestParam(PropertyConstants.USER_ID)
             Long userId
     ) {
-        Collection<ReservationResponseDto> response = service.findByCourtIdUserId(CourtId,);
+        Collection<ReservationResponseDto> response = service.findByCourtIdUserId(courtId, userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -95,7 +94,7 @@ public class ReservationController {
             @RequestParam("id")
             Long id
     ) {
-        service.deleteById(id);
+        service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -1,7 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
 
@@ -43,8 +42,7 @@ public class Reservation extends BasicEntity {
             LocalDateTime startDateTime,
             LocalDateTime endDateTime,
             Court court,
-            SaceUser saceUser,
-            ReservationAvailabilityStatusEnum status
+            SaceUser saceUser
     ) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;

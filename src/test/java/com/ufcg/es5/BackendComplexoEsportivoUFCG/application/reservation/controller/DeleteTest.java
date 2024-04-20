@@ -34,7 +34,7 @@ class DeleteTest extends BasicTestController {
 
     @BeforeEach
     void setUp() {
-        Mockito.doNothing().when(reservationService).deleteById(VALID_ID);
+        Mockito.doNothing().when(reservationService).delete(VALID_ID);
     }
 
     @ParameterizedTest

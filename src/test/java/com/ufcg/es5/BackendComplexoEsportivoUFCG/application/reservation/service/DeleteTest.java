@@ -5,7 +5,6 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.Court
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
@@ -71,7 +70,7 @@ class DeleteTest extends BasicTestService {
         Assertions.assertEquals(1, reservationService.findAll().size());
 
         Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
-        reservationService.deleteById(reservation.getId());
+        reservationService.delete(reservation.getId());
 
         Assertions.assertEquals(0, reservationService.findAll().size());
     }
@@ -82,7 +81,7 @@ class DeleteTest extends BasicTestService {
     void deleteNonExistingReservationShouldThrowResourceNotFoundException() {
         Assertions.assertThrows(
                 SaceResourceNotFoundException.class,
-                () -> reservationService.deleteById(99999L)
+                () -> reservationService.delete(99999L)
         );
     }
 
@@ -98,7 +97,7 @@ class DeleteTest extends BasicTestService {
 
         Assertions.assertThrows(
                 SaceForbiddenException.class,
-                () -> reservationService.deleteById(reservation.getId())
+                () -> reservationService.delete(reservation.getId())
         );
 
         Assertions.assertEquals(1, reservationService.findAll().size());
@@ -111,8 +110,7 @@ class DeleteTest extends BasicTestService {
                 startDateTime,
                 endDateTime,
                 court,
-                user1,
-                ReservationAvailabilityStatusEnum.BOOKED
+                user1
         );
     }
 
@@ -121,7 +119,8 @@ class DeleteTest extends BasicTestService {
                 COURT_NAME,
                 List.of(COURT_IMAGE_URL),
                 CourtAvailabilityStatusEnum.AVAILABLE,
-                90L
+                90L,
+                6L
         );
 
         court = courtService.save(court);
