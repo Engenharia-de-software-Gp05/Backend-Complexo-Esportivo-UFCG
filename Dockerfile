@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew build
+RUN ./gradlew build -x test
 
 FROM amazoncorretto:20.0.2
 

@@ -69,7 +69,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                            reservation.endDateTime as endDateTime
                         FROM Reservation reservation
                             WHERE reservation.saceUser.id = :userId AND
-                                reservation.startDateTime = : startDateTime
+                                reservation.startDateTime = :startDateTime
                     """
     )
     Collection<ReservationResponseProjection> findByUserIdAndStartDateTime(
@@ -93,5 +93,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("courtId") Long courtId,
             @Param("userId") Long userId,
             @Param("startDateTime") LocalDateTime startDateTime,
-            @Param("endDatetime") LocalDateTime endDateTime);
+            @Param("endDateTime") LocalDateTime endDateTime);
 }

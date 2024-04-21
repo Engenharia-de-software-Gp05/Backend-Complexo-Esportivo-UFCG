@@ -11,6 +11,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNo
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.RandomStringGenerator;
 import jakarta.transaction.Transactional;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +38,8 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    private static final Log LOGGER = LogFactory.getLog(SignUpConfirmationCodeServiceImpl.class);
+
     @Override
     public JpaRepository<SignUpConfirmationCode, Long> getRepository() {
         return repository;
@@ -57,6 +61,7 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
                 userIdConfirmationCodeDto, SignUpConfirmationCodeUserIdConfirmationCodeDto.class
         );
 
+        LOGGER.info(savedEvent + "puts");
         eventPublisher.publishEvent(savedEvent);
     }
 

@@ -8,8 +8,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
+@EnableAsync
 @SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Authorization", in = SecuritySchemeIn.HEADER)
 @OpenAPIDefinition(info = @Info(title = "SACE back-end", version = "v1.0.0"), security = {@SecurityRequirement(name = "Authorization")})
 public class BackendComplexoEsportivoUfcgApplication {
