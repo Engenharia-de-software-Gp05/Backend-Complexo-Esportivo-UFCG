@@ -140,7 +140,6 @@ class AuthServiceImpl implements AuthService {
         SaceUser newUser = makeUser(credentials, encodedPassword);
         SaceUser user = saceUserService.save(newUser);
 
-        LOGGER.info(user.getId() + "pequepe");
         confirmationCodeService.generate(user.getId());
 
         String token = tokenService

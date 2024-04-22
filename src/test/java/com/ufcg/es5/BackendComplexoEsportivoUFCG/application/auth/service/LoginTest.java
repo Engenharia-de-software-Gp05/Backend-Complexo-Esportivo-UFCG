@@ -4,6 +4,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.service.Basic
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
@@ -57,6 +58,7 @@ class LoginTest extends BasicTestService {
     void shouldReturnTokenWhenLoginSuccessfullyWithEmail() {
         rightCredentials = new AuthUsernamePasswordDto(USER_EMAIL, USER_PASSWORD);
         AuthTokenDto authTokenDto = authService.login(rightCredentials);
+
 
         Assertions.assertFalse(authTokenDto.token().isEmpty());
     }
