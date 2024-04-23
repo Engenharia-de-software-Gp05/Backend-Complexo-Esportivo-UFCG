@@ -24,13 +24,13 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.S
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,6 +45,7 @@ public class ReservationServiceImpl implements ReservationService {
     private SaceUserService saceUserService;
 
     @Autowired
+    @Lazy
     private UnavailableReservationService unavailableReservationService;
 
     @Autowired
@@ -238,7 +239,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private void checkReservationAvailability(Long courtId, LocalDateTime startDateTime) {
-        if(unavailableReservationService.existsByCourtIdAndStartDateTime(courtId, startDateTime)){
+        if (unavailableReservationService.existsByCourtIdAndStartDateTime(courtId, startDateTime)) {
             throw new SaceInvalidArgumentException(
                     ReservationExeceptionMessages.UNAVAILABILITY_FOUND_FOR_THE_GIVEN_TIME
             );
