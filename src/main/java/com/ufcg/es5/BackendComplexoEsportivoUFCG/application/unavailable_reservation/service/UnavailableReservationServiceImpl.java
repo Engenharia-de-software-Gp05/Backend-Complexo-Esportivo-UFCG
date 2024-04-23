@@ -35,9 +35,6 @@ public class UnavailableReservationServiceImpl implements UnavailableReservation
     private CourtService courtService;
 
     @Autowired
-    private ReservationRepository reservationRepository;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     @Override
@@ -53,7 +50,7 @@ public class UnavailableReservationServiceImpl implements UnavailableReservation
 
     @Override
     public Optional<UnavailableReservation> findByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime) {
-        return Optional.empty();
+        return repository.findByCourtIdAndStartDateTime(courtId, startDateTime);
     }
 
     @Override

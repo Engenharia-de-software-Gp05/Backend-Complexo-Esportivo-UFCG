@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 @Repository
 public interface UnavailableReservationRepository extends JpaRepository<UnavailableReservation, Long> {
@@ -28,4 +29,16 @@ public interface UnavailableReservationRepository extends JpaRepository<Unavaila
             @Param("courtId") Long courtId,
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime);
+
+    @Query(
+            """
+                    SELECT unavailableReservation
+                        FROM UnavailableReservation unavailableReservation
+                            WHERE unavailableReservation.court.id = :courtId AND
+                                unavailableReservation.startDateTime = :startDateTime
+            """
+    )
+    Optional<UnavailableReservation> findByCourtIdAndStartDateTime(
+            @Param("courtId") Long courtId,
+            @Param("startDateTime") LocalDateTime startDateTime);
 }
