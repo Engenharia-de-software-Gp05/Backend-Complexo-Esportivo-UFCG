@@ -38,10 +38,13 @@ class DeleteTest extends BasicTestService {
     private static final String USER_PASSWORD_2 = "5451616547";
     private static final String COURT_NAME = "Volleyball Court";
     private static final String COURT_IMAGE_URL = "imageurl.com";
+    private static final Long CANCELLATION_TIME_LIMIT = 24L;
 
     private static SaceUser user1;
     private static SaceUser user2;
     private static Court court;
+    private static LocalDateTime startDateTime;
+
 
     @Autowired
     private ReservationServiceImpl reservationService;
@@ -59,13 +62,14 @@ class DeleteTest extends BasicTestService {
     void setUp() {
         createCourt();
         createUsers();
+        startDateTime = LocalDateTime.now().plusHours(CANCELLATION_TIME_LIMIT).plusMinutes(1);
     }
 
     @Test
     @Transactional
     @DisplayName("Deleting reservation by owner should be successful")
     void deleteReservationByOwnerShouldSucceed() {
-        Reservation reservation = reservationService.save(createReservation());
+        Reservation reservation = reservationService.save(createReservation(startDateTime));
 
         Assertions.assertEquals(1, reservationService.findAll().size());
 
@@ -73,6 +77,24 @@ class DeleteTest extends BasicTestService {
         reservationService.delete(reservation.getId());
 
         Assertions.assertEquals(0, reservationService.findAll().size());
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Deleting reservation by owner should be successful")
+    void deleteWhenCancellationTimeExpiredShouldThrowException() {
+        startDateTime = startDateTime.minusHours(1);
+
+        Reservation reservation = reservationService.save(createReservation(startDateTime));
+
+        Assertions.assertEquals(1, reservationService.findAll().size());
+
+        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
+
+        Assertions.assertThrows(
+                SaceForbiddenException.class,
+                () -> reservationService.delete(reservation.getId())
+        );
     }
 
     @Test
@@ -89,7 +111,9 @@ class DeleteTest extends BasicTestService {
     @Transactional
     @DisplayName("Trying to delete reservation without ownership should throw IllegalAccessException")
     void deleteReservationWithoutOwnershipShouldThrowIllegalAccessException() {
-        Reservation reservation = reservationService.save(createReservation());
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(25L);
+
+        Reservation reservation = reservationService.save(createReservation(startDateTime));
 
         Assertions.assertEquals(1, reservationService.findAll().size());
 
@@ -103,8 +127,7 @@ class DeleteTest extends BasicTestService {
         Assertions.assertEquals(1, reservationService.findAll().size());
     }
 
-    private Reservation createReservation() {
-        LocalDateTime startDateTime = LocalDateTime.now();
+    private Reservation createReservation(LocalDateTime startDateTime) {
         LocalDateTime endDateTime = startDateTime.plusHours(2L);
         return new Reservation(
                 startDateTime,
