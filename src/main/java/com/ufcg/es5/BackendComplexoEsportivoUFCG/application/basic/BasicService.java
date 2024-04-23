@@ -36,6 +36,9 @@ public interface BasicService <T extends BasicEntity, ID>{
     }
 
     @Transactional
+    public default void delete(T entity){getRepository().delete(entity);}
+
+    @Transactional
     public default void deleteById(ID id){
         getRepository().deleteById(id);
     }

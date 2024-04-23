@@ -1,9 +1,13 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.event.DeletedEvent;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reservation.service.UnavailableReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationCancelledByAdminDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
@@ -18,12 +22,14 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -35,10 +41,19 @@ public class ReservationServiceImpl implements ReservationService {
     private SaceUserService saceUserService;
 
     @Autowired
+    private UnavailableReservationService unavailableReservationService;
+
+    @Autowired
     private AuthenticatedUser authenticatedUser;
 
     @Autowired
     private CourtService courtService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public JpaRepository<Reservation, Long> getRepository() {
@@ -60,7 +75,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     @Transactional
-    public Reservation createReservation(ReservationSaveDto reservationSaveDto) {
+    public ReservationResponseDto create(ReservationSaveDto reservationSaveDto) {
         SaceUser user = getAuthenticatedUser();
         Court court = getCourt(reservationSaveDto);
 
@@ -76,8 +91,8 @@ public class ReservationServiceImpl implements ReservationService {
                 court,
                 user
         );
-
-        return this.save(reservation);
+        reservation = save(reservation);
+        return objectMapper.convertValue(reservation, ReservationResponseDto.class);
     }
 
     @Override
@@ -114,6 +129,12 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public Optional<Reservation> findByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime) {
+        return Optional.empty();
+    }
+
+
+    @Override
     @Transactional
     public void delete(Long id) throws SaceResourceNotFoundException, SaceForbiddenException {
         Reservation reservation = getReservation(id);
@@ -126,9 +147,21 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void adminDeleteById(Long id) {
+    @Transactional
+    public void deleteByIdAndMotive(Long id, String motive) {
         Reservation reservation = repository.findById(id).orElseThrow();
+
+        publishEvent(reservation, motive);
         repository.delete(reservation);
+    }
+
+    private void publishEvent(Reservation reservation, String motive) {
+        ReservationCancelledByAdminDto reservationCancelledByAdminDto = new ReservationCancelledByAdminDto(reservation, motive);
+        DeletedEvent<ReservationCancelledByAdminDto> deletedEvent = new DeletedEvent<>(
+                reservationCancelledByAdminDto, ReservationCancelledByAdminDto.class
+        );
+
+        eventPublisher.publishEvent(deletedEvent);
     }
 
     private Court getCourt(ReservationSaveDto reservationSaveDto) {
