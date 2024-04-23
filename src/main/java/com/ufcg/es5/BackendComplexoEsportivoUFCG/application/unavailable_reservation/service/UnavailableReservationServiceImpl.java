@@ -57,6 +57,11 @@ public class UnavailableReservationServiceImpl implements UnavailableReservation
     }
 
     @Override
+    public boolean existsByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime) {
+        return findByCourtIdAndStartDateTime(courtId, startDateTime).isPresent();
+    }
+
+    @Override
     @Transactional
     public UnavailableReservationResponseDto create(ReservationSaveDto reservationSaveDto) {
         Reservation existingReservation = findExistingReservation(reservationSaveDto);

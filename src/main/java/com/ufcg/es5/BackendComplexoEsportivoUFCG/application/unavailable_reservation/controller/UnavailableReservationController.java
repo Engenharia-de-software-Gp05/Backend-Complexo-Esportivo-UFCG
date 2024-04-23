@@ -51,12 +51,12 @@ public class UnavailableReservationController {
     }
 
     @PostMapping(value = "/create")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Create a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
             description = "Reservation is created.",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Reservation.class))})})
+                    schema = @Schema(implementation = UnavailableReservationResponseDto.class))})})
     public ResponseEntity<UnavailableReservationResponseDto> createReservation(
             @Valid
             @RequestBody
@@ -67,7 +67,7 @@ public class UnavailableReservationController {
     }
 
     @DeleteMapping(value = "/delete/by/id")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
             description = "Reservation is deleted.")})

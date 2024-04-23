@@ -15,6 +15,8 @@ public interface UnavailableReservationService extends BasicService<UnavailableR
 
     Optional<UnavailableReservation> findByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime);
 
+    boolean existsByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime);
+
     UnavailableReservationResponseDto create(ReservationSaveDto reservationSaveDto);
 
     void delete(Long id);

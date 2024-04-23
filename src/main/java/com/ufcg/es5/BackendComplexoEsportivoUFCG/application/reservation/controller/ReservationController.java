@@ -98,12 +98,12 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping(value = "/admin/delete/by/id")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Delete a reservation.")
+    @DeleteMapping(value = "/delete/by/id/motive")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @Operation(summary = "Delete a reservation and notify the reservation owner.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
             description = "Reservation is deleted.")})
-    public ResponseEntity<Void> adminDeleteById(
+    public ResponseEntity<Void> deleteByIdAndMotive(
             @NotNull
             @RequestParam(PropertyConstants.ID)
             Long id,
