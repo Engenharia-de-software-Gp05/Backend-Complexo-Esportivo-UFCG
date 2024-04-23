@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -104,10 +103,23 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
                     reservation.startDateTime as startDateTime,
                     reservation.endDateTime as endDateTime
                 FROM Reservation reservation
-                    WHERE reservation.id = :id
+                    WHERE reservation.saceUser.id = :userId AND
+                        reservation.startDateTime > :dateTime
             """
     )
-    Optional<ReservationDetailedProjection> findDetailedById(
-            @Param("id") Long id
+    Collection<ReservationDetailedProjection> findDetailedByUserIdAndDateTime(
+            @Param("userId") Long id,
+            @Param("dateTime") LocalDateTime dateTime
     );
+
+    @Query(
+            """
+            SELECT reservation.court.name as courtName,
+                    reservation.saceUser.name as userName,
+                    reservation.startDateTime as startDateTime,
+                    reservation.endDateTime as endDateTime
+                FROM Reservation reservation
+            """
+    )
+    Collection<ReservationDetailedProjection> findAllDetailed();
 }

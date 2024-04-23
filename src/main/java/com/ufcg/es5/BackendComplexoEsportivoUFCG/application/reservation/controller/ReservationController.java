@@ -116,19 +116,27 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(value = "/by/id")
+    @GetMapping(value = "/by/authenticated-user")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     @Operation(summary = "Get reservations detailed from requester.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "User reservations are returned.",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = ReservationDetailedDto.class)))})})
-    public ResponseEntity<ReservationDetailedDto> findDetailedById(
-            @NotNull
-            @RequestParam(PropertyConstants.ID)
-            Long id
-    ) {
-        ReservationDetailedDto response = service.findDetailedById(id);
+    public ResponseEntity<Collection<ReservationDetailedDto>> findDetailedByAuthenticatedUser() {
+        Collection<ReservationDetailedDto> response = service.findDetailedByAuthenticatedUser();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/all/detailed")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Get reservations detailed from all users.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200",
+            description = "User reservations are returned.",
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ReservationDetailedDto.class)))})})
+    public ResponseEntity<Collection<ReservationDetailedDto>> findAllDetailed() {
+        Collection<ReservationDetailedDto> response = service.findAllDetailed();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

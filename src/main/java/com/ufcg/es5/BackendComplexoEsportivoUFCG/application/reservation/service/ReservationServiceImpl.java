@@ -136,6 +136,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Collection<ReservationResponseDto> findByCourtIdUserId(Long courtId, Long userId) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+
         Collection<ReservationResponseProjection> projections = repository.findByCourtIdUserIdAndDateTime(courtId, userId, startOfDay);
         return projections.stream().map(ReservationResponseDto::new).toList();
     }
@@ -183,13 +184,20 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ReservationDetailedDto findDetailedById(Long id) {
-        ReservationDetailedProjection projection = repository.findDetailedById(id).orElseThrow(
-                () -> new SaceResourceNotFoundException(
-                        ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
-                )
-        );
-        return new ReservationDetailedDto(projection);
+    public Collection<ReservationDetailedDto> findDetailedByAuthenticatedUser() {
+        Long userId = authenticatedUser.getAuthenticatedUserId();
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+
+        Collection<ReservationDetailedProjection> projection = repository.findDetailedByUserIdAndDateTime(userId, startOfDay);
+
+        return projection.stream().map(ReservationDetailedDto::new).toList();
+    }
+
+    @Override
+    public Collection<ReservationDetailedDto> findAllDetailed() {
+        Collection<ReservationDetailedProjection> projection = repository.findAllDetailed();
+
+        return projection.stream().map(ReservationDetailedDto::new).toList();
     }
 
     private SaceUser getAuthenticatedUser() {

@@ -35,6 +35,8 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     Optional<Reservation> findByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime);
 
-    ReservationDetailedDto findDetailedById(Long id);
+    Collection<ReservationDetailedDto> findDetailedByAuthenticatedUser();
+
+    Collection<ReservationDetailedDto> findAllDetailed();
 }
 
