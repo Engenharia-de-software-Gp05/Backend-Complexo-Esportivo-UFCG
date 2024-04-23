@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationDetailedProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -94,4 +96,18 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("userId") Long userId,
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime);
+
+    @Query(
+            """
+            SELECT reservation.court.name as courtName,
+                    reservation.saceUser.name as userName,
+                    reservation.startDateTime as startDateTime,
+                    reservation.endDateTime as endDateTime
+                FROM Reservation reservation
+                    WHERE reservation.id = :id
+            """
+    )
+    Optional<ReservationDetailedProjection> findDetailedById(
+            @Param("id") Long id
+    );
 }

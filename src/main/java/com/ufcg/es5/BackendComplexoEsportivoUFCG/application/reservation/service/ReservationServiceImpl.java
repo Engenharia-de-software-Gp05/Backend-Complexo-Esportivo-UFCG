@@ -12,6 +12,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationDetailedProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -178,6 +180,16 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Optional<Reservation> findByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime) {
         return Optional.empty();
+    }
+
+    @Override
+    public ReservationDetailedDto findDetailedById(Long id) {
+        ReservationDetailedProjection projection = repository.findDetailedById(id).orElseThrow(
+                () -> new SaceResourceNotFoundException(
+                        ReservationExeceptionMessages.RESERVATION_WITH_ID_NOT_FOUND.formatted(id)
+                )
+        );
+        return new ReservationDetailedDto(projection);
     }
 
     private SaceUser getAuthenticatedUser() {

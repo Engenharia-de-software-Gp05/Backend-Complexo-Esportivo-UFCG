@@ -2,6 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.contro
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationDetailedDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -113,6 +114,22 @@ public class ReservationController {
     ) {
         service.deleteByIdAndMotive(id, motive);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "/by/id")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+    @Operation(summary = "Get reservations detailed from requester.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200",
+            description = "User reservations are returned.",
+            content = {@Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ReservationDetailedDto.class)))})})
+    public ResponseEntity<ReservationDetailedDto> findDetailedById(
+            @NotNull
+            @RequestParam(PropertyConstants.ID)
+            Long id
+    ) {
+        ReservationDetailedDto response = service.findDetailedById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationDetailedDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
@@ -34,5 +35,6 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     Optional<Reservation> findByCourtIdAndStartDateTime(Long courtId, LocalDateTime startDateTime);
 
+    ReservationDetailedDto findDetailedById(Long id);
 }
 
