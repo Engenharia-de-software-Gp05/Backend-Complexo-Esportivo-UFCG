@@ -2,7 +2,6 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reserv
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reservation.repository.UnavailableReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
