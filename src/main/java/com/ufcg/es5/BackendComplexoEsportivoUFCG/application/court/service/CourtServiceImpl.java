@@ -3,6 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
@@ -32,6 +33,9 @@ public class CourtServiceImpl implements CourtService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private ReservationService reservationService;
+
     @Override
     public JpaRepository<Court, Long> getRepository() {
         return this.repository;
@@ -60,7 +64,9 @@ public class CourtServiceImpl implements CourtService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException {
+        System.out.println("oooooooooooooooooooooooo" + id);
         checkIfExistsById(id);
+        reservationService.deleteReservations(id);
         repository.deleteById(id);
     }
 
@@ -91,6 +97,7 @@ public class CourtServiceImpl implements CourtService {
 
     private void checkIfExistsById(Long id) {
         if (!this.exists(id)) {
+            System.out.println("Entrou");
             throw new SaceResourceNotFoundException(
                     CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
             );

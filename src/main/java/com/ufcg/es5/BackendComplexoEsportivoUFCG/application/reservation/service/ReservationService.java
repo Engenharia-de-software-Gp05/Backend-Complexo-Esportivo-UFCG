@@ -19,6 +19,8 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     void delete(Long reservationId);
 
+    void deleteReservations(Long id);
+
     void deleteByIdAndMotive(Long id, String motive);
 
     Boolean existsByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime);

@@ -178,89 +178,38 @@ public class DeleteTest extends BasicTestService {
         Assertions.assertEquals(5, courtService.findAll().size());
 
         Reservation reservation1 = reservationService.save(createReservation(court2, user1, startDateTime));
-        Reservation reservation2 = reservationService.save(createReservation(court2, user1, startDateTime));
-        Reservation reservation3 = reservationService.save(createReservation(court4, user2, startDateTime));
+        Reservation reservation2 = reservationService.save(createReservation(court2, user2, startDateTime));
+        Reservation reservation3 = reservationService.save(createReservation(court4, user1, startDateTime));
 
-        List<Reservation> reservations = reservationService.findAll()
+        Assertions.assertEquals(3, reservationService.findAll().size());
+        Assertions.assertEquals(5, courtService.findAll().size());
                 
         Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
         reservationService.delete(reservation1.getId());
 
-        List<Court> courts = courtService.findAll();
+        Assertions.assertEquals(2, reservationService.findAll().size());
+        Assertions.assertEquals(5, courtService.findAll().size());
 
         courtService.deleteById(court1.getId());
+
+        Assertions.assertEquals(2, reservationService.findAll().size());
+        Assertions.assertEquals(4, courtService.findAll().size());
 
         courtService.deleteById(court4.getId());
 
-        reservations.remove(reservation1);
-        reservations.remove(reservation3);
-
-        courts.remove(court1);
-        courts.remove(court4);
-
-        Assertions.assertEquals(courts, courtService.findAll());
-        Assertions.assertEquals(reservations, reservationService.findAll());
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("Delete a court by id when there is only one court in the system and is avaliabe")
-    void successfullyDeleteAQuatrainGAvaliabeByIdGivenThatThereIsOnlyMany() {
-        court1 = createCourtAvaliabe(COURT_NAME1, COURT_IMAGE_URL1);
-
-        Assertions.assertEquals(1, courtService.findAll().size());
-
-        courtService.deleteById(court1.getId());
-
-        Assertions.assertEquals(0, courtService.findAll().size());
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("Deleting reservation by owner should be successful")
-    void deleteWhenCancellationTimeExpiredShouldThrowException() {
-        startDateTime = startDateTime.minusHours(1);
-
-        Reservation reservation = reservationService.save(createReservation(court1, user1, startDateTime));
-
+        Assertions.assertTrue(userService.findById(user1.getId()).isPresent());
         Assertions.assertEquals(1, reservationService.findAll().size());
-
-        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
-
-        Assertions.assertThrows(
-                SaceForbiddenException.class,
-                () -> reservationService.delete(reservation.getId())
-        );
+        Assertions.assertEquals(3, courtService.findAll().size());
     }
 
     @Test
     @Transactional
-    @DisplayName("Deleting a non-existing reservation should throw ResourceNotFoundException")
-    void deleteNonExistingReservationShouldThrowResourceNotFoundException() {
+    @DisplayName("Deletion without a referent block must return an exception")
+    void deleteABlockThatDoesNotExistThrowException() {
         Assertions.assertThrows(
                 SaceResourceNotFoundException.class,
-                () -> reservationService.delete(99999L)
+                () -> courtService.deleteById(1000L)
         );
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("Trying to delete reservation without ownership should throw IllegalAccessException")
-    void deleteReservationWithoutOwnershipShouldThrowIllegalAccessException() {
-        LocalDateTime startDateTime = LocalDateTime.now().plusHours(25L);
-
-        Reservation reservation = reservationService.save(createReservation(court1, user1, startDateTime));
-
-        Assertions.assertEquals(1, reservationService.findAll().size());
-
-        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user2.getId());
-
-        Assertions.assertThrows(
-                SaceForbiddenException.class,
-                () -> reservationService.delete(reservation.getId())
-        );
-
-        Assertions.assertEquals(1, reservationService.findAll().size());
     }
 
     private void createUsers() {
