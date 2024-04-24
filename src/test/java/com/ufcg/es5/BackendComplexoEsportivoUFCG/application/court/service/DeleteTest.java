@@ -25,22 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 public class DeleteTest extends BasicTestService {
-//    void deleteById(Long id);
-//
-//    @Override
-//    @Transactional
-//    public void deleteById(Long id) throws SaceResourceNotFoundException {
-//        checkIfExistsById(id);
-//        repository.deleteById(id);
-//    }
-//
-//    private void checkIfExistsById(Long id) {
-//        if (this.exists(id)) {
-//            throw new SaceResourceNotFoundException(
-//                    CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
-//            );
-//        }
-//    }
 
     private static final String COURT_NAME1 = "Volleyball Court";
     private static final String COURT_IMAGE_URL1 = "imageurl.com";
@@ -83,16 +67,6 @@ public class DeleteTest extends BasicTestService {
         createUsers();
         startDateTime = LocalDateTime.now().plusHours(CANCELLATION_TIME_LIMIT).plusMinutes(1);
     }
-
-    //Deletar reserva não deleta quadra - OK
-
-    //Deletar sucesso apenas um
-
-    //Deletar suesso com reservas deve exluir as reservas
-
-    //Deletar sucesso com mais de um com e sem reservas
-
-    //Deletar fracasso Id não existe
 
     @Test
     @Transactional
@@ -183,23 +157,35 @@ public class DeleteTest extends BasicTestService {
 
         Assertions.assertEquals(3, reservationService.findAll().size());
         Assertions.assertEquals(5, courtService.findAll().size());
-                
+
+        List<Court> courts= courtService.findAll();
+        List<Reservation> reservations = reservationService.findAll();
+
         Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
         reservationService.delete(reservation1.getId());
 
         Assertions.assertEquals(2, reservationService.findAll().size());
         Assertions.assertEquals(5, courtService.findAll().size());
 
+        reservations.remove(reservation1);
+
         courtService.deleteById(court1.getId());
+
+        courts.remove(court1);
 
         Assertions.assertEquals(2, reservationService.findAll().size());
         Assertions.assertEquals(4, courtService.findAll().size());
 
         courtService.deleteById(court4.getId());
 
+        courts.remove(court4);
+        reservations.remove(reservation3);
+
         Assertions.assertTrue(userService.findById(user1.getId()).isPresent());
         Assertions.assertEquals(1, reservationService.findAll().size());
         Assertions.assertEquals(3, courtService.findAll().size());
+        Assertions.assertEquals(reservations, reservationService.findAll());
+        Assertions.assertEquals(courts, courtService.findAll());
     }
 
     @Test

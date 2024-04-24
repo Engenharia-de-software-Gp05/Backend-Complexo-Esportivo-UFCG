@@ -64,9 +64,7 @@ public class CourtServiceImpl implements CourtService {
     @Override
     @Transactional
     public void deleteById(Long id) throws SaceResourceNotFoundException {
-        System.out.println("oooooooooooooooooooooooo" + id);
         checkIfExistsById(id);
-        reservationService.deleteReservations(id);
         repository.deleteById(id);
     }
 

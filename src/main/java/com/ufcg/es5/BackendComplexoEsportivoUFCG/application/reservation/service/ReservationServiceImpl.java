@@ -130,13 +130,6 @@ public class ReservationServiceImpl implements ReservationService {
         repository.delete(reservation);
     }
 
-    @Override
-    @Transactional
-    public void deleteReservations(Long id) {
-        Collection<Long> ids = repository.findIdsByCourtId(id);
-        repository.deleteAllById(ids);
-    }
-
     private void publishCancellationEventByAdmin(Reservation reservation, String motive) {
         eventPublisher.publishEvent(new DeletedEvent<>(new ReservationCancelledByAdminDto(reservation, motive), ReservationCancelledByAdminDto.class));
     }
