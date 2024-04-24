@@ -2,6 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
@@ -27,6 +28,9 @@ public class CourtServiceImpl implements CourtService {
 
     @Autowired
     private CourtRepository repository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @Override
     public JpaRepository<Court, Long> getRepository() {
@@ -86,7 +90,7 @@ public class CourtServiceImpl implements CourtService {
     }
 
     private void checkIfExistsById(Long id) {
-        if (this.exists(id)) {
+        if (!this.exists(id)) {
             throw new SaceResourceNotFoundException(
                     CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
             );
