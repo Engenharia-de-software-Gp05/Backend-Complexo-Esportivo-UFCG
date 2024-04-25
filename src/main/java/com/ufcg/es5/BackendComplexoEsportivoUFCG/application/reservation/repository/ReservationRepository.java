@@ -31,6 +31,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     );
 
     @Query(
+        """
+                SELECT reservation
+                FROM Reservation reservation
+                WHERE reservation.court.id = :courtId
+        """
+    )
+    Collection<ReservationResponseProjection> findByCourtId(
+            @Param("courtId") Long courtId
+    );
+
+    @Query(
             """
                     SELECT reservation.id as id,
                            reservation.startDateTime as startDateTime,

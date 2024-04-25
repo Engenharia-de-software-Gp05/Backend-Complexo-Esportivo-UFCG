@@ -233,7 +233,7 @@ public class DeleteTest extends BasicTestService {
     }
 
     private Court createCourtAvaliabe(String name, String urlImage) {
-        court1 = new Court(
+        Court court = new Court(
                 name,
                 List.of(urlImage),
                 CourtAvailabilityStatusEnum.AVAILABLE,
@@ -241,11 +241,11 @@ public class DeleteTest extends BasicTestService {
                 6L
         );
 
-        return courtService.save(court1);
+        return courtService.save(court);
     }
 
     private Court createCourtUnavailable(String name, String urlImage) {
-        court1 = new Court(
+        Court court = new Court(
                 name,
                 List.of(urlImage),
                 CourtAvailabilityStatusEnum.UNAVAILABLE,
@@ -253,7 +253,7 @@ public class DeleteTest extends BasicTestService {
                 6L
         );
 
-        return courtService.save(court1);
+        return courtService.save(court);
     }
 
 }

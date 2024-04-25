@@ -4,7 +4,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.service.Basic
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationServiceImpl;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
@@ -12,9 +12,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class UpdateTest extends BasicTestService {
+public class CreateTest extends BasicTestService {
 
     private static final String USER_EMAIL_1 = "user@gmail.com";
     private static final String USER_USERNAME_1 = "username";
@@ -72,73 +70,51 @@ public class UpdateTest extends BasicTestService {
     @Transactional
     @DisplayName("Success in court update")
     void successfulUpdateOnTheCourt() {
+        List<String> imagens = new ArrayList<String>();
 
-        court1 = createCourtAvaliabe(COURT_NAME, COURT_IMAGE_URL);
+        imagens.add("img1.com");
+        imagens.add("img2.com");
 
-        Reservation reservation = reservationService.save(createReservation(court1, user1, startDateTime));
-        court1 = courtService.findByName(court1.getName());
-
-        Assertions.assertEquals(1, reservationService.findAll().size());
-        Assertions.assertEquals(court1.getName(), "Volleyball Court");
-        Assertions.assertEquals(court1.getId(), reservationService.findAll().get(0).getCourt().getId());
-        Assertions.assertEquals(courtService.findById(court1.getId()).get().getImagesUrls().size(), 1);
-
-        CourtUpdateDto newCourt = new CourtUpdateDto(
+        CourtSaveDto newCourt = new CourtSaveDto(
                 "Novo nome",
-                CourtAvailabilityStatusEnum.UNAVAILABLE
+                imagens,
+                CourtAvailabilityStatusEnum.UNAVAILABLE,
+                90L,
+                10L
         );
+        courtService.create(newCourt);
 
-        courtService.updateById(newCourt, court1.getId());
-        court1 = courtService.findByName(court1.getName());
+        Reservation reservation = reservationService.save(createReservation(courtService.findByName(newCourt.name()), user1, startDateTime));
+        court1 = courtService.findByName(newCourt.name());
 
-        Assertions.assertEquals(1, reservationService.findAll().size());
-        Assertions.assertEquals(court1.getName(), "Novo nome");
-        Assertions.assertEquals(court1.getCourtAvailabilityStatusEnum(), newCourt.courtStatusEnum());
-        Assertions.assertEquals(court1.getReservationDuration(), 90L);
+        Assertions.assertEquals("Novo nome", court1.getName());
+        Assertions.assertEquals(imagens.get(0), court1.getImagesUrls().get(0));
+        Assertions.assertEquals(imagens.get(1), court1.getImagesUrls().get(1));
+        Assertions.assertEquals(reservationService.findByCourtId(court1.getId()).size(), 1);
     }
 
     @Test
     @Transactional
     @DisplayName("An exception should be returned because there is already a block with that name")
     void InvalidupdateCourtwithThatNameAlreadyExists() {
-        startDateTime = startDateTime.minusHours(1);
+        List<String> imagens = new ArrayList<String>();
 
-        court1 = createCourtAvaliabe(COURT_NAME, COURT_IMAGE_URL);
+        imagens.add("img1.com");
+        imagens.add("img2.com");
 
-        court2 = createCourtAvaliabe("Quadra Grande", COURT_IMAGE_URL);
+        CourtSaveDto newCourt = new CourtSaveDto(
+                "Novo nome",
+                new ArrayList<>(),
+                CourtAvailabilityStatusEnum.UNAVAILABLE,
+                90L,
+                10L
+                );
 
-        Reservation reservation1 = reservationService.save(createReservation(court2, user1, startDateTime));
-        Reservation reservation2 = reservationService.save(createReservation(court1, user2, startDateTime));
-
-        Assertions.assertEquals(2, reservationService.findAll().size());
-
-        CourtUpdateDto newCourt = new CourtUpdateDto(
-                "Quadra Grande",
-                CourtAvailabilityStatusEnum.UNAVAILABLE
-        );
+        courtService.create(newCourt);
 
         Assertions.assertThrows(
                 SaceConflictException.class,
-                () -> courtService.updateById(newCourt, court1.getId())
-        );
-        Assertions.assertEquals(reservationService.findByCourtId(court1.getId()).size(), 1);
-        Assertions.assertEquals(2, reservationService.findAll().size());
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("Returns exception for not finding blockl")
-    void updateCourtInvalidParametersIdNotFoundThrowException() {
-        court1 = createCourtAvaliabe(COURT_NAME, COURT_IMAGE_URL);
-
-        CourtUpdateDto newCourt = new CourtUpdateDto(
-                "Quadra Grande",
-                CourtAvailabilityStatusEnum.UNAVAILABLE
-        );
-
-        Assertions.assertThrows(
-                SaceResourceNotFoundException.class,
-                () -> courtService.updateById(newCourt, 9999L)
+                () -> courtService.create(newCourt)
         );
     }
 

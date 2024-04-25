@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -171,6 +172,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Boolean existsByCourtIdUserIdAndTimeInterval(Long courtId, Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return !findByCourtIdUserIdAndTimeInterval(courtId, userId, startDateTime, endDateTime).isEmpty();
+    }
+
+    @Override
+    public Collection<ReservationResponseDto> findByCourtId(Long courtId) {
+        Collection<ReservationResponseProjection> projections = repository.findByCourtId(courtId);
+        return projections.stream().map(ReservationResponseDto::new).toList();
     }
 
     @Override

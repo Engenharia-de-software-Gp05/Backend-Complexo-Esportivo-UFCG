@@ -27,6 +27,8 @@ public interface ReservationService extends BasicService<Reservation, Long> {
 
     Boolean existsByCourtIdUserIdAndTimeInterval(Long courtId, Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
+    Collection<ReservationResponseDto> findByCourtId(Long courtId);
+
     Collection<ReservationResponseDto> findByCourtIdAndTimeInterval(Long courtId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
     Collection<ReservationResponseDto> findByUserIdAndStartDateTime(Long userId, LocalDateTime startDateTime);

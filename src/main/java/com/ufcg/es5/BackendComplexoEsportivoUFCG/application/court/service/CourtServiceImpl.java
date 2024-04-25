@@ -45,18 +45,26 @@ public class CourtServiceImpl implements CourtService {
     @Transactional
     public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
+        System.out.println("oi");
         Court court = objectMapper.convertValue(data, Court.class);
+        System.out.println(court.getCourtAvailabilityStatusEnum());
+        System.out.println("oi2");
         this.save(court);
+        System.out.println("oi3");
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
 
     @Override
     @Transactional
-    public CourtResponseDto updateById(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException {
+    public CourtResponseDto updateById(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException, SaceConflictException {
         Court court = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
                 CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
         ));
-        updateCourtData(court, data);
+        checkByName(data.name());
+
+        court.setName(data.name());
+        court.setCourtAvailabilityStatusEnum(data.courtStatusEnum());
+
         this.save(court);
         return objectMapper.convertValue(court, CourtResponseDto.class);
     }
@@ -86,16 +94,8 @@ public class CourtServiceImpl implements CourtService {
         }
     }
 
-    private void updateCourtData(Court court, CourtUpdateDto newData) {
-        court.setName(newData.name());
-        court.setCourtAvailabilityStatusEnum(newData.courtStatusEnum());
-        court.getImagesUrls().clear();
-        court.getImagesUrls().addAll(newData.imagesUrls());
-    }
-
     private void checkIfExistsById(Long id) {
         if (!this.exists(id)) {
-            System.out.println("Entrou");
             throw new SaceResourceNotFoundException(
                     CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
             );
