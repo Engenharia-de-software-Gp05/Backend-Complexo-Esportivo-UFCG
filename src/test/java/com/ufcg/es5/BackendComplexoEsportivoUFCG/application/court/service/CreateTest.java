@@ -118,6 +118,42 @@ public class CreateTest extends BasicTestService {
         );
     }
 
+    @Test
+    @Transactional
+    @DisplayName("Amust create two blocks and only them and both must have different names")
+    void validCreationOfTwoBlocks() {
+        List<String> imagens = new ArrayList<String>();
+
+        imagens.add("img1.com");
+        imagens.add("img2.com");
+
+        CourtSaveDto newCourt1 = new CourtSaveDto(
+                "Novo nome",
+                new ArrayList<>(),
+                CourtAvailabilityStatusEnum.UNAVAILABLE,
+                90L,
+                10L
+        );
+
+        courtService.create(newCourt1);
+
+        CourtSaveDto newCourt2 = new CourtSaveDto(
+                "Outro nome",
+                new ArrayList<>(),
+                CourtAvailabilityStatusEnum.UNAVAILABLE,
+                90L,
+                10L
+        );
+        courtService.create(newCourt2);
+
+        court1 = courtService.findByName(newCourt1.name());
+        court2 =  courtService.findByName(newCourt2.name());
+
+        Assertions.assertEquals(courtService.findAll().size(), 2);
+        Assertions.assertNotEquals(court1, court2);
+        Assertions.assertNotEquals(court1.getName(), court2.getName());
+    }
+
     private Court createCourtAvaliabe(String name, String urlImage) {
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add(urlImage);

@@ -45,6 +45,8 @@ public class CourtController {
             @RequestBody
             CourtSaveDto data
     ) {
+        System.out.println("sssssssssssssssssssssssssssssssssssss");
+        System.out.println(data);
         CourtResponseDto response = service.create(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
