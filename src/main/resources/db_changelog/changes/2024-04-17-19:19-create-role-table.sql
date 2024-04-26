@@ -8,4 +8,4 @@ CREATE TABLE role
 );
 
 ALTER TABLE role
-    ADD CONSTRAINT fk_role_on_sace_user FOREIGN KEY (user_id) REFERENCES sace_user (id);
+    ADD CONSTRAINT fk_role_on_sace_user FOREIGN KEY (user_id) REFERENCES sace_user (id) ON DELETE CASCADE;

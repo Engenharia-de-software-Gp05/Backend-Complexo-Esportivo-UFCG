@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface ReservationService extends BasicService<Reservation, Long> {
     Collection<ReservationResponseDto> findByCourtIdAndDateRange(Long courtId, LocalDateTime startDate, LocalDateTime endDate);
 
-    Collection<ReservationResponseDto> findByCourtIdUserId(Long courtId, Long userId);
+    Collection<ReservationResponseDto> findByCourtIdAndUserId(Long courtId, Long userId);
 
     ReservationResponseDto create(ReservationSaveDto reservationSaveDto);
 

@@ -11,12 +11,12 @@ public record ReservationDetailedDto(
         String courtName,
         Collection<String> courtImageUrl,
         String userName,
-        @JsonFormat(timezone = DateTimeUtils.DATE_TIME_PATTERN)
+        @JsonFormat(pattern = DateTimeUtils.DATE_TIME_PATTERN)
         LocalDateTime startDateTime,
-        @JsonFormat(timezone = DateTimeUtils.DATE_TIME_PATTERN)
+        @JsonFormat(pattern = DateTimeUtils.DATE_TIME_PATTERN)
         LocalDateTime endDateTime
 ) {
-    public ReservationDetailedDto(ReservationDetailedProjection p){
+    public ReservationDetailedDto(ReservationDetailedProjection p) {
         this(p.getCourtName(), p.getCourtImageUrls(), p.getUserName(), p.getStartDateTime(), p.getEndDateTime());
     }
 }

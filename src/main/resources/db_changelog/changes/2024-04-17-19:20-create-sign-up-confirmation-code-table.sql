@@ -16,4 +16,4 @@ ALTER TABLE sign_up_confirmation_code
     ADD CONSTRAINT uc_sign_up_confirmation_code_sace_user UNIQUE (sace_user_id);
 
 ALTER TABLE sign_up_confirmation_code
-    ADD CONSTRAINT fk_sign_up_confirmation_code_on_sace_user FOREIGN KEY (sace_user_id) REFERENCES sace_user (id);
+    ADD CONSTRAINT fk_sign_up_confirmation_code_on_sace_user FOREIGN KEY (sace_user_id) REFERENCES sace_user (id) ON DELETE CASCADE;
