@@ -67,7 +67,7 @@ class DeleteTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Deleting reservation by owner should be successful")
+    @DisplayName("Deleting reservation by owner should be successful.")
     void deleteReservationByOwnerShouldSucceed() {
         Reservation reservation = reservationService.save(createReservation(startDateTime));
 
@@ -81,8 +81,8 @@ class DeleteTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Deleting reservation by owner should be successful")
-    void deleteWhenCancellationTimeExpiredShouldThrowException() {
+    @DisplayName("Deleting after cancellation time limit should throw ForbiddenException.")
+    void deleteWhenCancellationTimeExpiredShouldThrowForbiddenException() {
         startDateTime = startDateTime.minusHours(1);
 
         Reservation reservation = reservationService.save(createReservation(startDateTime));
@@ -99,7 +99,7 @@ class DeleteTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Deleting a non-existing reservation should throw ResourceNotFoundException")
+    @DisplayName("Deleting a non-existing reservation should throw ResourceNotFoundException.")
     void deleteNonExistingReservationShouldThrowResourceNotFoundException() {
         Assertions.assertThrows(
                 SaceResourceNotFoundException.class,
@@ -109,8 +109,8 @@ class DeleteTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Trying to delete reservation without ownership should throw IllegalAccessException")
-    void deleteReservationWithoutOwnershipShouldThrowIllegalAccessException() {
+    @DisplayName("Trying to delete reservation without ownership should throw ForbiddenException.")
+    void deleteReservationWithoutOwnershipShouldThrowForbiddenException() {
         LocalDateTime startDateTime = LocalDateTime.now().plusHours(25L);
 
         Reservation reservation = reservationService.save(createReservation(startDateTime));

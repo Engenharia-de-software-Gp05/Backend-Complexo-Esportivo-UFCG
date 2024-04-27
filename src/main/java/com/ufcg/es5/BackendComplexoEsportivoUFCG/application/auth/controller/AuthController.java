@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;

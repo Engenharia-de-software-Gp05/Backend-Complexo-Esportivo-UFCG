@@ -1,10 +1,10 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.AuthPathConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthUsernamePasswordDto;
 import org.apache.http.HttpHeaders;
@@ -72,8 +72,8 @@ class LoginTest extends BasicTestController {
     private String makeRequestPayload(String username, String password) throws JsonProcessingException {
         Map<String, Object> payload = new HashMap<>();
 
-        payload.put(PropertyConstants.USERNAME, username);
-        payload.put(PropertyConstants.PASSWORD, password);
+        payload.put(PropertyTestConstants.USERNAME, username);
+        payload.put(PropertyTestConstants.PASSWORD, password);
 
         return objectMapper.writeValueAsString(payload);
     }

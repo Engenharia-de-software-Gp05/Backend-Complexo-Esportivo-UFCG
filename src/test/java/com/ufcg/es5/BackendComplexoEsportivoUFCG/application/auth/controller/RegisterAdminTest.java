@@ -1,9 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthAttributesConstants.*;
-import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants.*;
+import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RegisterAdminTest extends BasicTestController {
