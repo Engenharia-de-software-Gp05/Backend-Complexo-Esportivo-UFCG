@@ -6,18 +6,15 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.handler.SystemInternalException;
-
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.s3.S3Uploader;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CourtServiceImpl implements CourtService {
@@ -27,6 +24,9 @@ public class CourtServiceImpl implements CourtService {
 
     @Autowired
     private CourtRepository repository;
+
+    @Autowired
+    private S3Uploader s3Uploader;
 
     @Override
     public JpaRepository<Court, Long> getRepository() {
@@ -45,12 +45,16 @@ public class CourtServiceImpl implements CourtService {
     @Override
     @Transactional
     public CourtResponseDto updateById(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException {
-        Court court = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
-                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
-        ));
+        Court court = getCourtById(id);
         updateCourtData(court, data);
         this.save(court);
         return objectMapper.convertValue(court, CourtResponseDto.class);
+    }
+
+    private Court getCourtById(Long id) {
+        return this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        ));
     }
 
     @Override
@@ -68,6 +72,16 @@ public class CourtServiceImpl implements CourtService {
     @Override
     public Boolean existsByName(String name) {
         return findByName(name) != null;
+    }
+
+    @Override
+    @Transactional
+    public void updateImageById(MultipartFile picture, Long id) {
+        Court court = getCourtById(id);
+
+        String courtImageUrl = s3Uploader.uploadCourtImage(picture);
+        court.addImageUrl(courtImageUrl);
+        save(court);
     }
 
     private void checkByName(String name) {

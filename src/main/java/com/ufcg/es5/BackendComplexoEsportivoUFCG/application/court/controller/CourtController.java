@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @RestController
@@ -48,7 +50,18 @@ public class CourtController {
         CourtResponseDto response = service.create(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-  
+
+    @PutMapping("/upload/image")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> updateProfilePicture(
+            @RequestParam(PropertyConstants.ID)
+            @NotNull Long id,
+            @RequestPart(value = "courtImage") MultipartFile image
+    ) {
+        service.updateImageById(image, id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PutMapping("/update/by/id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {

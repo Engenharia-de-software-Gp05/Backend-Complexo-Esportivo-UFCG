@@ -49,6 +49,8 @@ dependencies {
     compileOnly 'org.modelmapper:modelmapper:3.1.0'
     implementation 'org.modelmapper:modelmapper:3.1.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.3.0-rc1'
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
 
     /*Object Mapper suporte para LocalDateTime*/
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
