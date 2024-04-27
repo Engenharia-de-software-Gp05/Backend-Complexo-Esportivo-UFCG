@@ -1,7 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationResponseProjection;
 
 import java.time.LocalDateTime;
 

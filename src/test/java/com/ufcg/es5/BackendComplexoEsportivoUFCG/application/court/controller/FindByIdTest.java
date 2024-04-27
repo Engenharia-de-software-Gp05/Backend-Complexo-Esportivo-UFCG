@@ -3,7 +3,6 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,33 +22,32 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-public class DeleteTest extends BasicTestController {
-
+public class FindByIdTest extends BasicTestController {
     public static final long VALID_ID = 1L;
-    private static final String PATH = "/court/delete/by/id";
+    private static final String PATH = "/court/find/by/id";
 
     @MockBean
     private CourtService courtService;
 
     @BeforeEach
-    void setUp() {
-        Mockito.doNothing().when(courtService).deleteById(VALID_ID);
-    }
+    void setUp() {}
 
     @ParameterizedTest
-    @DisplayName("Should return Success. Code: 204")
-    @MethodSource(value = "returnNoContent")
+    @DisplayName("Should return Success. Code: 200")
+    @MethodSource(value = "returnOk")
     void returnNoContent(List<String> roles) throws Exception {
         SecurityContextUtils.fakeAuthentication(roles);
-        callEndpoint().andExpect(status().isNoContent()).andReturn();
+        callEndpoint().andExpect(status().isOk()).andReturn();
     }
 
-    private static Stream<Arguments> returnNoContent() {
+    private static Stream<Arguments> returnOk() {
         return Stream.of(
                 Arguments.of(List.of(PropertyConstants.ROLE_ADMIN)),
+                Arguments.of(List.of(PropertyConstants.ROLE_USER)),
                 Arguments.of(List.of(PropertyConstants.ROLE_ADMIN, PropertyConstants.ROLE_PENDING))
         );
     }
@@ -59,7 +57,7 @@ public class DeleteTest extends BasicTestController {
     void returnBadRequestByQueryParam() throws Exception {
         SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
 
-        ResultActions resultActions = mockMvc.perform(delete(PATH)
+        ResultActions resultActions = mockMvc.perform(get(PATH)
                 .queryParam(PropertyConstants.ID, (String) null)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
@@ -74,7 +72,7 @@ public class DeleteTest extends BasicTestController {
         SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .delete(PATH)
+                .get(PATH)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
@@ -91,7 +89,7 @@ public class DeleteTest extends BasicTestController {
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .delete(PATH)
+                .get(PATH)
                 .queryParam(PropertyConstants.ID, String.valueOf(VALID_ID))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)

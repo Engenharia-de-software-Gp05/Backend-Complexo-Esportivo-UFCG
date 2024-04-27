@@ -1,7 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.UnavailableReservationResponseProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.formatters.DateTimeUtils;
 import jakarta.validation.constraints.NotNull;
 

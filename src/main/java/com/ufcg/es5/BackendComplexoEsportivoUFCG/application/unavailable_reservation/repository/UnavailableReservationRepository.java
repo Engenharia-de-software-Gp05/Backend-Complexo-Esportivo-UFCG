@@ -1,8 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reservation.repository;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation.UnavailableReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.UnavailableReservation;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.UnavailableReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.UnavailableReservationResponseProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

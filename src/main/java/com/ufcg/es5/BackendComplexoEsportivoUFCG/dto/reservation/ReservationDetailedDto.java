@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationDetailedProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationDetailedProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.formatters.DateTimeUtils;
 
 import java.time.LocalDateTime;

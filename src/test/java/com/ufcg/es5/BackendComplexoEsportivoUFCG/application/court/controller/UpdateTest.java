@@ -4,7 +4,9 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.Ba
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,14 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-public class CreateTest extends BasicTestController {
+public class UpdateTest extends BasicTestController {
 
-    private static final String PATH = "/court/save";
+    private static final String PATH = "/court/update/by/id";
+
 
     @MockBean
     private CourtService courtService;
@@ -40,27 +42,20 @@ public class CreateTest extends BasicTestController {
     void setUp() {}
 
     @ParameterizedTest
-    @DisplayName("Should return Success. Code: 201")
-    @MethodSource(value = "returnCreate")
+    @DisplayName("Should return Success. Code: 200")
+    @MethodSource(value = "returnNoContent")
     void returnNoCreate(List<String> roles) throws Exception {
-        List<String> imagens = new ArrayList<String>();
 
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
-        CourtSaveDto data = new CourtSaveDto(
+        CourtUpdateDto data = new CourtUpdateDto(
                 "Novo nome",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
-                90L,
-                10L
+                CourtAvailabilityStatusEnum.UNAVAILABLE
         );
 
         SecurityContextUtils.fakeAuthentication(roles);
-        callEndpoint(data).andExpect(status().isCreated()).andReturn();
+        callEndpoint(data, 1L).andExpect(status().isOk()).andReturn();
     }
 
-    private static Stream<Arguments> returnCreate() {
+    private static Stream<Arguments> returnNoContent() {
         return Stream.of(
                 Arguments.of(List.of(PropertyConstants.ROLE_ADMIN))
         );
@@ -68,23 +63,17 @@ public class CreateTest extends BasicTestController {
 
     @Test
     @DisplayName("should return badrequest for invalid parameters passed to dto")
-    void returnBadRequestByDto() throws Exception {
-        List<String> imagens = new ArrayList<String>();
+    void returnBadRequestByDto1() throws Exception {
 
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
-        CourtSaveDto data = new CourtSaveDto(
+        CourtUpdateDto data = new CourtUpdateDto(
                 null,
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
-                90L,
-                10L
+                CourtAvailabilityStatusEnum.AVAILABLE
         );
 
         SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
 
-        ResultActions resultActions = mockMvc.perform(post(PATH)
+        ResultActions resultActions = mockMvc.perform(put(PATH)
+                .queryParam("id", String.valueOf(1L))
                 .content(objectMapper.writeValueAsString(data))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
@@ -92,30 +81,44 @@ public class CreateTest extends BasicTestController {
 
         resultActions.andExpect(status().isBadRequest()).andReturn();
     }
-    
+
     @Test
-    @DisplayName("Should return Forbidden. Code: 403.")
+    @DisplayName("should return badrequest for invalid parameters passed to dto")
+    void returnBadRequestByDto2() throws Exception {
+
+        CourtUpdateDto data = new CourtUpdateDto(
+                "Nome",
+                CourtAvailabilityStatusEnum.AVAILABLE
+        );
+
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
+
+        ResultActions resultActions = mockMvc.perform(put(PATH)
+                .queryParam("id", (String) null)
+                .content(objectMapper.writeValueAsString(data))
+                .header(HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_JSON)
+        );
+
+        resultActions.andExpect(status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    @DisplayName("Should return Forbiddenpost. Code: 403.")
     void returnForbidden() throws Exception {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
-        CourtSaveDto data = new CourtSaveDto(
+        CourtUpdateDto newData = new CourtUpdateDto(
                 "Nome quadra",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
-                90L,
-                10L
+                CourtAvailabilityStatusEnum.AVAILABLE
         );
 
         SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_USER));
-        callEndpoint(data).andExpect(status().isForbidden()).andReturn();
+        callEndpoint(newData, 1L).andExpect(status().isForbidden()).andReturn();
     }
 
-    private ResultActions callEndpoint(CourtSaveDto data) throws Exception {
+    private ResultActions callEndpoint(CourtUpdateDto data, Long id) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .post(PATH)
+                .put(PATH)
+                .queryParam("id", String.valueOf(id))
                 .content(objectMapper.writeValueAsString(data))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
