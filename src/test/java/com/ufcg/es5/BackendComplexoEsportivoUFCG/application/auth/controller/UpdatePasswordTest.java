@@ -1,9 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthPasswordUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthAttributesConstants.VALID_PASSWORD;
-import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants.*;
+import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UpdatePasswordTest extends BasicTestController {

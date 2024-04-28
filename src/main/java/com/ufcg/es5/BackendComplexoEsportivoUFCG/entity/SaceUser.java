@@ -26,6 +26,7 @@ public class SaceUser extends BasicEntity implements UserDetails {
     private static final String USER_ID_COLUMN = "user_id";
     private static final String STUDENT_ID_COLUMN = "student_id";
     private static final String SACE_USER_PROPERTY = "saceUser";
+    public static final String PROFILE_PICTURE_URL_COLUMN = "profile_picture_url";
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
@@ -41,6 +42,9 @@ public class SaceUser extends BasicEntity implements UserDetails {
 
     @Column(name = STUDENT_ID_COLUMN, nullable = true, unique = true)
     private String studentId;
+
+    @Column(name = PROFILE_PICTURE_URL_COLUMN)
+    private String profilePictureUrl;
 
     @OneToMany(mappedBy = SACE_USER_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Reservation> reservations;
@@ -87,6 +91,14 @@ public class SaceUser extends BasicEntity implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.roleEnums = roleEnums;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 
     @Override
@@ -184,12 +196,12 @@ public class SaceUser extends BasicEntity implements UserDetails {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         SaceUser saceUser = (SaceUser) o;
-        return Objects.equals(name, saceUser.name) && Objects.equals(email, saceUser.email) && Objects.equals(phoneNumber, saceUser.phoneNumber) && Objects.equals(password, saceUser.password) && Objects.equals(studentId, saceUser.studentId) && Objects.equals(reservations, saceUser.reservations) && Objects.equals(roleEnums, saceUser.roleEnums);
+        return Objects.equals(name, saceUser.name) && Objects.equals(email, saceUser.email) && Objects.equals(phoneNumber, saceUser.phoneNumber) && Objects.equals(password, saceUser.password) && Objects.equals(studentId, saceUser.studentId) && Objects.equals(profilePictureUrl, saceUser.profilePictureUrl) && Objects.equals(reservations, saceUser.reservations) && Objects.equals(roleEnums, saceUser.roleEnums);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, email, phoneNumber, password, studentId, reservations, roleEnums);
+        return Objects.hash(super.hashCode(), name, email, phoneNumber, password, studentId, profilePictureUrl, reservations, roleEnums);
     }
 
     @Override
@@ -200,6 +212,7 @@ public class SaceUser extends BasicEntity implements UserDetails {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", password='" + password + '\'' +
                 ", studentId='" + studentId + '\'' +
+                ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", reservations=" + reservations +
                 ", roleEnums=" + roleEnums +
                 '}';

@@ -16,6 +16,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNo
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.RandomStringGenerator;
 import jakarta.transaction.Transactional;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,6 +56,8 @@ class AuthServiceImpl implements AuthService {
 
     @Autowired
     private SignUpConfirmationCodeService confirmationCodeService;
+
+    private static final Log LOGGER = LogFactory.getLog(AuthServiceImpl.class);
 
     @Override
     @Transactional

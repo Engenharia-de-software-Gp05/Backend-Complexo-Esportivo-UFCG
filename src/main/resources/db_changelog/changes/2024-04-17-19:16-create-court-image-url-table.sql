@@ -8,4 +8,4 @@ CREATE TABLE court_image_url
 );
 
 ALTER TABLE court_image_url
-    ADD CONSTRAINT fk_court_image_url_on_court FOREIGN KEY (court_id) REFERENCES court (id);
+    ADD CONSTRAINT fk_court_image_url_on_court FOREIGN KEY (court_id) REFERENCES court (id) ON DELETE CASCADE;

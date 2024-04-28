@@ -23,7 +23,7 @@ public class TokenService {
 
     private static final String UNAUTHORIZED = "";
 
-    @Value("${api.security.token.secret}")
+    @Value("${api.jwt.secret.key}")
     private String secret;
 
     @Autowired

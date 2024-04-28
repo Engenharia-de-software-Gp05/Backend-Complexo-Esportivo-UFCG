@@ -5,7 +5,6 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.Court
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.enums.ReservationAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
@@ -39,10 +38,13 @@ class DeleteTest extends BasicTestService {
     private static final String USER_PASSWORD_2 = "5451616547";
     private static final String COURT_NAME = "Volleyball Court";
     private static final String COURT_IMAGE_URL = "imageurl.com";
+    private static final Long CANCELLATION_TIME_LIMIT = 24L;
 
     private static SaceUser user1;
     private static SaceUser user2;
     private static Court court;
+    private static LocalDateTime startDateTime;
+
 
     @Autowired
     private ReservationServiceImpl reservationService;
@@ -60,37 +62,58 @@ class DeleteTest extends BasicTestService {
     void setUp() {
         createCourt();
         createUsers();
+        startDateTime = LocalDateTime.now().plusHours(CANCELLATION_TIME_LIMIT).plusMinutes(1);
     }
 
     @Test
     @Transactional
-    @DisplayName("Deleting reservation by owner should be successful")
+    @DisplayName("Deleting reservation by owner should be successful.")
     void deleteReservationByOwnerShouldSucceed() {
-        Reservation reservation = reservationService.save(createReservation());
+        Reservation reservation = reservationService.save(createReservation(startDateTime));
 
         Assertions.assertEquals(1, reservationService.findAll().size());
 
         Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
-        reservationService.deleteById(reservation.getId());
+        reservationService.delete(reservation.getId());
 
         Assertions.assertEquals(0, reservationService.findAll().size());
     }
 
     @Test
     @Transactional
-    @DisplayName("Deleting a non-existing reservation should throw ResourceNotFoundException")
-    void deleteNonExistingReservationShouldThrowResourceNotFoundException() {
+    @DisplayName("Deleting after cancellation time limit should throw ForbiddenException.")
+    void deleteWhenCancellationTimeExpiredShouldThrowForbiddenException() {
+        startDateTime = startDateTime.minusHours(1);
+
+        Reservation reservation = reservationService.save(createReservation(startDateTime));
+
+        Assertions.assertEquals(1, reservationService.findAll().size());
+
+        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
+
         Assertions.assertThrows(
-                SaceResourceNotFoundException.class,
-                () -> reservationService.deleteById(99999L)
+                SaceForbiddenException.class,
+                () -> reservationService.delete(reservation.getId())
         );
     }
 
     @Test
     @Transactional
-    @DisplayName("Trying to delete reservation without ownership should throw IllegalAccessException")
-    void deleteReservationWithoutOwnershipShouldThrowIllegalAccessException() {
-        Reservation reservation = reservationService.save(createReservation());
+    @DisplayName("Deleting a non-existing reservation should throw ResourceNotFoundException.")
+    void deleteNonExistingReservationShouldThrowResourceNotFoundException() {
+        Assertions.assertThrows(
+                SaceResourceNotFoundException.class,
+                () -> reservationService.delete(99999L)
+        );
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("Trying to delete reservation without ownership should throw ForbiddenException.")
+    void deleteReservationWithoutOwnershipShouldThrowForbiddenException() {
+        LocalDateTime startDateTime = LocalDateTime.now().plusHours(25L);
+
+        Reservation reservation = reservationService.save(createReservation(startDateTime));
 
         Assertions.assertEquals(1, reservationService.findAll().size());
 
@@ -98,21 +121,19 @@ class DeleteTest extends BasicTestService {
 
         Assertions.assertThrows(
                 SaceForbiddenException.class,
-                () -> reservationService.deleteById(reservation.getId())
+                () -> reservationService.delete(reservation.getId())
         );
 
         Assertions.assertEquals(1, reservationService.findAll().size());
     }
 
-    private Reservation createReservation() {
-        LocalDateTime startDateTime = LocalDateTime.now();
+    private Reservation createReservation(LocalDateTime startDateTime) {
         LocalDateTime endDateTime = startDateTime.plusHours(2L);
         return new Reservation(
                 startDateTime,
                 endDateTime,
                 court,
-                user1,
-                ReservationAvailabilityStatusEnum.BOOKED
+                user1
         );
     }
 
@@ -121,7 +142,8 @@ class DeleteTest extends BasicTestService {
                 COURT_NAME,
                 List.of(COURT_IMAGE_URL),
                 CourtAvailabilityStatusEnum.AVAILABLE,
-                90L
+                90L,
+                6L
         );
 
         court = courtService.save(court);

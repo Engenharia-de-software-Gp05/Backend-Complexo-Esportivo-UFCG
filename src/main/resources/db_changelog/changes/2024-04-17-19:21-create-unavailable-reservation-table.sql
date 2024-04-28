@@ -13,4 +13,4 @@ CREATE TABLE unavailable_reservation
 );
 
 ALTER TABLE unavailable_reservation
-    ADD CONSTRAINT fk_unavailable_reservation_on_court FOREIGN KEY (court_id) REFERENCES court (id);
+    ADD CONSTRAINT fk_unavailable_reservation_on_court FOREIGN KEY (court_id) REFERENCES court (id) ON DELETE CASCADE;
