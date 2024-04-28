@@ -2,10 +2,8 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reserv
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reservation.service.UnavailableReservationService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation.UnavailableReservationResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation.UnavailableReservationSaveDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,7 +58,7 @@ public class UnavailableReservationController {
     public ResponseEntity<UnavailableReservationResponseDto> createReservation(
             @Valid
             @RequestBody
-            ReservationSaveDto reservationSaveDto
+            UnavailableReservationSaveDto reservationSaveDto
     ) {
         UnavailableReservationResponseDto response = service.create(reservationSaveDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

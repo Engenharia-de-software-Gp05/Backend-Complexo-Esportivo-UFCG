@@ -1,7 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.ReservationPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
@@ -27,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DeleteTest extends BasicTestController {
 
     public static final long VALID_ID = 1L;
-    private static final String PATH = "/reservation/delete/by/id";
 
     @MockBean
     private ReservationService reservationService;
@@ -47,19 +47,19 @@ class DeleteTest extends BasicTestController {
 
     private static Stream<Arguments> returnNoContent() {
         return Stream.of(
-                Arguments.of(List.of(PropertyConstants.ROLE_USER)),
-                Arguments.of(List.of(PropertyConstants.ROLE_ADMIN)),
-                Arguments.of(List.of(PropertyConstants.ROLE_ADMIN, PropertyConstants.ROLE_PENDING))
+                Arguments.of(List.of(PropertyTestConstants.ROLE_USER)),
+                Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN)),
+                Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN, PropertyTestConstants.ROLE_PENDING))
         );
     }
 
     @Test
     @DisplayName("Should return BadRequest ")
     void returnBadRequest() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_USER));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_USER));
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .delete(PATH)
+                .delete(ReservationPathConstants.DELETE_BY_ID_PATH)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
@@ -70,14 +70,14 @@ class DeleteTest extends BasicTestController {
     @Test
     @DisplayName("Should return Forbidden. Code: 403.")
     void returnForbidden() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_PENDING));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_PENDING));
         callEndpoint().andExpect(status().isForbidden()).andReturn();
     }
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .delete(PATH)
-                .queryParam(PropertyConstants.ID, String.valueOf(VALID_ID))
+                .delete(ReservationPathConstants.DELETE_BY_ID_PATH)
+                .queryParam(PropertyTestConstants.ID, String.valueOf(VALID_ID))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );

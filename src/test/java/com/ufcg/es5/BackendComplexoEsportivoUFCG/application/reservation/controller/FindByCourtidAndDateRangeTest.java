@@ -8,6 +8,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResp
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,8 +28,7 @@ import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.Pr
 import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.controller.DeleteTest.VALID_ID;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class FindByCourtIdUserIdTest extends BasicTestController {
-
+class FindByCourtidAndDateRangeTest extends BasicTestController {
     @MockBean
     private ReservationService reservationService;
 
@@ -41,7 +41,7 @@ class FindByCourtIdUserIdTest extends BasicTestController {
 
         Mockito.when(reservationService.findByCourtIdAndUserId(VALID_ID, VALID_ID)).thenReturn(response);
 
-        callEndpoint(VALID_ID, VALID_ID).andExpect(status().isOk()).andReturn();
+        callEndpoint(VALID_ID, "2024-01-01 12:00", "2024-01-01 13:00").andExpect(status().isOk()).andReturn();
     }
 
     private static Stream<Arguments> returnSuccess() {
@@ -54,39 +54,36 @@ class FindByCourtIdUserIdTest extends BasicTestController {
     @ParameterizedTest
     @MethodSource(value = "returnBadRequest")
     @DisplayName("Should return BadRequest. Code: 400")
-    void returnBadRequest(Long courtId, Long userId) throws Exception {
+    void returnBadRequest(Long courtId, String startDateTime, String endDateTime) throws Exception {
         SecurityContextUtils.fakeAuthentication(List.of(ROLE_ADMIN));
 
-        callEndpoint(courtId, userId).andExpect(status().isBadRequest()).andReturn();
+        callEndpoint(courtId, startDateTime, endDateTime).andExpect(status().isBadRequest()).andReturn();
     }
 
     private static Stream<Arguments> returnBadRequest() {
         return Stream.of(
-                Arguments.of(null, 1L),
-                Arguments.of(1L, null)
+                Arguments.of(null, "2024-01-01 10:00", "2024-01-01 12:00"),
+                Arguments.of(1L, "", "2024-01-01 12:00"),
+                Arguments.of(1L, null, "2024-01-01 12:00"),
+                Arguments.of(1L, "2024-01-01 12:00", ""),
+                Arguments.of(1L, "2024-01-01 12:00", null)
         );
     }
 
-    @ParameterizedTest
+    @Test
     @DisplayName("Should return Forbidden. Code: 403.")
-    @MethodSource(value = "returnForbidden")
-    void returnForbidden(Collection<String> roles) throws Exception {
-        SecurityContextUtils.fakeAuthentication(roles);
-        callEndpoint(VALID_ID, VALID_ID).andExpect(status().isForbidden()).andReturn();
+    void returnForbidden() throws Exception {
+        SecurityContextUtils.fakeAuthentication(List.of(ROLE_PENDING));
+        callEndpoint(VALID_ID, "2024-01-01 12:00", "2024-01-01 13:00").andExpect(status().isForbidden()).andReturn();
     }
 
-    private static Stream<Arguments> returnForbidden() {
-        return Stream.of(
-                Arguments.of(List.of(ROLE_USER)),
-                Arguments.of(List.of(ROLE_PENDING))
-        );
-    }
 
-    private ResultActions callEndpoint(Long courtId, Long userId) throws Exception {
+    private ResultActions callEndpoint(Long courtId, String startDateTime, String endDateTime) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .get(ReservationPathConstants.FIND_BY_COURT_ID_USER_ID_FULL_PATH)
+                .get(ReservationPathConstants.FIND_BY_COURT_ID_AND_DATE_RANGE_FULL_PATH)
                 .param(PropertyConstants.COURT_ID, Objects.toString(courtId, null))
-                .param(PropertyConstants.USER_ID, Objects.toString(userId, null))
+                .param(PropertyConstants.START_DATE_TIME, startDateTime)
+                .param(PropertyConstants.END_DATE_TIME, endDateTime)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
