@@ -1,10 +1,12 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.controller;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.ReservationPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationDetailedDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.formatters.DateTimeUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,13 +29,13 @@ import java.util.Collection;
 
 @Validated
 @RestController
-@RequestMapping("/reservation")
+@RequestMapping(ReservationPathConstants.PREFIX)
 public class ReservationController {
 
     @Autowired
     private ReservationService service;
 
-    @GetMapping(value = "/by/court-id/user-id")
+    @GetMapping(value = ReservationPathConstants.FIND_BY_COURT_ID_AND_USER_ID_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get reservations by court id and user id.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -47,11 +50,11 @@ public class ReservationController {
             @RequestParam(PropertyConstants.USER_ID)
             Long userId
     ) {
-        Collection<ReservationResponseDto> response = service.findByCourtIdUserId(courtId, userId);
+        Collection<ReservationResponseDto> response = service.findByCourtIdAndUserId(courtId, userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/by/court")
+    @GetMapping(value = ReservationPathConstants.FIND_BY_COURT_ID_AND_DATE_RANGE_PATH)
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get reservations by court and date time.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -60,16 +63,20 @@ public class ReservationController {
                     array = @ArraySchema(schema = @Schema(implementation = ReservationResponseDto[].class)))})})
     public ResponseEntity<Collection<ReservationResponseDto>> findByCourtIdAndDateRange(
             @RequestParam(PropertyConstants.COURT_ID)
+            @NotNull
             Long courtId,
             @RequestParam(PropertyConstants.START_DATE_TIME)
+            @NotNull @DateTimeFormat(pattern = DateTimeUtils.DATE_TIME_PATTERN)
             LocalDateTime startDateTime,
             @RequestParam(PropertyConstants.END_DATE_TIME)
-            LocalDateTime endDateTime) {
+            @NotNull @DateTimeFormat(pattern = DateTimeUtils.DATE_TIME_PATTERN)
+            LocalDateTime endDateTime
+    ) {
         Collection<ReservationResponseDto> response = service.findByCourtIdAndDateRange(courtId, startDateTime, endDateTime);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/create")
+    @PostMapping(value = ReservationPathConstants.CREATE_PATH)
     @PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "Create a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
@@ -85,7 +92,7 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value = "/delete/by/id")
+    @DeleteMapping(value = ReservationPathConstants.DELETE_BY_ID_PATH)
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
@@ -99,7 +106,7 @@ public class ReservationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping(value = "/delete/by/id/motive")
+    @DeleteMapping(value = ReservationPathConstants.DELETE_BY_ID_AND_MOTIVE_PATH)
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Delete a reservation and notify the reservation owner.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
@@ -109,14 +116,14 @@ public class ReservationController {
             @RequestParam(PropertyConstants.ID)
             Long id,
             @NotBlank
-            @RequestParam(PropertyConstants.ID)
+            @RequestParam(PropertyConstants.MOTIVE)
             String motive
     ) {
         service.deleteByIdAndMotive(id, motive);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(value = "/by/authenticated-user")
+    @GetMapping(value = ReservationPathConstants.FIND_DETAILED_BY_AUTHENTICATED_USER_PATH)
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     @Operation(summary = "Get reservations detailed from requester.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -128,7 +135,7 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/all/detailed")
+    @GetMapping(value = ReservationPathConstants.FIND_ALL_DETAILED_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get reservations detailed from all users.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",

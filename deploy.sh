@@ -33,7 +33,7 @@ DOCKER_IMAGE="ratorock/joga-junto-api:$VERSION"
 DOCKER_CONTAINER="jogajunto"
 
 # SSH to server
-ssh ubuntu@44.197.102.136 << EOF
+ssh ubuntu@35.174.62.157 << EOF
   docker rm -f $DOCKER_CONTAINER
   docker pull $DOCKER_IMAGE
   docker run -d --name $DOCKER_CONTAINER -e ddl=$DDL_AUTO --env-file .env --network host $DOCKER_IMAGE

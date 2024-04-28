@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.unavailable_reservation.repository.UnavailableReservationRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation.UnavailableReservationResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation.UnavailableReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.UnavailableReservation;
@@ -59,27 +59,27 @@ public class UnavailableReservationServiceImpl implements UnavailableReservation
 
     @Override
     @Transactional
-    public UnavailableReservationResponseDto create(ReservationSaveDto reservationSaveDto) {
-        Reservation existingReservation = findExistingReservation(reservationSaveDto);
-        Court court = findCourt(reservationSaveDto);
-        LocalDateTime startDateTime = reservationSaveDto.startDateTime();
+    public UnavailableReservationResponseDto create(UnavailableReservationSaveDto unavailableReservationSaveDto) {
+        Reservation existingReservation = findExistingReservation(unavailableReservationSaveDto);
+        Court court = findCourt(unavailableReservationSaveDto);
+        LocalDateTime startDateTime = unavailableReservationSaveDto.startDateTime();
         LocalDateTime endDateTime = calculateEndDateTime(startDateTime, court.getReservationDuration());
 
         if (existingReservation != null) {
-            cancelExistingReservation(existingReservation, reservationSaveDto.unavailabilityReason());
+            cancelExistingReservation(existingReservation, unavailableReservationSaveDto.unavailabilityReason());
         }
 
         UnavailableReservation unavailableReservation = saveUnavailableReservation(startDateTime, endDateTime, court);
         return objectMapper.convertValue(unavailableReservation, UnavailableReservationResponseDto.class);
     }
 
-    private Reservation findExistingReservation(ReservationSaveDto reservationSaveDto) {
+    private Reservation findExistingReservation(UnavailableReservationSaveDto unavailableReservationSaveDto) {
         return reservationService.findByCourtIdAndStartDateTime(
-                reservationSaveDto.courtId(), reservationSaveDto.startDateTime()).orElse(null);
+                unavailableReservationSaveDto.courtId(), unavailableReservationSaveDto.startDateTime()).orElse(null);
     }
 
-    private Court findCourt(ReservationSaveDto reservationSaveDto) {
-        Long courtId = reservationSaveDto.courtId();
+    private Court findCourt(UnavailableReservationSaveDto unavailableReservationSaveDto) {
+        Long courtId = unavailableReservationSaveDto.courtId();
         return courtService.findById(courtId).orElseThrow(() ->
                 new SaceResourceNotFoundException(
                         CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(courtId)

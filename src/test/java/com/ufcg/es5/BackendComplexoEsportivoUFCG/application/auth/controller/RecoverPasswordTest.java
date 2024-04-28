@@ -1,10 +1,10 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.AuthPathConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -66,7 +66,7 @@ public class RecoverPasswordTest extends BasicTestController {
     private String makeRequestPayload(String username) throws JsonProcessingException {
         Map<String, Object> payload = new HashMap<>();
 
-        payload.put(PropertyConstants.USERNAME, username);
+        payload.put(PropertyTestConstants.USERNAME, username);
 
         return objectMapper.writeValueAsString(payload);
     }
@@ -74,7 +74,7 @@ public class RecoverPasswordTest extends BasicTestController {
     private ResultActions callEndpoint(String username) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .post(AuthPathConstants.RECOVER_PASSWORD_FULL_PATH)
-                .param(PropertyConstants.USERNAME, username)
+                .param(PropertyTestConstants.USERNAME, username)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );

@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants;
 
 public class AuthPathConstants {
     public static final String PREFIX = "/auth";

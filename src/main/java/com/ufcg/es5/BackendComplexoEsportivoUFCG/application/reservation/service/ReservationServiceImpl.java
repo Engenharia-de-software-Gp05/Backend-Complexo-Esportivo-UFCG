@@ -135,7 +135,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Collection<ReservationResponseDto> findByCourtIdUserId(Long courtId, Long userId) {
+    public Collection<ReservationResponseDto> findByCourtIdAndUserId(Long courtId, Long userId) {
         LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
 
         Collection<ReservationResponseProjection> projections = repository.findByCourtIdUserIdAndDateTime(courtId, userId, startOfDay);
