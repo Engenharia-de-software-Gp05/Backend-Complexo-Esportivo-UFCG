@@ -1,8 +1,11 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,8 @@ public class Court extends BasicEntity {
     private static final String NAME_COLUMN = "name";
     private static final String COURT_PROPERTY = "court";
     private static final String STATUS_COLUMN = "status";
+    public static final String RESERVATION_DURATION_COLUMN = "reservation_duration";
+    public static final String MINIMUM_INTERVAL_BETWEEN_RESERVATION_COLUMN = "minimum_interval_between_reservation";
 
     @Column(name = NAME_COLUMN, nullable = false)
     private String name;
@@ -27,19 +32,35 @@ public class Court extends BasicEntity {
     private List<String> imagesUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("court")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Reservation> reservations = new ArrayList<>();
+
+    @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UnavailableReservation> unavailableReservations = new ArrayList<>();
 
     @Column(name = STATUS_COLUMN, nullable = false)
     @Enumerated(EnumType.STRING)
     private CourtAvailabilityStatusEnum courtAvailabilityStatusEnum;
 
+    @Column(name = RESERVATION_DURATION_COLUMN, nullable = false)
+    private Long reservationDuration;
+
+    @Column(name = MINIMUM_INTERVAL_BETWEEN_RESERVATION_COLUMN, nullable = false)
+    private Long minimumIntervalBetweenReservation;
+
     public Court() {
     }
 
-    public Court(String name, List<String> imagesUrls, CourtAvailabilityStatusEnum status) {
+    public Court(String name, List<String> imagesUrls,
+                 CourtAvailabilityStatusEnum status,
+                 Long reservationDuration,
+                 Long minimumIntervalBetweenReservation) {
         this.name = name;
         this.imagesUrls = imagesUrls;
         this.courtAvailabilityStatusEnum = status;
+        this.reservationDuration = reservationDuration;
+        this.minimumIntervalBetweenReservation = minimumIntervalBetweenReservation;
     }
 
     public void addImageUrl(String imageUrl) {
@@ -74,8 +95,32 @@ public class Court extends BasicEntity {
         return courtAvailabilityStatusEnum;
     }
 
+    public List<UnavailableReservation> getUnavailableReservations() {
+        return unavailableReservations;
+    }
+
+    public void setUnavailableReservations(List<UnavailableReservation> unavailableReservations) {
+        this.unavailableReservations = unavailableReservations;
+    }
+
+    public Long getReservationDuration() {
+        return reservationDuration;
+    }
+
+    public void setReservationDuration(Long reservationDuration) {
+        this.reservationDuration = reservationDuration;
+    }
+
     public void setCourtAvailabilityStatusEnum(CourtAvailabilityStatusEnum courtStatusEnum) {
         this.courtAvailabilityStatusEnum = courtStatusEnum;
+    }
+
+    public Long getMinimumIntervalBetweenReservation() {
+        return minimumIntervalBetweenReservation;
+    }
+
+    public void setMinimumIntervalBetweenReservation(Long minimumIntervalBetweenReservation) {
+        this.minimumIntervalBetweenReservation = minimumIntervalBetweenReservation;
     }
 
     @Override
@@ -84,12 +129,12 @@ public class Court extends BasicEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Court court = (Court) o;
-        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && courtAvailabilityStatusEnum == court.courtAvailabilityStatusEnum;
+        return Objects.equals(name, court.name) && Objects.equals(imagesUrls, court.imagesUrls) && Objects.equals(reservations, court.reservations) && Objects.equals(unavailableReservations, court.unavailableReservations) && courtAvailabilityStatusEnum == court.courtAvailabilityStatusEnum && Objects.equals(reservationDuration, court.reservationDuration) && Objects.equals(minimumIntervalBetweenReservation, court.minimumIntervalBetweenReservation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, courtAvailabilityStatusEnum);
+        return Objects.hash(super.hashCode(), name, imagesUrls, reservations, unavailableReservations, courtAvailabilityStatusEnum, reservationDuration, minimumIntervalBetweenReservation);
     }
 
     @Override
@@ -97,8 +142,11 @@ public class Court extends BasicEntity {
         return "Court{" +
                 "name='" + name + '\'' +
                 ", imagesUrls=" + imagesUrls +
-                ", reservas=" + reservations +
-                ", courtStatusEnum=" + courtAvailabilityStatusEnum +
+                ", reservations=" + reservations +
+                ", unavailableReservations=" + unavailableReservations +
+                ", courtAvailabilityStatusEnum=" + courtAvailabilityStatusEnum +
+                ", reservationDuration=" + reservationDuration +
+                ", minimumIntervalBetweenReservation=" + minimumIntervalBetweenReservation +
                 '}';
     }
 }

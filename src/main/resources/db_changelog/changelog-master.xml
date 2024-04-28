@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="/db_changelog/changes/2024-03-03-14:00-create-update-at-column-procedure.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:15-create-court-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:16-create-court-image-url-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:17-create-reservation-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:18-create-user-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:19-create-role-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:20-create-sign-up-confirmation-code-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-17-19:21-create-unavailable-reservation-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-18-00:00-create-basic-triggers.sql"/>
+    <include
+            file="/db_changelog/changes/2024-04-20-16:51-add-column-minimum-interval-between-reservation-to-court-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-25-22:44-add-column-profile-picture-url-to-user-table.sql"/>
+</databaseChangeLog>

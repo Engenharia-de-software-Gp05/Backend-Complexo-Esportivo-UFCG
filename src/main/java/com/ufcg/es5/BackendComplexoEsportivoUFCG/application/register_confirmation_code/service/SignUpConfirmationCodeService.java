@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmation_code.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sign_up_confirmation_code.SignUpConfirmationCodeSavedEventDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SignUpConfirmationCode;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ public interface SignUpConfirmationCodeService extends BasicService<SignUpConfir
 
     boolean existsByUserIdAndConfirmationCode(Long userId, String confirmationCode);
 
-    SignUpConfirmationCode save(Long userId, LocalDateTime expiresAt);
+    SignUpConfirmationCodeSavedEventDataDto save(Long userId, LocalDateTime expiresAt);
 
     void collect(LocalDateTime dateTime);
 }

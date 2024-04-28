@@ -3,6 +3,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmat
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.event.SavedEvent;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.register_confirmation_code.repository.SignUpConfirmationCodeRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sign_up_confirmation_code.SignUpConfirmationCodeSavedEventDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sign_up_confirmation_code.SignUpConfirmationCodeUserIdConfirmationCodeDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SignUpConfirmationCode;
@@ -11,6 +12,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNo
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.RandomStringGenerator;
 import jakarta.transaction.Transactional;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +39,8 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    private static final Log LOGGER = LogFactory.getLog(SignUpConfirmationCodeServiceImpl.class);
+
     @Override
     public JpaRepository<SignUpConfirmationCode, Long> getRepository() {
         return repository;
@@ -46,15 +51,14 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     public void generate(Long userId) {
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(EXPIRATION_TIME);
 
-        SignUpConfirmationCode confirmationCode = save(userId, expiresAt);
+        SignUpConfirmationCodeSavedEventDataDto savedEventDataDto = save(userId, expiresAt);
 
-        publishSavedEvent(userId, confirmationCode.getConfirmationCode());
+        publishSavedEvent(savedEventDataDto);
     }
 
-    private void publishSavedEvent(Long userId, String confirmationCode) {
-        SignUpConfirmationCodeUserIdConfirmationCodeDto userIdConfirmationCodeDto = new SignUpConfirmationCodeUserIdConfirmationCodeDto(userId, confirmationCode);
-        SavedEvent<SignUpConfirmationCodeUserIdConfirmationCodeDto> savedEvent = new SavedEvent<>(
-                userIdConfirmationCodeDto, SignUpConfirmationCodeUserIdConfirmationCodeDto.class
+    private void publishSavedEvent(SignUpConfirmationCodeSavedEventDataDto savedEventDataDto) {
+        SavedEvent<SignUpConfirmationCodeSavedEventDataDto> savedEvent = new SavedEvent<>(
+                savedEventDataDto, SignUpConfirmationCodeSavedEventDataDto.class
         );
 
         eventPublisher.publishEvent(savedEvent);
@@ -97,7 +101,7 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
 
     @Override
     @Transactional
-    public SignUpConfirmationCode save(Long userId, LocalDateTime expiresAt) {
+    public SignUpConfirmationCodeSavedEventDataDto save(Long userId, LocalDateTime expiresAt) {
 
         SaceUser user = userService.findById(userId).orElseThrow(
                 () -> new SaceResourceNotFoundException(String.format(SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND, userId))
@@ -116,7 +120,15 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
         signUpConfirmationCode.setUser(user);
         signUpConfirmationCode.setConfirmationCode(confirmationCode);
 
-        return this.repository.save(signUpConfirmationCode);
+        this.repository.save(signUpConfirmationCode);
+
+        SignUpConfirmationCodeSavedEventDataDto savedEventDataDto =
+                new SignUpConfirmationCodeSavedEventDataDto(
+                        user.getName(),
+                        user.getEmail(),
+                        confirmationCode
+                );
+        return savedEventDataDto;
     }
 
     @Override

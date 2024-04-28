@@ -1,9 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.service.AuthService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.AuthPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthRegisterDataWithoutRolesDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth.AuthTokenDto;
 import org.apache.http.HttpHeaders;
@@ -41,6 +41,12 @@ class RegisterTest extends BasicTestController {
         callEndpoint(payload).andExpect(status().isCreated()).andReturn();
     }
 
+    private static Stream<Arguments> returnCreated() {
+        return Stream.of(
+                Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, VALID_STUDENT_ID, VALID_PASSWORD))
+        );
+    }
+
     @ParameterizedTest
     @DisplayName("Should return BadRequest ")
     @MethodSource(value = "returnBadRequest")
@@ -48,12 +54,6 @@ class RegisterTest extends BasicTestController {
         String payload = makeRequestPayload(registerDataWithoutRolesDto);
 
         callEndpoint(payload).andExpect(status().isBadRequest()).andReturn();
-    }
-
-    private static Stream<Arguments> returnCreated() {
-        return Stream.of(
-                Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, VALID_STUDENT_ID, VALID_PASSWORD))
-        );
     }
 
     private static Stream<Arguments> returnBadRequest() {
@@ -69,7 +69,6 @@ class RegisterTest extends BasicTestController {
                 Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, "", VALID_PASSWORD)),
                 Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, null, VALID_PASSWORD)),
                 Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, VALID_STUDENT_ID, "")),
-                //  Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, VALID_STUDENT_ID, "invalid password")),
                 Arguments.of(new AuthRegisterDataWithoutRolesDto(VALID_STUDENT_EMAIL, VALID_NAME, VALID_PHONE_NUMBER, VALID_STUDENT_ID, null))
         );
     }

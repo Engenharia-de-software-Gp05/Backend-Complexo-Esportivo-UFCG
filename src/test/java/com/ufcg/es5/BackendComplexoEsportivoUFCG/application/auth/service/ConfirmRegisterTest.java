@@ -77,7 +77,7 @@ class ConfirmRegisterTest extends BasicTestService {
 
         LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5L);
 
-        String confirmationCode = confirmationCodeService.save(user.getId(), expirationTime).getConfirmationCode();
+        String confirmationCode = confirmationCodeService.save(user.getId(), expirationTime).confirmationCode();
 
         authService.confirmEmailRegistered(confirmationCode);
 
@@ -103,7 +103,7 @@ class ConfirmRegisterTest extends BasicTestService {
     void shouldThrowExceptionWhenCodeExpired() {
         LocalDateTime expirationTime = LocalDateTime.now().minusMinutes(5L);
 
-        String confirmationCode = confirmationCodeService.save(user.getId(), expirationTime).getConfirmationCode();
+        String confirmationCode = confirmationCodeService.save(user.getId(), expirationTime).confirmationCode();
 
         Assertions.assertThrows(
                 SaceInvalidArgumentException.class,

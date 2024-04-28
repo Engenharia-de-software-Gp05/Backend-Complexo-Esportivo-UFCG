@@ -33,6 +33,9 @@ public class MailServiceImpl implements MailService {
     @Autowired
     private final JavaMailSender javaMailSender;
 
+    @Autowired
+    private MailTemplatePathConstants mailTemplatePathConstants;
+
     private final MustacheFactory mf = new DefaultMustacheFactory();
 
     public MailServiceImpl(final JavaMailSender javaMailSender) {
@@ -64,7 +67,7 @@ public class MailServiceImpl implements MailService {
 
         Message message = makeMessage(
                 MailSubjectConstants.SIGN_UP_CONFIRMATION_CODE_EMAIL_SUBJECT,
-                MailTemplatePathConstants.SIGN_UP_CONFIRMATION_CODE_EMAIL_TEMPLATE_PATH,
+                mailTemplatePathConstants.getSignUpConfirmationCodeEmailTemplatePath(),
                 dataToInject
         );
 
@@ -80,7 +83,7 @@ public class MailServiceImpl implements MailService {
 
         Message message = makeMessage(
                 MailSubjectConstants.SIGN_UP_TEMPORARY_PASSWORD_EMAIL_SUBJECT,
-                MailTemplatePathConstants.SIGN_UP_TEMPORARY_PASSWORD_EMAIL_TEMPLATE_PATH,
+                mailTemplatePathConstants.getSignUpTemporaryPasswordEmailTemplatePath(),
                 dataToInject
         );
 
@@ -98,7 +101,7 @@ public class MailServiceImpl implements MailService {
 
         Message message = makeMessage(
                 MailSubjectConstants.RESERVATION_CONFIRMED_EMAIL_SUBJECT,
-                MailTemplatePathConstants.RESERVATION_CONFIRMED_EMAIL_TEMPLATE_PATH,
+                mailTemplatePathConstants.getReservationConfirmedEmailTemplatePath(),
                 dataToInject
         );
 
@@ -116,7 +119,7 @@ public class MailServiceImpl implements MailService {
 
         Message message = makeMessage(
                 MailSubjectConstants.RESERVATION_CANCELLED_BY_USER_SUBJECT,
-                MailTemplatePathConstants.RESERVATION_CANCELLED_BY_USER_TEMPLATE_PATH,
+                mailTemplatePathConstants.getReservationCancelledByUserTemplatePath(),
                 dataToInject
         );
 
@@ -136,7 +139,7 @@ public class MailServiceImpl implements MailService {
 
         Message message = makeMessage(
                 MailSubjectConstants.RESERVATION_CANCELLED_BY_ADMIN_SUBJECT,
-                MailTemplatePathConstants.RESERVATION_CANCELLED_BY_ADMIN_TEMPLATE_PATH,
+                mailTemplatePathConstants.getReservationCancelledByAdminTemplatePath(),
                 dataToInject
         );
 
@@ -152,7 +155,7 @@ public class MailServiceImpl implements MailService {
 
         Message message = makeMessage(
                 MailSubjectConstants.RECOVER_PASSWORD_LINK_SUBJECT,
-                MailTemplatePathConstants.RECOVER_PASSWORD_LINK_TEMPLATE_PATH,
+                mailTemplatePathConstants.getRecoverPasswordLinkTemplatePath(),
                 dataToInject
         );
 

@@ -5,6 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,4 +33,6 @@ public interface SaceUserService extends BasicService<SaceUser, Long> {
     SaceUserNameEmailDto findByEmailAsDto(String email);
 
     void updatePasswordById(Long id, String currentPassword, String newPassword);
+
+    void uploadProfilePicture(MultipartFile picture);
 }
