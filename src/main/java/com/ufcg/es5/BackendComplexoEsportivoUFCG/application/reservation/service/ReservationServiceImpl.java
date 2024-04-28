@@ -115,12 +115,12 @@ public class ReservationServiceImpl implements ReservationService {
         validateReservationOwnership(userId, reservation);
         validateCancellationTimeLimit(reservation);
 
-        publishCancellationEventByUser(reservation);
-
         repository.delete(reservation);
+
+        publishCancellationEventByUser(reservation);
     }
 
-    private void publishCancellationEventByUser(Reservation reservation) {
+    void publishCancellationEventByUser(Reservation reservation) {
         eventPublisher.publishEvent(new DeletedEvent<>(new ReservationCancelledByUserDto(reservation), ReservationCancelledByUserDto.class));
     }
 

@@ -41,7 +41,7 @@ class FindByCourtidAndDateRangeTest extends BasicTestController {
 
         Mockito.when(reservationService.findByCourtIdAndUserId(VALID_ID, VALID_ID)).thenReturn(response);
 
-        callEndpoint(VALID_ID, "2024-01-01 12:00", "2024-01-01 13:00").andExpect(status().isOk()).andReturn();
+        callEndpoint(VALID_ID, "2024-01-01 12:00:00", "2024-01-01 13:00:00").andExpect(status().isOk()).andReturn();
     }
 
     private static Stream<Arguments> returnSuccess() {
@@ -62,11 +62,11 @@ class FindByCourtidAndDateRangeTest extends BasicTestController {
 
     private static Stream<Arguments> returnBadRequest() {
         return Stream.of(
-                Arguments.of(null, "2024-01-01 10:00", "2024-01-01 12:00"),
-                Arguments.of(1L, "", "2024-01-01 12:00"),
-                Arguments.of(1L, null, "2024-01-01 12:00"),
-                Arguments.of(1L, "2024-01-01 12:00", ""),
-                Arguments.of(1L, "2024-01-01 12:00", null)
+                Arguments.of(null, "2024-01-01 10:00:00", "2024-01-01 12:00:00"),
+                Arguments.of(1L, "", "2024-01-01 12:00:00"),
+                Arguments.of(1L, null, "2024-01-01 12:00:00"),
+                Arguments.of(1L, "2024-01-01 12:00:00", ""),
+                Arguments.of(1L, "2024-01-01 12:00:00", null)
         );
     }
 
@@ -74,7 +74,7 @@ class FindByCourtidAndDateRangeTest extends BasicTestController {
     @DisplayName("Should return Forbidden. Code: 403.")
     void returnForbidden() throws Exception {
         SecurityContextUtils.fakeAuthentication(List.of(ROLE_PENDING));
-        callEndpoint(VALID_ID, "2024-01-01 12:00", "2024-01-01 13:00").andExpect(status().isForbidden()).andReturn();
+        callEndpoint(VALID_ID, "2024-01-01 12:00:00", "2024-01-01 13:00:00").andExpect(status().isForbidden()).andReturn();
     }
 
 
