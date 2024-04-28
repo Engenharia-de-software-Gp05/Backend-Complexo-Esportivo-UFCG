@@ -2,21 +2,20 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.repository.CourtRepository;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository.ReservationRepository;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Court.CourtBasicProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Court.CourtDetailedProjection;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
-
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.s3.S3Uploader;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 
@@ -30,7 +29,7 @@ public class CourtServiceImpl implements CourtService {
     private CourtRepository repository;
 
     @Autowired
-    private ReservationRepository reservationRepository;
+    private S3Uploader s3Uploader;
 
     @Autowired
     private ReservationService reservationService;
@@ -44,24 +43,41 @@ public class CourtServiceImpl implements CourtService {
     @Transactional
     public CourtResponseDto create(CourtSaveDto data) throws SaceConflictException {
         checkByName(data.name());
-        Court court = objectMapper.convertValue(data, Court.class);
+        Court court = saveDtoToClass(data);
         this.save(court);
-        return objectMapper.convertValue(court, CourtResponseDto.class);
+        return classToResponseDto(court);
+    }
+
+    private CourtResponseDto classToResponseDto(Court court) {
+        return new CourtResponseDto(court.getName(), court.getImagesUrls(), court.getCourtAvailabilityStatusEnum());
+    }
+
+    private Court saveDtoToClass(CourtSaveDto data) {
+        return new Court(
+                data.name(),
+                data.imagesUrls(),
+                data.courtAvailabilityStatusEnum(),
+                data.reservationDuration(),
+                data.minimumIntervalBetweenReservation());
     }
 
     @Override
     @Transactional
     public CourtResponseDto updateById(CourtUpdateDto data, Long id) throws SaceResourceNotFoundException, SaceConflictException {
-        Court court = this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
-                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
-        ));
+        Court court = getCourtById(id);
         checkByName(data.name());
 
         court.setName(data.name());
         court.setCourtAvailabilityStatusEnum(data.courtStatusEnum());
 
         this.save(court);
-        return objectMapper.convertValue(court, CourtResponseDto.class);
+        return classToResponseDto(court);
+    }
+
+    private Court getCourtById(Long id) {
+        return this.findById(id).orElseThrow(() -> new SaceResourceNotFoundException(
+                CourtExceptionMessages.COURT_WITH_ID_NOT_FOUND.formatted(id)
+        ));
     }
 
     @Override
@@ -91,6 +107,16 @@ public class CourtServiceImpl implements CourtService {
     @Override
     public Boolean existsByName(String name) {
         return findByName(name) != null;
+    }
+
+    @Override
+    @Transactional
+    public void updateImageById(MultipartFile picture, Long id) {
+        Court court = getCourtById(id);
+
+        String courtImageUrl = s3Uploader.uploadCourtImage(picture);
+        court.addImageUrl(courtImageUrl);
+        save(court);
     }
 
     private void checkByName(String name) {

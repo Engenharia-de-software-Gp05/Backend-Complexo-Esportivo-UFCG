@@ -44,15 +44,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.auth0:java-jwt:4.4.0'
     implementation 'org.flywaydb:flyway-core'
-    implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
+    implementation 'com.github.spullara.mustache.java:compiler:0.9.11'
     compileOnly 'org.projectlombok:lombok'
-    compileOnly 'org.modelmapper:modelmapper:3.1.0'
-    implementation 'org.modelmapper:modelmapper:3.1.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.3.0-rc1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0-rc1'
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.705')
+    implementation 'com.amazonaws:aws-java-sdk-s3'
 
     /*Object Mapper suporte para LocalDateTime*/
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
-
     implementation 'org.springframework.cloud:spring-cloud-function-web'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

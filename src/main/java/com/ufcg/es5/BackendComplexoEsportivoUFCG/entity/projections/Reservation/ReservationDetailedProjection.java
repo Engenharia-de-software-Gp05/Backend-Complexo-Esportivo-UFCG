@@ -5,6 +5,8 @@ import java.util.Collection;
 
 public interface ReservationDetailedProjection {
 
+    Long getId();
+
     String getCourtName();
 
     Collection<String> getCourtImageUrls();

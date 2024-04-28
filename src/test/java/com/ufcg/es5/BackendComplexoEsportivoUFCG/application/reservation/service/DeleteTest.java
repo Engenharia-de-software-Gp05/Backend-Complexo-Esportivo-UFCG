@@ -59,9 +59,11 @@ class DeleteTest extends BasicTestService {
     private AuthenticatedUser authenticatedUser;
 
     @BeforeEach
-    void setUp() {
+    void makeTestScenario() {
+
         createCourt();
         createUsers();
+
         startDateTime = LocalDateTime.now().plusHours(CANCELLATION_TIME_LIMIT).plusMinutes(1);
     }
 

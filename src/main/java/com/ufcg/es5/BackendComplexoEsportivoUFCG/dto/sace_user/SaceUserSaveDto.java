@@ -1,15 +1,18 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint.EmailFormat;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailStudentConstraint.StudentEmailConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.NameConstraint.NameConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PasswordConstraint.PasswordConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstraint.PhoneNumberConstraint;
 
 public record SaceUserSaveDto(
+        @NameConstraint
         String name,
-        @JsonSerialize(using = EmailFormat.Serializer.class)
-        @JsonDeserialize(using = EmailFormat.Deserializer.class)
+        @StudentEmailConstraint
         String email,
+        @PhoneNumberConstraint
         String phoneNumber,
+        @PasswordConstraint
         String password
 ) {
 }

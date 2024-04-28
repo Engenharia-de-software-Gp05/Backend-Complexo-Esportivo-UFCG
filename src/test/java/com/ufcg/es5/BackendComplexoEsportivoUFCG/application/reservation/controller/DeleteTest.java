@@ -59,7 +59,7 @@ class DeleteTest extends BasicTestController {
         SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_USER));
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .delete(ReservationPathConstants.DELETE_BY_ID_PATH)
+                .delete(ReservationPathConstants.DELETE_BY_ID_FULL_PATH)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
@@ -76,7 +76,7 @@ class DeleteTest extends BasicTestController {
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .delete(ReservationPathConstants.DELETE_BY_ID_PATH)
+                .delete(ReservationPathConstants.DELETE_BY_ID_FULL_PATH)
                 .queryParam(PropertyTestConstants.ID, String.valueOf(VALID_ID))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)

@@ -5,6 +5,10 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyCons
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,12 +56,21 @@ public class CourtController {
             @RequestBody
             CourtSaveDto data
     ) {
-        System.out.println("sssssssssssssssssssssssssssssssssssss");
-        System.out.println(data);
         CourtResponseDto response = service.create(data);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-  
+
+    @PutMapping("/upload/image")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> updateProfilePicture(
+            @RequestParam(PropertyConstants.ID)
+            @NotNull Long id,
+            @RequestPart(value = "courtImage") MultipartFile image
+    ) {
+        service.updateImageById(image, id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PutMapping("/update/by/id")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
@@ -76,7 +90,7 @@ public class CourtController {
             @RequestBody
             CourtUpdateDto data,
             @NotNull
-            @RequestParam("id")
+            @RequestParam(PropertyConstants.ID)
             Long id
     ) {
         CourtResponseDto response = service.updateById(data, id);
@@ -90,7 +104,7 @@ public class CourtController {
             description = "Court is deleted.")})
     public ResponseEntity<Void> deleteById(
             @NotNull
-            @RequestParam("id")
+            @RequestParam(PropertyConstants.ID)
             Long id
     ) {
         service.deleteById(id);
@@ -98,7 +112,7 @@ public class CourtController {
     }
 
     @GetMapping(value = "/find/by/id")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @Operation(summary = "Get court by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "returned court.",
@@ -106,7 +120,7 @@ public class CourtController {
                     array = @ArraySchema(schema = @Schema(implementation = CourtDetailedResponseDto.class)))})})
     public ResponseEntity<CourtDetailedResponseDto> findById(
             @NotNull
-            @RequestParam("id")
+            @RequestParam(PropertyConstants.ID)
             Long id
     ) {
         CourtDetailedResponseDto response = service.findCourtDetailedResponseDtoById(id);
@@ -114,7 +128,7 @@ public class CourtController {
     }
 
     @GetMapping(value = "/find/all")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @Operation(summary = "Get all courts")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "returned court.",

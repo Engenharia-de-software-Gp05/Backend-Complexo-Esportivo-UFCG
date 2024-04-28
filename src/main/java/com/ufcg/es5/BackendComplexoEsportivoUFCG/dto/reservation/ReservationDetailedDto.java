@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public record ReservationDetailedDto(
+        Long id,
         String courtName,
         Collection<String> courtImageUrl,
         String userName,
@@ -17,6 +18,6 @@ public record ReservationDetailedDto(
         LocalDateTime endDateTime
 ) {
     public ReservationDetailedDto(ReservationDetailedProjection p) {
-        this(p.getCourtName(), p.getCourtImageUrls(), p.getUserName(), p.getStartDateTime(), p.getEndDateTime());
+        this(p.getId(), p.getCourtName(), p.getCourtImageUrls(), p.getUserName(), p.getStartDateTime(), p.getEndDateTime());
     }
 }
