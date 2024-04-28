@@ -1,12 +1,10 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,7 +35,8 @@ public class UpdateTest extends BasicTestController {
     private CourtService courtService;
 
     @BeforeEach
-    void setUp() {}
+    void setUp() {
+    }
 
     @ParameterizedTest
     @DisplayName("Should return Success. Code: 200")
@@ -57,7 +54,7 @@ public class UpdateTest extends BasicTestController {
 
     private static Stream<Arguments> returnNoContent() {
         return Stream.of(
-                Arguments.of(List.of(PropertyConstants.ROLE_ADMIN))
+                Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN))
         );
     }
 
@@ -70,7 +67,7 @@ public class UpdateTest extends BasicTestController {
                 CourtAvailabilityStatusEnum.AVAILABLE
         );
 
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(put(PATH)
                 .queryParam("id", String.valueOf(1L))
@@ -91,7 +88,7 @@ public class UpdateTest extends BasicTestController {
                 CourtAvailabilityStatusEnum.AVAILABLE
         );
 
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(put(PATH)
                 .queryParam("id", (String) null)
@@ -111,7 +108,7 @@ public class UpdateTest extends BasicTestController {
                 CourtAvailabilityStatusEnum.AVAILABLE
         );
 
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_USER));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_USER));
         callEndpoint(newData, 1L).andExpect(status().isForbidden()).andReturn();
     }
 

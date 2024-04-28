@@ -1,9 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,18 +48,18 @@ public class DeleteTest extends BasicTestController {
 
     private static Stream<Arguments> returnNoContent() {
         return Stream.of(
-                Arguments.of(List.of(PropertyConstants.ROLE_ADMIN)),
-                Arguments.of(List.of(PropertyConstants.ROLE_ADMIN, PropertyConstants.ROLE_PENDING))
+                Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN)),
+                Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN, PropertyTestConstants.ROLE_PENDING))
         );
     }
 
     @Test
     @DisplayName("Should return BadRequest ")
     void returnBadRequestByQueryParam() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(delete(PATH)
-                .queryParam(PropertyConstants.ID, (String) null)
+                .queryParam(PropertyTestConstants.ID, (String) null)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
@@ -71,7 +70,7 @@ public class DeleteTest extends BasicTestController {
     @Test
     @DisplayName("Should return BadRequest ")
     void returnBadRequest() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .delete(PATH)
@@ -85,14 +84,14 @@ public class DeleteTest extends BasicTestController {
     @Test
     @DisplayName("Should return Forbidden. Code: 403.")
     void returnForbidden() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_PENDING));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_PENDING));
         callEndpoint().andExpect(status().isForbidden()).andReturn();
     }
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .delete(PATH)
-                .queryParam(PropertyConstants.ID, String.valueOf(VALID_ID))
+                .queryParam(PropertyTestConstants.ID, String.valueOf(VALID_ID))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );

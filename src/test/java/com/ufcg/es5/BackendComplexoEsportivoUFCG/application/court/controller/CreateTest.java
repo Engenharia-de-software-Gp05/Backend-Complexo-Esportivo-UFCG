@@ -1,7 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +35,8 @@ public class CreateTest extends BasicTestController {
     private CourtService courtService;
 
     @BeforeEach
-    void setUp() {}
+    void setUp() {
+    }
 
     @ParameterizedTest
     @DisplayName("Should return Success. Code: 201")
@@ -62,7 +61,7 @@ public class CreateTest extends BasicTestController {
 
     private static Stream<Arguments> returnCreate() {
         return Stream.of(
-                Arguments.of(List.of(PropertyConstants.ROLE_ADMIN))
+                Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN))
         );
     }
 
@@ -82,7 +81,7 @@ public class CreateTest extends BasicTestController {
                 10L
         );
 
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_ADMIN));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(post(PATH)
                 .content(objectMapper.writeValueAsString(data))
@@ -92,7 +91,7 @@ public class CreateTest extends BasicTestController {
 
         resultActions.andExpect(status().isBadRequest()).andReturn();
     }
-    
+
     @Test
     @DisplayName("Should return Forbidden. Code: 403.")
     void returnForbidden() throws Exception {
@@ -109,7 +108,7 @@ public class CreateTest extends BasicTestController {
                 10L
         );
 
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyConstants.ROLE_USER));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_USER));
         callEndpoint(data).andExpect(status().isForbidden()).andReturn();
     }
 
