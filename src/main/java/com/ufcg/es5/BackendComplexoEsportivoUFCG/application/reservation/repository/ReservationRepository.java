@@ -98,14 +98,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query(
             """
-            SELECT reservation.court.name as courtName,
-                    reservation.saceUser.name as userName,
-                    reservation.startDateTime as startDateTime,
-                    reservation.endDateTime as endDateTime
-                FROM Reservation reservation
-                    WHERE reservation.saceUser.id = :userId AND
-                        reservation.startDateTime > :dateTime
-            """
+                    SELECT reservation.court.name as courtName,
+                            reservation.saceUser.name as userName,
+                            reservation.startDateTime as startDateTime,
+                            reservation.endDateTime as endDateTime
+                        FROM Reservation reservation
+                            WHERE reservation.saceUser.id = :userId AND
+                                reservation.startDateTime > :dateTime
+                    """
     )
     Collection<ReservationDetailedProjection> findDetailedByUserIdAndDateTime(
             @Param("userId") Long id,
@@ -114,12 +114,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query(
             """
-            SELECT reservation.court.name as courtName,
-                    reservation.saceUser.name as userName,
-                    reservation.startDateTime as startDateTime,
-                    reservation.endDateTime as endDateTime
-                FROM Reservation reservation
-            """
+                    SELECT reservation.id as id,
+                            reservation.court.name as courtName,
+                            reservation.saceUser.name as userName,
+                            reservation.startDateTime as startDateTime,
+                            reservation.endDateTime as endDateTime
+                        FROM Reservation reservation
+                    """
     )
     Collection<ReservationDetailedProjection> findAllDetailed();
 }

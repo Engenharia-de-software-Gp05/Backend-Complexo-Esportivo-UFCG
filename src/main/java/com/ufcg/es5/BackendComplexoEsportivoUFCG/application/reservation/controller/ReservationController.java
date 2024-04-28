@@ -76,7 +76,7 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = ReservationPathConstants.CREATE_PATH)
+    @PostMapping(ReservationPathConstants.CREATE_PATH)
     @PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "Create a reservation.")
     @ApiResponses(value = {@ApiResponse(responseCode = "201",
@@ -84,8 +84,8 @@ public class ReservationController {
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = ReservationResponseDto.class))})})
     public ResponseEntity<ReservationResponseDto> create(
-            @Valid
             @RequestBody
+            @Valid
             ReservationSaveDto reservationSaveDto
     ) {
         ReservationResponseDto response = service.create(reservationSaveDto);
@@ -136,7 +136,7 @@ public class ReservationController {
     }
 
     @GetMapping(value = ReservationPathConstants.FIND_ALL_DETAILED_PATH)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     @Operation(summary = "Get reservations detailed from all users.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "User reservations are returned.",

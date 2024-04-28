@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static com.ufcg.es5.BackendComplexoEsportivoUFCG.application.auth.constants.AuthAttributesConstants.*;
@@ -35,6 +36,7 @@ class RegisterTest extends BasicTestController {
         String payload = makeRequestPayload(registerDataWithoutRolesDto);
         AuthTokenDto response = makeResponse();
 
+        System.out.println(LocalDateTime.now() + "peuqepe");
         Mockito.when(authService.register(registerDataWithoutRolesDto))
                 .thenReturn(response);
 

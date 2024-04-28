@@ -5,6 +5,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.Court
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationSaveDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
@@ -62,6 +63,7 @@ class DeleteTest extends BasicTestService {
     void setUp() {
         createCourt();
         createUsers();
+
         startDateTime = LocalDateTime.now().plusHours(CANCELLATION_TIME_LIMIT).plusMinutes(1);
     }
 
@@ -77,6 +79,15 @@ class DeleteTest extends BasicTestService {
         reservationService.delete(reservation.getId());
 
         Assertions.assertEquals(0, reservationService.findAll().size());
+    }
+
+    @Test
+    @Transactional
+    void temp() {
+
+        ReservationSaveDto saveDto = new ReservationSaveDto(court.getId(), "2024-12-01 12:00:00");
+        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
+        Assertions.assertDoesNotThrow(() -> reservationService.create(saveDto));
     }
 
     @Test

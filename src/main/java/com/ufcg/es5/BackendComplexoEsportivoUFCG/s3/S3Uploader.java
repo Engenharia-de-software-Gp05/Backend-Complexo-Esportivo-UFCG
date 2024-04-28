@@ -20,7 +20,6 @@ import java.util.*;
 public class S3Uploader {
 
     private static final Set<String> VALID_PICTURE_EXTENSIONS = new HashSet<>(Arrays.asList("jpg", "png", "jpeg"));
-    private static final String PDF_ALLOWED_EXTENSION = "pdf";
 
     private final AmazonS3 s3Client;
 
@@ -37,10 +36,10 @@ public class S3Uploader {
     public String uploadProfilePicture(MultipartFile picture) {
         this.checkPictureExtension(picture);
 
-        String bucket = this.getFullBucketName(this.profilePicturesFolder);
-        String fileName = this.createFilename(picture);
+        //String bucket = this.getFullBucketName(this.profilePicturesFolder);
+        String fileName = this.profilePicturesFolder + "/" + this.createFilename(picture);
 
-        this.uploadFile(bucket, fileName, picture);
+        this.uploadFile(this.bucketName, fileName, picture);
 
         return this.getPictureUrl(this.profilePicturesFolder, fileName);
     }
@@ -48,10 +47,10 @@ public class S3Uploader {
     public String uploadCourtImage(MultipartFile courtImage) {
         this.checkPictureExtension(courtImage);
 
-        String bucket = this.getFullBucketName(this.courtImagesFolder);
-        String fileName = this.createFilename(courtImage);
+        // String bucket = this.getFullBucketName(this.courtImagesFolder);
+        String fileName = this.courtImagesFolder + "/" + this.createFilename(courtImage);
 
-        this.uploadFile(bucket, fileName, courtImage);
+        this.uploadFile(this.bucketName, fileName, courtImage);
 
         return this.getPictureUrl(this.courtImagesFolder, fileName);
     }

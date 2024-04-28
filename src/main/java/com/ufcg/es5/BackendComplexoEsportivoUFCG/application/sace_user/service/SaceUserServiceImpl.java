@@ -2,6 +2,7 @@ package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.repository.SaceUserRepository;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
@@ -11,10 +12,12 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.s3.S3Uploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,6 +32,12 @@ public class SaceUserServiceImpl implements SaceUserService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private AuthenticatedUser authenticatedUser;
+
+    @Autowired
+    private S3Uploader s3Uploader;
 
     @Override
     public JpaRepository<SaceUser, Long> getRepository() {
@@ -104,6 +113,21 @@ public class SaceUserServiceImpl implements SaceUserService {
         user.setPassword(newPassword);
 
         save(user);
+    }
+
+    @Override
+    @Transactional
+    public void uploadProfilePicture(MultipartFile picture) {
+        Long authenticatedUserId = authenticatedUser.getAuthenticatedUserId();
+        SaceUser authenticatedUser = findById(authenticatedUserId).orElseThrow(
+                () -> new SaceForbiddenException(
+                        SaceUserExceptionMessages.NO_USER_AUTHENTICATED
+                )
+        );
+
+        String profilePictureUrl = s3Uploader.uploadProfilePicture(picture);
+        authenticatedUser.setProfilePictureUrl(profilePictureUrl);
+        save(authenticatedUser);
     }
 
     private void checkIfPasswordMatches(SaceUser user, String providedPassword) {
