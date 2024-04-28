@@ -12,8 +12,8 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationDetailedProjection;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationDetailedProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationResponseProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceInvalidArgumentException;
@@ -21,6 +21,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNo
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.reservation.ReservationExeceptionMessages;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.sace_user.SaceUserExceptionMessages;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.formatters.DateTimeUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -76,23 +77,25 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponseDto create(ReservationSaveDto reservationSaveDto) {
         SaceUser user = getAuthenticatedUser();
         Court court = getCourtById(reservationSaveDto.courtId());
-        LocalDateTime startDateTime = reservationSaveDto.startDateTime();
+        LocalDateTime startDateTime = DateTimeUtils.toDatetime(reservationSaveDto.startDateTime());
         LocalDateTime endDateTime = calculateEndDateTime(startDateTime, court);
 
-        validateReservation(court.getId(), user.getId(), startDateTime);
+        validateReservation(court.getId(), user.getId(), startDateTime, endDateTime);
 
         Reservation reservation = makeReservation(startDateTime, endDateTime, court, user);
 
         reservation = save(reservation);
         publishSavedEvent(reservation);
 
-        return objectMapper.convertValue(reservation, ReservationResponseDto.class);
+        return toResponseDto(reservation);
     }
 
-    private void validateReservation(Long courtId, Long userId, LocalDateTime startDateTime) {
-        Court court = getCourtById(courtId);
+    private ReservationResponseDto toResponseDto(Reservation reservation) {
+        return new ReservationResponseDto(reservation.getId(), reservation.getStartDateTime(), reservation.getEndDateTime());
+    }
 
-        LocalDateTime endDateTime = calculateEndDateTime(startDateTime, court);
+    private void validateReservation(Long courtId, Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Court court = getCourtById(courtId);
 
         checkReservationAvailability(courtId, startDateTime);
         checkTimeAvailability(courtId, startDateTime, endDateTime);
@@ -112,12 +115,12 @@ public class ReservationServiceImpl implements ReservationService {
         validateReservationOwnership(userId, reservation);
         validateCancellationTimeLimit(reservation);
 
-        publishCancellationEventByUser(reservation);
-
         repository.delete(reservation);
+
+        publishCancellationEventByUser(reservation);
     }
 
-    private void publishCancellationEventByUser(Reservation reservation) {
+    void publishCancellationEventByUser(Reservation reservation) {
         eventPublisher.publishEvent(new DeletedEvent<>(new ReservationCancelledByUserDto(reservation), ReservationCancelledByUserDto.class));
     }
 
@@ -171,6 +174,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Boolean existsByCourtIdUserIdAndTimeInterval(Long courtId, Long userId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return !findByCourtIdUserIdAndTimeInterval(courtId, userId, startDateTime, endDateTime).isEmpty();
+    }
+
+    @Override
+    public Collection<ReservationResponseDto> findByCourtId(Long courtId) {
+        Collection<ReservationResponseProjection> projections = repository.findByCourtId(courtId);
+        return projections.stream().map(ReservationResponseDto::new).toList();
     }
 
     @Override

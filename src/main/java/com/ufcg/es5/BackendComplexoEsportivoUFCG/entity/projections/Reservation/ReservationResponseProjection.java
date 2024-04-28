@@ -1,4 +1,4 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation;
 
 import java.time.LocalDateTime;
 

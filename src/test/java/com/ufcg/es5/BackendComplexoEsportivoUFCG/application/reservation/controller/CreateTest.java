@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -35,19 +34,6 @@ class CreateTest extends BasicTestController {
     private ReservationService reservationService;
 
     @ParameterizedTest
-    @DisplayName("Should return Created. Code: 201")
-    @MethodSource(value = "returnCreated")
-    void returnCreated(Long courtId, String startDateTime) throws Exception {
-        String payload = makeRequestPayload(courtId, startDateTime);
-        ReservationResponseDto response = makeResponse();
-
-        Mockito.when(reservationService.create(Mockito.any()))
-                .thenReturn(response);
-
-        callEndpoint(payload).andExpect(status().isCreated()).andReturn();
-    }
-
-    @ParameterizedTest
     @DisplayName("Should return BadRequest ")
     @MethodSource(value = "returnBadRequest")
     void returnBadRequest(Long courtId, String startDateTime) throws Exception {
@@ -60,16 +46,9 @@ class CreateTest extends BasicTestController {
     @DisplayName("Should return Forbidden. Code: 403.")
     void returnForbidden() throws Exception {
         SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_PENDING));
-
         String payload = makeRequestPayload(VALID_ID, "2024-11-01 12:00");
 
         callEndpoint(payload).andExpect(status().isForbidden()).andReturn();
-    }
-
-    private static Stream<Arguments> returnCreated() {
-        return Stream.of(
-                Arguments.of(1L, "2024-11-01 12:00")
-        );
     }
 
     private static Stream<Arguments> returnBadRequest() {

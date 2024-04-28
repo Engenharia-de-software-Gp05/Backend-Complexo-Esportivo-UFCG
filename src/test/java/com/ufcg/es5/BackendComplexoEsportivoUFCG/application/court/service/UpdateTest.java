@@ -1,16 +1,20 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.service.BasicTestService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationServiceImpl;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceForbiddenException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +25,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class DeleteTest extends BasicTestService {
+public class UpdateTest extends BasicTestService {
 
     private static final String USER_EMAIL_1 = "user@gmail.com";
     private static final String USER_USERNAME_1 = "username";
@@ -39,12 +44,11 @@ class DeleteTest extends BasicTestService {
     private static final String COURT_NAME = "Volleyball Court";
     private static final String COURT_IMAGE_URL = "imageurl.com";
     private static final Long CANCELLATION_TIME_LIMIT = 24L;
-
     private static SaceUser user1;
     private static SaceUser user2;
-    private static Court court;
+    private static Court court1;
+    private static Court court2;
     private static LocalDateTime startDateTime;
-
 
     @Autowired
     private ReservationServiceImpl reservationService;
@@ -59,96 +63,108 @@ class DeleteTest extends BasicTestService {
     private AuthenticatedUser authenticatedUser;
 
     @BeforeEach
-    void makeTestScenario() {
-
-        createCourt();
+    void setUp() {
         createUsers();
-
         startDateTime = LocalDateTime.now().plusHours(CANCELLATION_TIME_LIMIT).plusMinutes(1);
     }
 
     @Test
     @Transactional
-    @DisplayName("Deleting reservation by owner should be successful.")
-    void deleteReservationByOwnerShouldSucceed() {
-        Reservation reservation = reservationService.save(createReservation(startDateTime));
+    @DisplayName("Success in court update")
+    void successfulUpdateOnTheCourt() {
+
+        court1 = createCourtAvaliabe(COURT_NAME, COURT_IMAGE_URL);
+
+        Reservation reservation = reservationService.save(createReservation(court1, user1, startDateTime));
+        court1 = courtService.findByName(court1.getName());
 
         Assertions.assertEquals(1, reservationService.findAll().size());
+        Assertions.assertEquals(court1.getName(), "Volleyball Court");
+        Assertions.assertEquals(court1.getId(), reservationService.findAll().get(0).getCourt().getId());
+        Assertions.assertEquals(courtService.findById(court1.getId()).get().getImagesUrls().size(), 1);
 
-        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
-        reservationService.delete(reservation.getId());
+        CourtUpdateDto newCourt = new CourtUpdateDto(
+                "Novo nome",
+                CourtAvailabilityStatusEnum.UNAVAILABLE
+        );
 
-        Assertions.assertEquals(0, reservationService.findAll().size());
+        courtService.updateById(newCourt, court1.getId());
+        court1 = courtService.findByName(court1.getName());
+
+        Assertions.assertEquals(1, reservationService.findAll().size());
+        Assertions.assertEquals(court1.getName(), "Novo nome");
+        Assertions.assertEquals(court1.getCourtAvailabilityStatusEnum(), newCourt.courtStatusEnum());
+        Assertions.assertEquals(court1.getReservationDuration(), 90L);
     }
 
     @Test
     @Transactional
-    @DisplayName("Deleting after cancellation time limit should throw ForbiddenException.")
-    void deleteWhenCancellationTimeExpiredShouldThrowForbiddenException() {
+    @DisplayName("An exception should be returned because there is already a block with that name")
+    void InvalidupdateCourtwithThatNameAlreadyExists() {
         startDateTime = startDateTime.minusHours(1);
 
-        Reservation reservation = reservationService.save(createReservation(startDateTime));
+        court1 = createCourtAvaliabe(COURT_NAME, COURT_IMAGE_URL);
 
-        Assertions.assertEquals(1, reservationService.findAll().size());
+        court2 = createCourtAvaliabe("Quadra Grande", COURT_IMAGE_URL);
 
-        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user1.getId());
+        Reservation reservation1 = reservationService.save(createReservation(court2, user1, startDateTime));
+        Reservation reservation2 = reservationService.save(createReservation(court1, user2, startDateTime));
+
+        Assertions.assertEquals(2, reservationService.findAll().size());
+
+        CourtUpdateDto newCourt = new CourtUpdateDto(
+                "Quadra Grande",
+                CourtAvailabilityStatusEnum.UNAVAILABLE
+        );
 
         Assertions.assertThrows(
-                SaceForbiddenException.class,
-                () -> reservationService.delete(reservation.getId())
+                SaceConflictException.class,
+                () -> courtService.updateById(newCourt, court1.getId())
         );
+        Assertions.assertEquals(reservationService.findByCourtId(court1.getId()).size(), 1);
+        Assertions.assertEquals(2, reservationService.findAll().size());
     }
 
     @Test
     @Transactional
-    @DisplayName("Deleting a non-existing reservation should throw ResourceNotFoundException.")
-    void deleteNonExistingReservationShouldThrowResourceNotFoundException() {
+    @DisplayName("Returns exception for not finding blockl")
+    void updateCourtInvalidParametersIdNotFoundThrowException() {
+        court1 = createCourtAvaliabe(COURT_NAME, COURT_IMAGE_URL);
+
+        CourtUpdateDto newCourt = new CourtUpdateDto(
+                "Quadra Grande",
+                CourtAvailabilityStatusEnum.UNAVAILABLE
+        );
+
         Assertions.assertThrows(
                 SaceResourceNotFoundException.class,
-                () -> reservationService.delete(99999L)
+                () -> courtService.updateById(newCourt, 9999L)
         );
     }
 
-    @Test
-    @Transactional
-    @DisplayName("Trying to delete reservation without ownership should throw ForbiddenException.")
-    void deleteReservationWithoutOwnershipShouldThrowForbiddenException() {
-        LocalDateTime startDateTime = LocalDateTime.now().plusHours(25L);
+    private Court createCourtAvaliabe(String name, String urlImage) {
+        List<String> imageUrls = new ArrayList<>();
+        imageUrls.add(urlImage);
 
-        Reservation reservation = reservationService.save(createReservation(startDateTime));
-
-        Assertions.assertEquals(1, reservationService.findAll().size());
-
-        Mockito.when(authenticatedUser.getAuthenticatedUserId()).thenReturn(user2.getId());
-
-        Assertions.assertThrows(
-                SaceForbiddenException.class,
-                () -> reservationService.delete(reservation.getId())
-        );
-
-        Assertions.assertEquals(1, reservationService.findAll().size());
-    }
-
-    private Reservation createReservation(LocalDateTime startDateTime) {
-        LocalDateTime endDateTime = startDateTime.plusHours(2L);
-        return new Reservation(
-                startDateTime,
-                endDateTime,
-                court,
-                user1
-        );
-    }
-
-    private void createCourt() {
-        court = new Court(
-                COURT_NAME,
-                List.of(COURT_IMAGE_URL),
+        Court court = new Court(
+                name,
+                imageUrls,
                 CourtAvailabilityStatusEnum.AVAILABLE,
                 90L,
                 6L
         );
 
-        court = courtService.save(court);
+        return courtService.save(court);
+    }
+
+    private Reservation createReservation(Court court, SaceUser user, LocalDateTime startDateTime) {
+        LocalDateTime endDateTime = startDateTime.plusHours(2L);
+        return new Reservation(
+                startDateTime,
+                endDateTime,
+                court,
+                user
+        );
     }
 
     private void createUsers() {

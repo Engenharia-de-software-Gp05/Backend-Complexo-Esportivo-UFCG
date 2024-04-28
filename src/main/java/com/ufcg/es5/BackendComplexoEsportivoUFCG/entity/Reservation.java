@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
 
@@ -29,6 +30,7 @@ public class Reservation extends BasicEntity {
 
     @ManyToOne
     @JoinColumn(name = COURT_ID_COLUMN, nullable = false)
+    @JsonIgnoreProperties("reservations")
     private Court court;
 
     @ManyToOne

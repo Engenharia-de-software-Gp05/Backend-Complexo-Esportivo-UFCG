@@ -16,10 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,8 +56,16 @@ public class SaceUserController {
             description = "User email, name, studentId and phoneNumber returned.",
             content = {@Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = SaceUserDataDto.class)))})})
-    public ResponseEntity<Collection> findAllAsDto() {
+    public ResponseEntity<Collection<SaceUserDataDto>> findAllAsDto() {
         List<SaceUserDataDto> response = service.findAllAsDto();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/upload/profile/picture")
+    public ResponseEntity<Void> uploadProfilePicture(
+            @RequestPart(value = "profilePicture") MultipartFile picture
+    ) {
+        service.uploadProfilePicture(picture);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

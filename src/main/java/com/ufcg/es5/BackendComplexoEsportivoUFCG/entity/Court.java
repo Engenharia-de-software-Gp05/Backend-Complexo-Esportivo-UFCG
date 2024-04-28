@@ -1,8 +1,11 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.basic.BasicEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,8 @@ public class Court extends BasicEntity {
     private List<String> imagesUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("court")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)

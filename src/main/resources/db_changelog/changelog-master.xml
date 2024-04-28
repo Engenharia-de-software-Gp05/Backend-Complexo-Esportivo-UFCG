@@ -15,5 +15,6 @@
     <include file="/db_changelog/changes/2024-04-17-19:21-create-unavailable-reservation-table.sql"/>
     <include file="/db_changelog/changes/2024-04-18-00:00-create-basic-triggers.sql"/>
     <include
-            file="/db_changelog/changes/2024-04-20-16:51-add-minimum-interval-between-reservation-column-to-court-table.sql"/>
+            file="/db_changelog/changes/2024-04-20-16:51-add-column-minimum-interval-between-reservation-to-court-table.sql"/>
+    <include file="/db_changelog/changes/2024-04-25-22:44-add-column-profile-picture-url-to-user-table.sql"/>
 </databaseChangeLog>

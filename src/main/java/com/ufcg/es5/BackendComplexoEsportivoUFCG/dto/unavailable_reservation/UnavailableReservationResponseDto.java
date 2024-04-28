@@ -1,6 +1,6 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation;
 
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.UnavailableReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.UnavailableReservationResponseProjection;
 
 import java.time.LocalDateTime;
 

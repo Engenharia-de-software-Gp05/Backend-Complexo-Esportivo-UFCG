@@ -1,9 +1,8 @@
-package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.controller;
+package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.ReservationPathConstants;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service.ReservationService;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,23 +21,25 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-class DeleteTest extends BasicTestController {
+public class DeleteTest extends BasicTestController {
 
     public static final long VALID_ID = 1L;
+    private static final String PATH = "/court/delete/by/id";
 
     @MockBean
-    private ReservationService reservationService;
+    private CourtService courtService;
 
     @BeforeEach
     void setUp() {
-        Mockito.doNothing().when(reservationService).delete(VALID_ID);
+        Mockito.doNothing().when(courtService).deleteById(VALID_ID);
     }
 
     @ParameterizedTest
-    @DisplayName("Should return Success. Code: 200")
+    @DisplayName("Should return Success. Code: 204")
     @MethodSource(value = "returnNoContent")
     void returnNoContent(List<String> roles) throws Exception {
         SecurityContextUtils.fakeAuthentication(roles);
@@ -47,7 +48,6 @@ class DeleteTest extends BasicTestController {
 
     private static Stream<Arguments> returnNoContent() {
         return Stream.of(
-                Arguments.of(List.of(PropertyTestConstants.ROLE_USER)),
                 Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN)),
                 Arguments.of(List.of(PropertyTestConstants.ROLE_ADMIN, PropertyTestConstants.ROLE_PENDING))
         );
@@ -55,11 +55,25 @@ class DeleteTest extends BasicTestController {
 
     @Test
     @DisplayName("Should return BadRequest ")
+    void returnBadRequestByQueryParam() throws Exception {
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
+
+        ResultActions resultActions = mockMvc.perform(delete(PATH)
+                .queryParam(PropertyTestConstants.ID, (String) null)
+                .header(HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_JSON)
+        );
+
+        resultActions.andExpect(status().isBadRequest()).andReturn();
+    }
+
+    @Test
+    @DisplayName("Should return BadRequest ")
     void returnBadRequest() throws Exception {
-        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_USER));
+        SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .delete(ReservationPathConstants.DELETE_BY_ID_FULL_PATH)
+                .delete(PATH)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
@@ -76,11 +90,10 @@ class DeleteTest extends BasicTestController {
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .delete(ReservationPathConstants.DELETE_BY_ID_FULL_PATH)
+                .delete(PATH)
                 .queryParam(PropertyTestConstants.ID, String.valueOf(VALID_ID))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
     }
-
 }

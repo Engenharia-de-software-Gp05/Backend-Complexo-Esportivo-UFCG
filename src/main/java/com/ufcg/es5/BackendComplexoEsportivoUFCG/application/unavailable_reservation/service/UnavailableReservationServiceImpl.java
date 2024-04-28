@@ -9,7 +9,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.unavailable_reservation.Una
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.UnavailableReservation;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.UnavailableReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.UnavailableReservationResponseProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
 import org.springframework.beans.factory.annotation.Autowired;

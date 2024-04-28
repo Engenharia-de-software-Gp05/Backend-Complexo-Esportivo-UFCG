@@ -1,8 +1,8 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.repository;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationDetailedProjection;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.ReservationResponseProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationDetailedProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Reservation.ReservationResponseProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +28,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("courtId") Long courtId,
             @Param("userId") Long userId,
             @Param("dateTime") LocalDateTime dateTime
+    );
+
+    @Query(
+        """
+                SELECT reservation
+                FROM Reservation reservation
+                WHERE reservation.court.id = :courtId
+        """
+    )
+    Collection<ReservationResponseProjection> findByCourtId(
+            @Param("courtId") Long courtId
     );
 
     @Query(
@@ -98,14 +109,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query(
             """
-            SELECT reservation.court.name as courtName,
-                    reservation.saceUser.name as userName,
-                    reservation.startDateTime as startDateTime,
-                    reservation.endDateTime as endDateTime
-                FROM Reservation reservation
-                    WHERE reservation.saceUser.id = :userId AND
-                        reservation.startDateTime > :dateTime
-            """
+                    SELECT reservation.court.name as courtName,
+                            reservation.saceUser.name as userName,
+                            reservation.startDateTime as startDateTime,
+                            reservation.endDateTime as endDateTime
+                        FROM Reservation reservation
+                            WHERE reservation.saceUser.id = :userId AND
+                                reservation.startDateTime > :dateTime
+                    """
     )
     Collection<ReservationDetailedProjection> findDetailedByUserIdAndDateTime(
             @Param("userId") Long id,
@@ -114,12 +125,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query(
             """
-            SELECT reservation.court.name as courtName,
-                    reservation.saceUser.name as userName,
-                    reservation.startDateTime as startDateTime,
-                    reservation.endDateTime as endDateTime
-                FROM Reservation reservation
-            """
+                    SELECT reservation.id as id,
+                            reservation.court.name as courtName,
+                            reservation.saceUser.name as userName,
+                            reservation.startDateTime as startDateTime,
+                            reservation.endDateTime as endDateTime
+                        FROM Reservation reservation
+                    """
     )
     Collection<ReservationDetailedProjection> findAllDetailed();
 }

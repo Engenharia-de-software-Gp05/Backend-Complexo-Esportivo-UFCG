@@ -1,8 +1,10 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.aspectj.bridge.IMessage;
 
 import java.util.List;
 
@@ -14,6 +16,12 @@ public record CourtSaveDto(
         List<String> imagesUrls,
 
         @NotNull(message = "status cannot be null")
-        CourtAvailabilityStatusEnum courtStatusEnum
+        CourtAvailabilityStatusEnum courtAvailabilityStatusEnum,
+
+        @NotNull(message = "reservation duration cannot be null") @Min(1L)
+        Long reservationDuration,
+
+        @NotNull(message = "minimum interval cannot be null") @Min(0L)
+        Long minimumIntervalBetweenReservation
 ) {
 }
