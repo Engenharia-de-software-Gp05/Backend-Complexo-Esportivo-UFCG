@@ -4,7 +4,6 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.Ba
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -42,15 +40,8 @@ public class CreateTest extends BasicTestController {
     @DisplayName("Should return Success. Code: 201")
     @MethodSource(value = "returnCreate")
     void returnNoCreate(List<String> roles) throws Exception {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto data = new CourtSaveDto(
                 "Novo nome",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -68,15 +59,8 @@ public class CreateTest extends BasicTestController {
     @Test
     @DisplayName("should return badrequest for invalid parameters passed to dto")
     void returnBadRequestByDto() throws Exception {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto data = new CourtSaveDto(
                 null,
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -95,15 +79,8 @@ public class CreateTest extends BasicTestController {
     @Test
     @DisplayName("Should return Forbidden. Code: 403.")
     void returnForbidden() throws Exception {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto data = new CourtSaveDto(
                 "Nome quadra",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );

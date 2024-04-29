@@ -120,7 +120,7 @@ public class ReservationServiceImpl implements ReservationService {
         publishCancellationEventByUser(reservation);
     }
 
-    void publishCancellationEventByUser(Reservation reservation) {
+    private void publishCancellationEventByUser(Reservation reservation) {
         eventPublisher.publishEvent(new DeletedEvent<>(new ReservationCancelledByUserDto(reservation), ReservationCancelledByUserDto.class));
     }
 

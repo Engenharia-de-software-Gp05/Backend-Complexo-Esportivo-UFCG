@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+                .allowedOrigins("https://fronted-complexo-esportivo-ufcg.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "CONNECT");
     }
 }

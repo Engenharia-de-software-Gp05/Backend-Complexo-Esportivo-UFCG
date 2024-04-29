@@ -5,19 +5,16 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.reservation.service
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.config.security.AuthenticatedUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.enums.CourtAvailabilityStatusEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.enums.SaceUserRoleEnum;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Reservation;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.SaceUser;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,15 +67,8 @@ public class CreateTest extends BasicTestService {
     @Transactional
     @DisplayName("Success in court update")
     void successfulUpdateOnTheCourt() {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto newCourt = new CourtSaveDto(
                 "Novo nome",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -88,27 +78,19 @@ public class CreateTest extends BasicTestService {
         court1 = courtService.findByName(newCourt.name());
 
         Assertions.assertEquals("Novo nome", court1.getName());
-        Assertions.assertEquals(imagens.get(0), court1.getImagesUrls().get(0));
-        Assertions.assertEquals(imagens.get(1), court1.getImagesUrls().get(1));
         Assertions.assertEquals(reservationService.findByCourtId(court1.getId()).size(), 1);
     }
 
     @Test
     @Transactional
-    @DisplayName("An exception should be returned because there is already a block with that name")
-    void InvalidupdateCourtwithThatNameAlreadyExists() {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
+    @DisplayName("Should throw an exception should be returned because there is already a block with that name")
+    void InvalidUpdateCourtWithNameThatAlreadyExists() {
 
         CourtSaveDto newCourt = new CourtSaveDto(
                 "Novo nome",
-                new ArrayList<>(),
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
-                );
+        );
 
         courtService.create(newCourt);
 
@@ -120,17 +102,11 @@ public class CreateTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Amust create two blocks and only them and both must have different names")
+    @DisplayName("Must create two blocks and only them and both must have different names")
     void validCreationOfTwoBlocks() {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
 
         CourtSaveDto newCourt1 = new CourtSaveDto(
                 "Novo nome",
-                new ArrayList<>(),
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -139,22 +115,20 @@ public class CreateTest extends BasicTestService {
 
         CourtSaveDto newCourt2 = new CourtSaveDto(
                 "Outro nome",
-                new ArrayList<>(),
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
         courtService.create(newCourt2);
 
         court1 = courtService.findByName(newCourt1.name());
-        court2 =  courtService.findByName(newCourt2.name());
+        court2 = courtService.findByName(newCourt2.name());
 
         Assertions.assertEquals(courtService.findAll().size(), 2);
         Assertions.assertNotEquals(court1, court2);
         Assertions.assertNotEquals(court1.getName(), court2.getName());
     }
 
-    private Court createCourtAvaliabe(String name, String urlImage) {
+    private Court createCourtAvailable(String name, String urlImage) {
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add(urlImage);
 

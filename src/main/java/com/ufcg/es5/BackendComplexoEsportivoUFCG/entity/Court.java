@@ -37,6 +37,7 @@ public class Court extends BasicEntity {
     private List<Reservation> reservations = new ArrayList<>();
 
     @OneToMany(mappedBy = COURT_PROPERTY, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<UnavailableReservation> unavailableReservations = new ArrayList<>();
 
     @Column(name = STATUS_COLUMN, nullable = false)
@@ -61,6 +62,15 @@ public class Court extends BasicEntity {
         this.courtAvailabilityStatusEnum = status;
         this.reservationDuration = reservationDuration;
         this.minimumIntervalBetweenReservation = minimumIntervalBetweenReservation;
+    }
+
+    public Court(String name, Long reservationDuration, Long minimumIntervalBetweenReservation) {
+        this.name = name;
+        this.imagesUrls = new ArrayList<>();
+        this.reservationDuration = reservationDuration;
+        this.minimumIntervalBetweenReservation = minimumIntervalBetweenReservation;
+        this.unavailableReservations = new ArrayList<>();
+        this.courtAvailabilityStatusEnum = CourtAvailabilityStatusEnum.AVAILABLE;
     }
 
     public void addImageUrl(String imageUrl) {
