@@ -63,6 +63,14 @@ public class Court extends BasicEntity {
         this.minimumIntervalBetweenReservation = minimumIntervalBetweenReservation;
     }
 
+    public Court(String name, Long minimumIntervalBetweenReservation, Long reservationDuration) {
+        this.name = name;
+        this.minimumIntervalBetweenReservation = minimumIntervalBetweenReservation;
+        this.reservationDuration = reservationDuration;
+        this.courtAvailabilityStatusEnum = CourtAvailabilityStatusEnum.AVAILABLE;
+        this.imagesUrls = new ArrayList<>();
+    }
+
     public void addImageUrl(String imageUrl) {
         this.imagesUrls.add(imageUrl);
     }

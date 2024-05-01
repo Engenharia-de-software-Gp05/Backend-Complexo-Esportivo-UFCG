@@ -55,8 +55,6 @@ public class CourtServiceImpl implements CourtService {
     private Court saveDtoToClass(CourtSaveDto data) {
         return new Court(
                 data.name(),
-                data.imagesUrls(),
-                data.courtAvailabilityStatusEnum(),
                 data.reservationDuration(),
                 data.minimumIntervalBetweenReservation());
     }

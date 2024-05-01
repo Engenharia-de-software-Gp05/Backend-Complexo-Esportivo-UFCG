@@ -111,8 +111,6 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
                 SignUpConfirmationCode::new
         );
 
-        checkIfUserHasActiveCode(signUpConfirmationCode, userId);
-
         signUpConfirmationCode.setExpiresAt(expiresAt);
 
         String confirmationCode = RandomStringGenerator.randomAlphaNumeric(CONFIRMATION_CODE_SIZE);
@@ -136,5 +134,11 @@ public class SignUpConfirmationCodeServiceImpl implements SignUpConfirmationCode
     public void collect(LocalDateTime dateTime) {
         Collection<Long> confirmationCodesToDelete = repository.findAllBeforeDateTime(dateTime.minusMinutes(5L));
         repository.deleteAllById(confirmationCodesToDelete);
+    }
+
+    @Override
+    @Transactional
+    public void resendConfirmationCodeByUserId(Long authenticatedUserId) {
+        generate(authenticatedUserId);
     }
 }

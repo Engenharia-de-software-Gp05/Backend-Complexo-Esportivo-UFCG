@@ -14,6 +14,8 @@ public class AuthPathConstants {
     public static final String UPDATE_PASSWORD_FULL_PATH = PREFIX + UPDATE_PASSWORD_PATH;
     public static final String CONFIRM_REGISTER_PATH = "/confirm/register";
     public static final String CONFIRM_REGISTER_FULL_PATH = PREFIX + CONFIRM_REGISTER_PATH;
+    public static final String RESEND_REGISTER_CONFIRMATION_CODE_PATH = "/resend/confirmationCode";
+    public static final String RESEND_REGISTER_CONFIRMATION_CODE_FULL_PATH = PREFIX + RESEND_REGISTER_CONFIRMATION_CODE_PATH;
 
     private AuthPathConstants() {
     }

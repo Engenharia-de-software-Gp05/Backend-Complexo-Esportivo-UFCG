@@ -128,7 +128,7 @@ public class AuthController {
                             schema = @Schema(implementation = SaceUserNameEmailDto.class))}),
             @ApiResponse(
                     responseCode = "403",
-                    description = "User password failed changed.",
+                    description = "Register confirmation failed.",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Void> confirmRegisterCode(
             @NotBlank
@@ -138,5 +138,22 @@ public class AuthController {
     ) {
         service.confirmEmailRegistered(confirmationCode);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(AuthPathConstants.RESEND_REGISTER_CONFIRMATION_CODE_PATH)
+    @PreAuthorize("hasRole('ROLE_PENDING')")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Resend confirmation code successfully.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SaceUserNameEmailDto.class))}),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Resend confirmation code failed.",
+                    content = {@Content(mediaType = "application/json")})})
+    public ResponseEntity<Void> resendRegisterCode(){
+        service.resendConfirmationCodeByAuthenticatedUser();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -116,6 +116,12 @@ class AuthServiceImpl implements AuthService {
         saceUserService.updateUserRolesById(Set.of(SaceUserRoleEnum.ROLE_USER), requesterUserId);
     }
 
+    @Override
+    public void resendConfirmationCodeByAuthenticatedUser() {
+        Long authenticatedUserId = authenticatedUser.getAuthenticatedUserId();
+        confirmationCodeService.resendConfirmationCodeByUserId(authenticatedUserId);
+    }
+
     private void checkIfConfirmationCodeIsValid(String confirmationCode, Long requesterUserId) {
         SignUpConfirmationCode signUpConfirmationCode = confirmationCodeService.findByUserIdAndConfirmationCode(requesterUserId, confirmationCode)
                 .orElseThrow(

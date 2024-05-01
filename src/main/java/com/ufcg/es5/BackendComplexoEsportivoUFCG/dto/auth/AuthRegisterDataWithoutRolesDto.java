@@ -1,23 +1,24 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.auth;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailConstraint.EmailConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.EmailStudentConstraint.StudentEmailConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.NameConstraint.NameConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PasswordConstraint.PasswordConstraint;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.PhoneNumberConstraint.PhoneNumberConstraint;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.constraints.StudentIdConstraint.StudentIdConstraint;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 public record AuthRegisterDataWithoutRolesDto(
-        @EmailConstraint
+        @StudentEmailConstraint
         String email,
-        @NotEmpty
-        @Size(min = 8)
+        @NameConstraint
         String name,
-        @NotEmpty
+        @PhoneNumberConstraint
         String phoneNumber,
-        @NotEmpty
-        @Size(min = 9, max = 9)
+        @StudentIdConstraint
         String studentId,
-        @NotEmpty
-        @Size(min = 8, max = 32)
+        @PasswordConstraint
         String password
 ) {
 }

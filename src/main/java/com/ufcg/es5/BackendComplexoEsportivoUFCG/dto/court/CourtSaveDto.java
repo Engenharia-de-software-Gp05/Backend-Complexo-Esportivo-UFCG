@@ -9,19 +9,13 @@ import org.aspectj.bridge.IMessage;
 import java.util.List;
 
 public record CourtSaveDto(
-        @NotBlank(message = "name cannot be empty")
+        @NotBlank(message = "Court name cannot be empty")
         String name,
 
-        @NotNull(message = "images cannot be null")
-        List<String> imagesUrls,
-
-        @NotNull(message = "status cannot be null")
-        CourtAvailabilityStatusEnum courtAvailabilityStatusEnum,
-
-        @NotNull(message = "reservation duration cannot be null") @Min(1L)
+        @NotNull(message = "reservation duration cannot be null")
         Long reservationDuration,
 
-        @NotNull(message = "minimum interval cannot be null") @Min(0L)
+        @NotNull(message = "minimum interval cannot be null")
         Long minimumIntervalBetweenReservation
 ) {
 }

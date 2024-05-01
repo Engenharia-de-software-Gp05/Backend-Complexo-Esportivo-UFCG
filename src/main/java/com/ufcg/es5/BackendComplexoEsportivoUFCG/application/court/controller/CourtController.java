@@ -61,6 +61,14 @@ public class CourtController {
     }
 
     @PutMapping("/upload/image")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Successfully upload court image"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed uploading court image")
+    })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> updateProfilePicture(
             @RequestParam(PropertyConstants.ID)

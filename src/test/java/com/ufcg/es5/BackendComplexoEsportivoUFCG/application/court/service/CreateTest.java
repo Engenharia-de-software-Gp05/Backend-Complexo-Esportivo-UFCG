@@ -39,8 +39,6 @@ public class CreateTest extends BasicTestService {
     private static final String USER_PHONE_NUMBER_2 = "44662954917";
     private static final String USER_STUDENT_ID_2 = "1212135267";
     private static final String USER_PASSWORD_2 = "5451616547";
-    private static final String COURT_NAME = "Volleyball Court";
-    private static final String COURT_IMAGE_URL = "imageurl.com";
     private static final Long CANCELLATION_TIME_LIMIT = 24L;
     private static SaceUser user1;
     private static SaceUser user2;
@@ -70,15 +68,8 @@ public class CreateTest extends BasicTestService {
     @Transactional
     @DisplayName("Success in court update")
     void successfulUpdateOnTheCourt() {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto newCourt = new CourtSaveDto(
                 "Novo nome",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -88,24 +79,15 @@ public class CreateTest extends BasicTestService {
         court1 = courtService.findByName(newCourt.name());
 
         Assertions.assertEquals("Novo nome", court1.getName());
-        Assertions.assertEquals(imagens.get(0), court1.getImagesUrls().get(0));
-        Assertions.assertEquals(imagens.get(1), court1.getImagesUrls().get(1));
         Assertions.assertEquals(reservationService.findByCourtId(court1.getId()).size(), 1);
     }
 
     @Test
     @Transactional
     @DisplayName("An exception should be returned because there is already a block with that name")
-    void InvalidupdateCourtwithThatNameAlreadyExists() {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
+    void InvalidUpdateCourtWithThatNameAlreadyExists() {
         CourtSaveDto newCourt = new CourtSaveDto(
                 "Novo nome",
-                new ArrayList<>(),
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
                 );
@@ -120,17 +102,10 @@ public class CreateTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Amust create two blocks and only them and both must have different names")
+    @DisplayName("Should create two blocks and only them and both must have different names")
     void validCreationOfTwoBlocks() {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto newCourt1 = new CourtSaveDto(
                 "Novo nome",
-                new ArrayList<>(),
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -139,8 +114,6 @@ public class CreateTest extends BasicTestService {
 
         CourtSaveDto newCourt2 = new CourtSaveDto(
                 "Outro nome",
-                new ArrayList<>(),
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );

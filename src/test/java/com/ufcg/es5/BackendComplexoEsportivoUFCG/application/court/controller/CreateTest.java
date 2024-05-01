@@ -42,15 +42,8 @@ public class CreateTest extends BasicTestController {
     @DisplayName("Should return Success. Code: 201")
     @MethodSource(value = "returnCreate")
     void returnNoCreate(List<String> roles) throws Exception {
-        List<String> imagens = new ArrayList<String>();
-
-        imagens.add("img1.com");
-        imagens.add("img2.com");
-
         CourtSaveDto data = new CourtSaveDto(
                 "Novo nome",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -75,8 +68,6 @@ public class CreateTest extends BasicTestController {
 
         CourtSaveDto data = new CourtSaveDto(
                 null,
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );
@@ -102,8 +93,6 @@ public class CreateTest extends BasicTestController {
 
         CourtSaveDto data = new CourtSaveDto(
                 "Nome quadra",
-                imagens,
-                CourtAvailabilityStatusEnum.UNAVAILABLE,
                 90L,
                 10L
         );

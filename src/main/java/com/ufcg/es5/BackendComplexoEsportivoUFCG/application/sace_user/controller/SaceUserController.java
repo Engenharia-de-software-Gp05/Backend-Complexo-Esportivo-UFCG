@@ -62,6 +62,14 @@ public class SaceUserController {
     }
 
     @PutMapping("/upload/profile/picture")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Successfully upload user profile picture."),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed uploading user profile picture.")
+    })
     public ResponseEntity<Void> uploadProfilePicture(
             @RequestPart(value = "profilePicture") MultipartFile picture
     ) {
