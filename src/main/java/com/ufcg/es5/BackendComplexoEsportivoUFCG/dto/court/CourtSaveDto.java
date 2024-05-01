@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CourtSaveDto(
-        @NotBlank(message = "name cannot be empty")
+        @NotBlank(message = "Court name cannot be empty")
         String name,
         @NotNull(message = "reservation duration cannot be null") @Min(1L)
         Long reservationDuration,

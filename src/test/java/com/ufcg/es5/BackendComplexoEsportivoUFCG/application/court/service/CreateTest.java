@@ -36,8 +36,6 @@ public class CreateTest extends BasicTestService {
     private static final String USER_PHONE_NUMBER_2 = "44662954917";
     private static final String USER_STUDENT_ID_2 = "1212135267";
     private static final String USER_PASSWORD_2 = "5451616547";
-    private static final String COURT_NAME = "Volleyball Court";
-    private static final String COURT_IMAGE_URL = "imageurl.com";
     private static final Long CANCELLATION_TIME_LIMIT = 24L;
     private static SaceUser user1;
     private static SaceUser user2;
@@ -102,7 +100,7 @@ public class CreateTest extends BasicTestService {
 
     @Test
     @Transactional
-    @DisplayName("Must create two blocks and only them and both must have different names")
+    @DisplayName("Should create two blocks and only them and both must have different names")
     void validCreationOfTwoBlocks() {
 
         CourtSaveDto newCourt1 = new CourtSaveDto(
@@ -121,7 +119,7 @@ public class CreateTest extends BasicTestService {
         courtService.create(newCourt2);
 
         court1 = courtService.findByName(newCourt1.name());
-        court2 = courtService.findByName(newCourt2.name());
+        court2 =  courtService.findByName(newCourt2.name());
 
         Assertions.assertEquals(courtService.findAll().size(), 2);
         Assertions.assertNotEquals(court1, court2);

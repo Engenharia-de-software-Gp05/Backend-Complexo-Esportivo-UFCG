@@ -34,6 +34,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getUsername())
+                    .withClaim("roles", user.getRoleEnums().toString())
                     .withExpiresAt(generateExpirationDate(expirationMinutes))
                     .sign(getAlgorithm());
         } catch (JWTCreationException exception) {

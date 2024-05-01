@@ -130,6 +130,18 @@ public class SaceUserServiceImpl implements SaceUserService {
         save(authenticatedUser);
     }
 
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        SaceUser user = findById(id).orElseThrow(
+                () -> new SaceResourceNotFoundException(
+                        SaceUserExceptionMessages.USER_WITH_ID_NOT_FOUND.formatted(id)
+                )
+        );
+
+        delete(user);
+    }
+
     private void checkIfPasswordMatches(SaceUser user, String providedPassword) {
         if (!user.getPassword().equals(providedPassword)) {
             throw new SaceForbiddenException(

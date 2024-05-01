@@ -1,14 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.CourtPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.*;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.reservation.ReservationResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,18 +21,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 @Validated
 @RestController
-@RequestMapping("/court")
+@RequestMapping(CourtPathConstants.PREFIX)
 public class CourtController {
 
     @Autowired
     private CourtService service;
 
-    @PostMapping("/save")
+    @PostMapping(CourtPathConstants.CREATE_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -60,9 +53,17 @@ public class CourtController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/upload/image")
+    @PutMapping(CourtPathConstants.UPLOAD_IMAGE_PATH)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Successfully upload court image"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed uploading court image")
+    })
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Void> updateProfilePicture(
+    public ResponseEntity<Void> updateImage(
             @RequestParam(PropertyConstants.ID)
             @NotNull Long id,
             @RequestPart(value = "courtImage") MultipartFile image
@@ -71,7 +72,7 @@ public class CourtController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/update/by/id")
+    @PutMapping(CourtPathConstants.UPDATE_BY_ID_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(
@@ -97,7 +98,7 @@ public class CourtController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete/by/id")
+    @DeleteMapping(CourtPathConstants.DELETE_BY_ID_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Delete a court.")
     @ApiResponses(value = {@ApiResponse(responseCode = "204",
@@ -111,7 +112,7 @@ public class CourtController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping(value = "/find/by/id")
+    @GetMapping(CourtPathConstants.FIND_BY_ID_PATH)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @Operation(summary = "Get court by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -127,7 +128,7 @@ public class CourtController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/find/all")
+    @GetMapping(CourtPathConstants.FIND_ALL_PATH)
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @Operation(summary = "Get all courts")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",

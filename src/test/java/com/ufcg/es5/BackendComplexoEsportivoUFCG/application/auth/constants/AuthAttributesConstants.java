@@ -8,7 +8,7 @@ public class AuthAttributesConstants {
     public static final String VALID_STUDENT_EMAIL = "arya.stark@estudante.ufcg.edu.br";
     public static final String VALID_PHONE_NUMBER = "83966666666";
     public static final String VALID_STUDENT_ID = "121212121";
-    public static final String VALID_PASSWORD = "validpassword123";
+    public static final String VALID_PASSWORD = "validpassworD123@";
 
 
     private AuthAttributesConstants() {

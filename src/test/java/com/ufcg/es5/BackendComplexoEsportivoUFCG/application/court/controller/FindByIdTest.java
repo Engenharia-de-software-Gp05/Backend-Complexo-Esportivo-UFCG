@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.CourtPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
@@ -26,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class FindByIdTest extends BasicTestController {
     public static final long VALID_ID = 1L;
-    private static final String PATH = "/court/find/by/id";
 
     @MockBean
     private CourtService courtService;
@@ -56,10 +56,11 @@ public class FindByIdTest extends BasicTestController {
     void returnBadRequestByQueryParam() throws Exception {
         SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
-        ResultActions resultActions = mockMvc.perform(get(PATH)
-                .queryParam(PropertyTestConstants.ID, (String) null)
-                .header(HttpHeaders.CONTENT_TYPE,
-                        MediaType.APPLICATION_JSON)
+        ResultActions resultActions = mockMvc.perform(
+                get(CourtPathConstants.FIND_BY_ID_FULL_PATH)
+                        .queryParam(PropertyTestConstants.ID, (String) null)
+                        .header(HttpHeaders.CONTENT_TYPE,
+                                MediaType.APPLICATION_JSON)
         );
 
         resultActions.andExpect(status().isBadRequest()).andReturn();
@@ -71,7 +72,7 @@ public class FindByIdTest extends BasicTestController {
         SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .get(PATH)
+                .get(CourtPathConstants.FIND_BY_ID_FULL_PATH)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );
@@ -88,7 +89,7 @@ public class FindByIdTest extends BasicTestController {
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .get(PATH)
+                .get(CourtPathConstants.FIND_BY_ID_FULL_PATH)
                 .queryParam(PropertyTestConstants.ID, String.valueOf(VALID_ID))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)

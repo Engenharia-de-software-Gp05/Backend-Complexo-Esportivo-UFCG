@@ -15,4 +15,6 @@ public interface AuthService {
     void updatePassword(AuthPasswordUpdateDto passwordUpdateDto);
 
     void confirmEmailRegistered(String confirmationCode);
+
+    void resendConfirmationCodeByAuthenticatedUser();
 }

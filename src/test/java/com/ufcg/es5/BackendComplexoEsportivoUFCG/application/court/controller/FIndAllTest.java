@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.CourtPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.util.security.SecurityContextUtils;
@@ -25,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class FIndAllTest extends BasicTestController {
     public static final long VALID_ID = 1L;
-    private static final String PATH = "/court/find/all";
 
     @MockBean
     private CourtService courtService;
@@ -59,7 +59,7 @@ public class FIndAllTest extends BasicTestController {
 
     private ResultActions callEndpoint() throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .get(PATH)
+                .get(CourtPathConstants.FIND_ALL_FULL_PATH)
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)
         );

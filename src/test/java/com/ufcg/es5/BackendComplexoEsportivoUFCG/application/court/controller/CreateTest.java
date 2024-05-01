@@ -1,6 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.controller;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.controller.BasicTestController;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.CourtPathConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.PropertyTestConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service.CourtService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
@@ -26,8 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 public class CreateTest extends BasicTestController {
-
-    private static final String PATH = "/court/save";
 
     @MockBean
     private CourtService courtService;
@@ -57,7 +56,7 @@ public class CreateTest extends BasicTestController {
     }
 
     @Test
-    @DisplayName("should return badrequest for invalid parameters passed to dto")
+    @DisplayName("Should return BadRequest for invalid parameters.")
     void returnBadRequestByDto() throws Exception {
         CourtSaveDto data = new CourtSaveDto(
                 null,
@@ -67,10 +66,11 @@ public class CreateTest extends BasicTestController {
 
         SecurityContextUtils.fakeAuthentication(List.of(PropertyTestConstants.ROLE_ADMIN));
 
-        ResultActions resultActions = mockMvc.perform(post(PATH)
-                .content(objectMapper.writeValueAsString(data))
-                .header(HttpHeaders.CONTENT_TYPE,
-                        MediaType.APPLICATION_JSON)
+        ResultActions resultActions = mockMvc.perform(
+                post(CourtPathConstants.CREATE_FULL_PATH)
+                        .content(objectMapper.writeValueAsString(data))
+                        .header(HttpHeaders.CONTENT_TYPE,
+                                MediaType.APPLICATION_JSON)
         );
 
         resultActions.andExpect(status().isBadRequest()).andReturn();
@@ -91,7 +91,7 @@ public class CreateTest extends BasicTestController {
 
     private ResultActions callEndpoint(CourtSaveDto data) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
-                .post(PATH)
+                .post(CourtPathConstants.CREATE_FULL_PATH)
                 .content(objectMapper.writeValueAsString(data))
                 .header(HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON)

@@ -22,4 +22,6 @@ public interface SignUpConfirmationCodeService extends BasicService<SignUpConfir
     SignUpConfirmationCodeSavedEventDataDto save(Long userId, LocalDateTime expiresAt);
 
     void collect(LocalDateTime dateTime);
+
+    void resendConfirmationCodeByUserId(Long authenticatedUserId);
 }

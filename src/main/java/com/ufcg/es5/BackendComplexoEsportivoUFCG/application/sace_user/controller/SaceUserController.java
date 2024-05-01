@@ -1,5 +1,7 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.controller;
 
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.constants.SaceUserPathConstants;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.global.PropertyConstants;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.sace_user.service.SaceUserService;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserDataDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.sace_user.SaceUserNameEmailDto;
@@ -24,7 +26,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/user")
+@RequestMapping(SaceUserPathConstants.PREFIX)
 public class SaceUserController {
 
     private static final String EMAIL_PROPERTY = "email";
@@ -32,7 +34,7 @@ public class SaceUserController {
     @Autowired
     private SaceUserService service;
 
-    @GetMapping(value = "/by/email")
+    @GetMapping(value = SaceUserPathConstants.FIND_BY_EMAIL_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get user username and name by username.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -49,7 +51,7 @@ public class SaceUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/data")
+    @GetMapping(value = SaceUserPathConstants.FIND_ALL_PATH)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get user username, name, studentId and phoneNumber")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
@@ -61,11 +63,37 @@ public class SaceUserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/upload/profile/picture")
+    @PutMapping(SaceUserPathConstants.UPLOAD_PROFILE_PICTURE_PATH)
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Successfully upload user profile picture."),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed uploading user profile picture.")
+    })
     public ResponseEntity<Void> uploadProfilePicture(
             @RequestPart(value = "profilePicture") MultipartFile picture
     ) {
         service.uploadProfilePicture(picture);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping(SaceUserPathConstants.DELETE_BY_ID_PATH)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Successfully upload user profile picture."),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Failed uploading user profile picture.")
+    })
+    public ResponseEntity<Void> deleteById(
+            @RequestParam(PropertyConstants.ID)
+            @NotNull Long id
+    ) {
+        service.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
