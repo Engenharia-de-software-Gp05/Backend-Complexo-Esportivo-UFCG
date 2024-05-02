@@ -119,7 +119,7 @@ public class CreateTest extends BasicTestService {
         courtService.create(newCourt2);
 
         court1 = courtService.findByName(newCourt1.name());
-        court2 =  courtService.findByName(newCourt2.name());
+        court2 = courtService.findByName(newCourt2.name());
 
         Assertions.assertEquals(courtService.findAll().size(), 2);
         Assertions.assertNotEquals(court1, court2);

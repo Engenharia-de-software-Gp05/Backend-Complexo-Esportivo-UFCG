@@ -134,9 +134,9 @@ public class CourtController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200",
             description = "returned court.",
             content = {@Content(mediaType = "application/json",
-                    array = @ArraySchema(schema = @Schema(implementation = CourtBasicResponseDto[].class)))})})
-    public ResponseEntity<Collection<CourtBasicResponseDto>> findAll() {
-        Collection<CourtBasicResponseDto> response = service.findAllCourtBasicResponseDto();
+                    array = @ArraySchema(schema = @Schema(implementation = CourtIdNameDto[].class)))})})
+    public ResponseEntity<Collection<CourtIdNameDto>> findAll() {
+        Collection<CourtIdNameDto> response = service.findAllAsDto();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

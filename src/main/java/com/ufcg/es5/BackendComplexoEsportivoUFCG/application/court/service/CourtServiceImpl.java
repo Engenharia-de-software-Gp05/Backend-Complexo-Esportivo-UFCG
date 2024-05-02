@@ -7,6 +7,7 @@ import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Court.CourtBasicProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Court.CourtDetailedProjection;
+import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Court.CourtIdNameProjection;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceConflictException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.common.SaceResourceNotFoundException;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.exception.constants.court.CourtExceptionMessages;
@@ -93,7 +94,7 @@ public class CourtServiceImpl implements CourtService {
     @Override
     public CourtDetailedResponseDto findCourtDetailedResponseDtoById(Long id) {
         CourtDetailedProjection projection = repository.findCourtDetailedProjectionById(id);
-        return projection == null ? null : new CourtDetailedResponseDto(projection);
+        return new CourtDetailedResponseDto(projection);
     }
 
     @Override
@@ -115,6 +116,12 @@ public class CourtServiceImpl implements CourtService {
         String courtImageUrl = s3Uploader.uploadCourtImage(picture);
         court.addImageUrl(courtImageUrl);
         save(court);
+    }
+
+    @Override
+    public Collection<CourtIdNameDto> findAllAsDto() {
+        Collection<CourtIdNameProjection> projections = repository.findIdName();
+        return projections.stream().map(CourtIdNameDto::new).toList();
     }
 
     private void checkByName(String name) {

@@ -1,13 +1,9 @@
 package com.ufcg.es5.BackendComplexoEsportivoUFCG.application.court.service;
 
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.application.basic.BasicService;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtResponseDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtSaveDto;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.CourtUpdateDto;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.dto.court.*;
 import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.Court;
 import org.springframework.web.multipart.MultipartFile;
-import com.ufcg.es5.BackendComplexoEsportivoUFCG.entity.projections.Court.CourtDetailedProjection;
 
 import java.util.Collection;
 
@@ -29,4 +25,5 @@ public interface CourtService extends BasicService<Court, Long> {
 
     void updateImageById(MultipartFile picture, Long id);
 
+    Collection<CourtIdNameDto> findAllAsDto();
 }
